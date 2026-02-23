@@ -1,0 +1,89 @@
+{
+  "common": {
+    "siteName": "PhoneSpec",
+    "search": "Search",
+    "searchPlaceholder": "Search phones, brands...",
+    "compare": "Compare",
+    "home": "Home",
+    "brands": "Brands",
+    "phones": "Phones",
+    "latestPhones": "Latest Phones",
+    "featuredPhones": "Featured Phones",
+    "viewAll": "View All",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "notFound": "Not found",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "close": "Close",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  },
+  "nav": {
+    "home": "Home",
+    "brands": "Brands",
+    "compare": "Compare",
+    "search": "Search",
+    "topRated": "Top Rated",
+    "newReleases": "New Releases",
+    "upcoming": "Upcoming"
+  },
+  "phone": {
+    "specs": "Specifications",
+    "fullSpecs": "Full Specifications",
+    "reviews": "Reviews",
+    "images": "Images",
+    "videos": "Videos",
+    "relatedPhones": "Related Phones",
+    "comparePhone": "Add to Compare",
+    "removeCompare": "Remove from Compare",
+    "share": "Share",
+    "available": "Available",
+    "upcoming": "Upcoming",
+    "discontinued": "Discontinued",
+    "releaseDate": "Release Date",
+    "price": "Price",
+    "brand": "Brand",
+    "noReviews": "No reviews yet",
+    "rating": "Rating",
+    "pros": "Pros",
+    "cons": "Cons",
+    "verdict": "Verdict"
+  },
+  "seo": {
+    "defaultTitle": "PhoneSpec — Mobile Phone Specs & Reviews",
+    "defaultDescription": "Find detailed specifications, reviews, and comparisons for the latest mobile phones."
+  },
+  "brands": {
+    "title": "All Brands",
+    "viewPhones": "View Phones",
+    "noBrands": "No brands found"
+  },
+  "compare": {
+    "title": "Compare Phones",
+    "addPhone": "Add a phone to compare",
+    "maxPhones": "You can compare up to 4 phones at once",
+    "clear": "Clear All",
+    "same": "Same",
+    "noPhones": "Add at least 2 phones to compare"
+  },
+  "search": {
+    "title": "Search Results",
+    "resultsFor": "Results for",
+    "noResults": "No results found for",
+    "tryDifferent": "Try a different search term",
+    "filters": "Filters",
+    "sortBy": "Sort by",
+    "relevance": "Relevance",
+    "newest": "Newest",
+    "priceAsc": "Price: Low to High",
+    "priceDesc": "Price: High to Low"
+  }
+}

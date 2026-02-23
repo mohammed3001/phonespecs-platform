@@ -1,0 +1,89 @@
+{
+  "common": {
+    "siteName": "فون سبيك",
+    "search": "بحث",
+    "searchPlaceholder": "ابحث عن هواتف، ماركات...",
+    "compare": "مقارنة",
+    "home": "الرئيسية",
+    "brands": "الماركات",
+    "phones": "الهواتف",
+    "latestPhones": "أحدث الهواتف",
+    "featuredPhones": "الهواتف المميزة",
+    "viewAll": "عرض الكل",
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ ما",
+    "notFound": "غير موجود",
+    "back": "رجوع",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "yes": "نعم",
+    "no": "لا",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "darkMode": "الوضع الداكن",
+    "lightMode": "الوضع الفاتح"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "brands": "الماركات",
+    "compare": "مقارنة",
+    "search": "بحث",
+    "topRated": "الأعلى تقييماً",
+    "newReleases": "إصدارات جديدة",
+    "upcoming": "قادم قريباً"
+  },
+  "phone": {
+    "specs": "المواصفات",
+    "fullSpecs": "المواصفات الكاملة",
+    "reviews": "التقييمات",
+    "images": "الصور",
+    "videos": "الفيديوهات",
+    "relatedPhones": "هواتف مشابهة",
+    "comparePhone": "أضف للمقارنة",
+    "removeCompare": "إزالة من المقارنة",
+    "share": "مشاركة",
+    "available": "متوفر",
+    "upcoming": "قادم",
+    "discontinued": "متوقف",
+    "releaseDate": "تاريخ الإصدار",
+    "price": "السعر",
+    "brand": "الماركة",
+    "noReviews": "لا توجد تقييمات بعد",
+    "rating": "التقييم",
+    "pros": "المميزات",
+    "cons": "العيوب",
+    "verdict": "الحكم النهائي"
+  },
+  "seo": {
+    "defaultTitle": "فون سبيك — مواصفات وتقييمات الهواتف",
+    "defaultDescription": "اعثر على المواصفات التفصيلية والتقييمات والمقارنات لأحدث الهواتف المحمولة."
+  },
+  "brands": {
+    "title": "جميع الماركات",
+    "viewPhones": "عرض الهواتف",
+    "noBrands": "لا توجد ماركات"
+  },
+  "compare": {
+    "title": "مقارنة الهواتف",
+    "addPhone": "أضف هاتفاً للمقارنة",
+    "maxPhones": "يمكنك مقارنة ما يصل إلى 4 هواتف",
+    "clear": "مسح الكل",
+    "same": "متماثل",
+    "noPhones": "أضف هاتفين على الأقل للمقارنة"
+  },
+  "search": {
+    "title": "نتائج البحث",
+    "resultsFor": "نتائج لـ",
+    "noResults": "لا توجد نتائج لـ",
+    "tryDifferent": "جرب كلمة بحث مختلفة",
+    "filters": "الفلاتر",
+    "sortBy": "ترتيب حسب",
+    "relevance": "الأكثر صلة",
+    "newest": "الأحدث",
+    "priceAsc": "السعر: من الأقل",
+    "priceDesc": "السعر: من الأعلى"
+  }
+}
