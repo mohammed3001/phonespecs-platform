@@ -693,6 +693,12 @@ export function searchPhones(query: string, filters: SearchFilters = {}): Search
   if (filters.status) {
     results = results.filter((p) => p.status === filters.status);
   }
+  if (filters.ram) {
+    results = results.filter((p) => p.keySpecs.ram?.includes(filters.ram!));
+  }
+  if (filters.storage) {
+    results = results.filter((p) => p.keySpecs.storage?.includes(filters.storage!));
+  }
 
   // Sort
   switch (filters.sortBy) {

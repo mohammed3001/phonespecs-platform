@@ -15,14 +15,14 @@ export function AddToCompare({ phoneId, phoneName }: AddToCompareProps) {
     setAdded(!added);
     // In production, this would update a global compare store
     if (!added) {
-      const existing = JSON.parse(localStorage.getItem('comparePhones') || '[]');
+      const existing = JSON.parse(localStorage.getItem('compare_phones') || '[]');
       if (existing.length < 4 && !existing.includes(phoneId)) {
         existing.push(phoneId);
-        localStorage.setItem('comparePhones', JSON.stringify(existing));
+        localStorage.setItem('compare_phones', JSON.stringify(existing));
       }
     } else {
-      const existing = JSON.parse(localStorage.getItem('comparePhones') || '[]');
-      localStorage.setItem('comparePhones', JSON.stringify(existing.filter((id: string) => id !== phoneId)));
+      const existing = JSON.parse(localStorage.getItem('compare_phones') || '[]');
+      localStorage.setItem('compare_phones', JSON.stringify(existing.filter((id: string) => id !== phoneId)));
     }
   };
 
