@@ -16,6 +16,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cloudflare.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
   },
