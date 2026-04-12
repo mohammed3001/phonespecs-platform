@@ -1,12 +1,16 @@
 'use client';
 
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { brands, phones } from '@/data/mock-phones';
 
 export default function BrandsPage() {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+
   return (
     <>
       <Header />
@@ -26,7 +30,7 @@ export default function BrandsPage() {
             return (
               <Link
                 key={brand.id}
-                href={'/en/brands/' + brand.slug}
+                href={`/${locale}/brands/${brand.slug}`}
                 className="card p-5 hover:shadow-lg transition-all duration-300 group"
               >
                 <div className="flex items-center gap-4 mb-4">

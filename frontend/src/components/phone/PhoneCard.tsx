@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import type { Phone } from '@/types/phone';
 import { SPEC_ICONS } from '@/types/phone';
@@ -30,11 +31,13 @@ const SECONDARY_SPECS: { key: keyof Phone['keySpecs']; label: string }[] = [
 ];
 
 export function PhoneCard({ phone, showSponsored = true }: PhoneCardProps) {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
   const primaryImage = phone.images.find((i) => i.isPrimary) || phone.images[0];
 
   return (
     <Link
-      href={`/en/phones/${phone.brand.slug}/${phone.slug}`}
+      href={`/${locale}/phones/${phone.brand.slug}/${phone.slug}`}
       className="phone-card group block"
     >
       <div className="p-4">

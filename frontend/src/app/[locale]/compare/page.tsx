@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -27,6 +28,8 @@ const COMPARE_SPECS: { key: keyof Phone['keySpecs']; label: string }[] = [
 ];
 
 export default function ComparePage() {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -137,7 +140,7 @@ export default function ComparePage() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
               Search above or add phones from their detail pages to start comparing.
             </p>
-            <Link href="/en/search" className="btn-primary inline-flex">
+            <Link href={`/${locale}/search`} className="btn-primary inline-flex">
               <Icon icon="mdi:magnify" width={18} />
               Browse Phones
             </Link>
@@ -157,7 +160,7 @@ export default function ComparePage() {
                         >
                           <Icon icon="mdi:close" width={16} />
                         </button>
-                        <Link href={'/en/phones/' + phone.brand.slug + '/' + phone.slug}>
+                        <Link href={`/${locale}/phones/${phone.brand.slug}/${phone.slug}`}>
                           <div className="w-20 h-24 relative mx-auto mb-3">
                             {phone.images[0] && (
                               <Image src={phone.images[0].url} alt={phone.name} fill className="object-contain" sizes="80px" />

@@ -1,16 +1,20 @@
 'use client';
 
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
 
 export function Footer() {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+
   return (
     <footer className="bg-gray-900 text-gray-300 mt-16">
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
-            <Link href="/en" className="flex items-center gap-2 mb-4">
+            <Link href={`/${locale}`} className="flex items-center gap-2 mb-4">
               <div className="w-9 h-9 bg-brand-600 rounded-xl flex items-center justify-center">
                 <Icon icon="mdi:cellphone" className="text-white" width={22} />
               </div>
@@ -27,10 +31,10 @@ export function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/en/search" className="hover:text-brand-400 transition-colors">All Phones</Link></li>
-              <li><Link href="/en/brands" className="hover:text-brand-400 transition-colors">Brands</Link></li>
-              <li><Link href="/en/compare" className="hover:text-brand-400 transition-colors">Compare Phones</Link></li>
-              <li><Link href="/en/search?sort=newest" className="hover:text-brand-400 transition-colors">Latest Phones</Link></li>
+              <li><Link href={`/${locale}/search`} className="hover:text-brand-400 transition-colors">All Phones</Link></li>
+              <li><Link href={`/${locale}/brands`} className="hover:text-brand-400 transition-colors">Brands</Link></li>
+              <li><Link href={`/${locale}/compare`} className="hover:text-brand-400 transition-colors">Compare Phones</Link></li>
+              <li><Link href={`/${locale}/search?sort=newest`} className="hover:text-brand-400 transition-colors">Latest Phones</Link></li>
             </ul>
           </div>
 
@@ -38,11 +42,11 @@ export function Footer() {
           <div>
             <h3 className="text-white font-semibold mb-4">Popular Brands</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/en/brands/samsung" className="hover:text-brand-400 transition-colors">Samsung</Link></li>
-              <li><Link href="/en/brands/apple" className="hover:text-brand-400 transition-colors">Apple</Link></li>
-              <li><Link href="/en/brands/xiaomi" className="hover:text-brand-400 transition-colors">Xiaomi</Link></li>
-              <li><Link href="/en/brands/honor" className="hover:text-brand-400 transition-colors">Honor</Link></li>
-              <li><Link href="/en/brands/oneplus" className="hover:text-brand-400 transition-colors">OnePlus</Link></li>
+              <li><Link href={`/${locale}/brands/samsung`} className="hover:text-brand-400 transition-colors">Samsung</Link></li>
+              <li><Link href={`/${locale}/brands/apple`} className="hover:text-brand-400 transition-colors">Apple</Link></li>
+              <li><Link href={`/${locale}/brands/xiaomi`} className="hover:text-brand-400 transition-colors">Xiaomi</Link></li>
+              <li><Link href={`/${locale}/brands/honor`} className="hover:text-brand-400 transition-colors">Honor</Link></li>
+              <li><Link href={`/${locale}/brands/oneplus`} className="hover:text-brand-400 transition-colors">OnePlus</Link></li>
             </ul>
           </div>
 

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import type { SponsoredAd } from '@/types/phone';
 
@@ -10,9 +11,13 @@ interface SponsoredBannerProps {
 }
 
 export function SponsoredBanner({ ad }: SponsoredBannerProps) {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  const href = ad.targetUrl ? ad.targetUrl.replace(/^\/en\//, `/${locale}/`) : '#';
+
   return (
     <Link
-      href={ad.targetUrl || '#'}
+      href={href}
       className="block relative rounded-2xl overflow-hidden bg-gradient-to-r from-gray-900 to-gray-800 group"
     >
       <div className="flex items-center justify-between p-4 md:p-6">
@@ -46,9 +51,13 @@ export function SponsoredBanner({ ad }: SponsoredBannerProps) {
 }
 
 export function SidebarAd({ ad }: SponsoredBannerProps) {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  const href = ad.targetUrl ? ad.targetUrl.replace(/^\/en\//, `/${locale}/`) : '#';
+
   return (
     <Link
-      href={ad.targetUrl || '#'}
+      href={href}
       className="block card overflow-hidden group"
     >
       <div className="relative">

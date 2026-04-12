@@ -61,8 +61,8 @@ export default function PhonePage({ params }: Props) {
       <main className="max-w-7xl mx-auto px-4 py-6">
         <BreadcrumbNav
           items={[
-            { label: 'Brands', href: '/en/brands' },
-            { label: phone.brand.name, href: '/en/brands/' + phone.brand.slug },
+            { label: 'Brands', href: `/${params.locale}/brands` },
+            { label: phone.brand.name, href: `/${params.locale}/brands/${phone.brand.slug}` },
             { label: phone.name },
           ]}
         />
@@ -133,7 +133,7 @@ export default function PhonePage({ params }: Props) {
                   </button>
                 </div>
 
-                <ShareButtons url={siteUrl + '/en/phones/' + params.brand + '/' + params.slug} title={phone.name} />
+                <ShareButtons url={siteUrl + '/' + params.locale + '/phones/' + params.brand + '/' + params.slug} title={phone.name} />
               </div>
             </div>
 
@@ -216,7 +216,7 @@ export default function PhonePage({ params }: Props) {
                 </h4>
                 <div className="space-y-2">
                   {latestPhones.slice(0, 4).map((p) => (
-                    <a key={p.id} href={'/en/phones/' + p.brand.slug + '/' + p.slug} className="block p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <a key={p.id} href={`/${params.locale}/phones/${p.brand.slug}/${p.slug}`} className="block p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                       <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{p.name}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{p.brand.name}</p>
                     </a>

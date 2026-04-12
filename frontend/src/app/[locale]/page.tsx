@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Icon } from '@iconify/react';
@@ -14,6 +14,8 @@ import { brands, getFeaturedPhones, getLatestPhones, sponsoredAds } from '@/data
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
   const featuredPhones = getFeaturedPhones();
   const latestPhones = getLatestPhones(6);
   const bannerAd = sponsoredAds.find((a) => a.type === 'banner');
@@ -21,7 +23,7 @@ export default function HomePage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/en/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -76,7 +78,7 @@ export default function HomePage() {
             {['Samsung Galaxy S25', 'iPhone 16', 'Honor X8d', 'Xiaomi 14'].map((term) => (
               <Link
                 key={term}
-                href={`/en/search?q=${encodeURIComponent(term)}`}
+                href={`/${locale}/search?q=${encodeURIComponent(term)}`}
                 className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-sm text-white/80 hover:text-white transition-colors border border-white/10"
               >
                 {term}
@@ -91,7 +93,7 @@ export default function HomePage() {
         <section className="py-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Top Brands</h2>
-            <Link href="/en/brands" className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1">
+            <Link href={`/${locale}/brands`} className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1">
               View All <Icon icon="mdi:arrow-right" width={16} />
             </Link>
           </div>
@@ -99,7 +101,7 @@ export default function HomePage() {
             {brands.map((brand) => (
               <Link
                 key={brand.id}
-                href={`/en/brands/${brand.slug}`}
+                href={`/${locale}/brands/${brand.slug}`}
                 className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-brand-200 dark:hover:border-brand-800 hover:shadow-md transition-all group"
               >
                 <div className="w-12 h-12 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-brand-50 dark:group-hover:bg-brand-900/20 transition-colors">
@@ -133,7 +135,7 @@ export default function HomePage() {
               <Icon icon="mdi:star-outline" width={24} className="text-amber-500" />
               Featured Phones
             </h2>
-            <Link href="/en/search?featured=true" className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1">
+            <Link href={`/${locale}/search?featured=true`} className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1">
               View All <Icon icon="mdi:arrow-right" width={16} />
             </Link>
           </div>
@@ -151,7 +153,7 @@ export default function HomePage() {
               <Icon icon="mdi:clock-outline" width={24} className="text-brand-500" />
               Latest Phones
             </h2>
-            <Link href="/en/search?sort=newest" className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1">
+            <Link href={`/${locale}/search?sort=newest`} className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1">
               View All <Icon icon="mdi:arrow-right" width={16} />
             </Link>
           </div>
@@ -178,7 +180,7 @@ export default function HomePage() {
             ].map((cat) => (
               <Link
                 key={cat.label}
-                href={`/en/search?${cat.query}`}
+                href={`/${locale}/search?${cat.query}`}
                 className="flex flex-col items-center gap-3 p-5 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-brand-200 dark:hover:border-brand-800 hover:shadow-md transition-all group"
               >
                 <div className="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center group-hover:bg-brand-100 dark:group-hover:bg-brand-900/40 transition-colors">

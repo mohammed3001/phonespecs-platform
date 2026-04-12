@@ -27,7 +27,7 @@ export default function BrandPage({ params }: Props) {
       <main className="max-w-7xl mx-auto px-4 py-6">
         <BreadcrumbNav
           items={[
-            { label: 'Brands', href: '/en/brands' },
+            { label: 'Brands', href: `/${params.locale}/brands` },
             { label: brand.name },
           ]}
         />
