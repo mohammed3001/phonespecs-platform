@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
+import { NewsletterSignup } from '@/components/ui/NewsletterSignup';
 
 export function Footer() {
   const params = useParams();
@@ -50,7 +51,7 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Connect & Newsletter */}
           <div>
             <h3 className="text-white font-semibold mb-4">Connect</h3>
             <div className="flex items-center gap-3 mb-4">
@@ -67,10 +68,12 @@ export function Footer() {
                 <Icon icon="mdi:instagram" width={18} />
               </a>
             </div>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 mb-4">
               <Icon icon="mdi:email-outline" width={14} className="inline mr-1" />
               contact@phonespec.com
             </p>
+            <h4 className="text-white font-semibold text-sm mb-2">Newsletter</h4>
+            <NewsletterSignup />
           </div>
         </div>
 

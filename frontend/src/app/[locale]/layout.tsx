@@ -6,6 +6,8 @@ import { getMessages } from 'next-intl/server';
 import '../globals.css';
 import { getSiteSettings } from '@/lib/settings';
 import { ThemeWrapper } from '@/components/providers/ThemeWrapper';
+import { CookieConsentWrapper } from '@/components/ui/CookieConsent';
+import { ScrollToTopWrapper } from '@/components/ui/ScrollToTop';
 
 interface Props {
   children: React.ReactNode;
@@ -64,6 +66,8 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeWrapper defaultTheme={settings.defaultTheme || settings.default_theme || 'light'} dir={dir as 'ltr' | 'rtl'}>
             {children}
+            <CookieConsentWrapper />
+            <ScrollToTopWrapper />
           </ThemeWrapper>
         </NextIntlClientProvider>
       </body>

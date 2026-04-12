@@ -9,7 +9,10 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { PhoneCard } from '@/components/phone/PhoneCard';
 import { SponsoredBanner } from '@/components/ads/SponsoredBanner';
+import { SearchAutocomplete } from '@/components/ui/SearchAutocomplete';
+import { WebsiteJsonLd } from '@/components/seo/JsonLd';
 import { brands, getFeaturedPhones, getLatestPhones, sponsoredAds } from '@/data/mock-phones';
+import { getLatestArticles } from '@/data/mock-articles';
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,6 +22,7 @@ export default function HomePage() {
   const featuredPhones = getFeaturedPhones();
   const latestPhones = getLatestPhones(6);
   const bannerAd = sponsoredAds.find((a) => a.type === 'banner');
+  const latestArticles = getLatestArticles(3);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +33,7 @@ export default function HomePage() {
 
   return (
     <>
+      <WebsiteJsonLd name="PhoneSpec" url="https://phonespec.com" />
       <Header />
 
       {/* Hero Section */}
@@ -46,31 +51,15 @@ export default function HomePage() {
             Search, compare, and discover detailed specifications for thousands of mobile phones from all major brands.
           </p>
 
-          {/* Search bar */}
-          <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
+          {/* Search bar with autocomplete */}
+          <div className="max-w-2xl mx-auto">
             <div className="relative bg-white/10 backdrop-blur-md rounded-2xl p-1.5 border border-white/20">
-              <div className="relative">
-                <Icon
-                  icon="mdi:magnify"
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-white/50"
-                  width={24}
-                />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search phones, brands, specs... (e.g. Honor X8d, 108MP camera)"
-                  className="w-full pl-12 pr-32 py-4 rounded-xl bg-white/10 text-white placeholder:text-white/40 text-base focus:outline-none focus:ring-2 focus:ring-white/30"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white text-brand-700 hover:bg-brand-50 px-6 py-2.5 rounded-lg font-semibold text-sm transition-colors"
-                >
-                  Search
-                </button>
-              </div>
+              <SearchAutocomplete
+                size="lg"
+                placeholder="Search phones, brands, specs... (e.g. Honor X8d, 108MP camera)"
+              />
             </div>
-          </form>
+          </div>
 
           {/* Quick search suggestions */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
@@ -160,6 +149,47 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {latestPhones.map((phone) => (
               <PhoneCard key={phone.id} phone={phone} />
+            ))}
+          </div>
+        </section>
+
+        {/* Latest News & Articles */}
+        <section className="pb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <Icon icon="mdi:newspaper-variant-outline" width={24} className="text-brand-500" />
+              Latest News
+            </h2>
+            <Link href={`/${locale}/articles`} className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1">
+              All Articles <Icon icon="mdi:arrow-right" width={16} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {latestArticles.map((article) => (
+              <Link
+                key={article.id}
+                href={`/${locale}/articles/${article.slug}`}
+                className="card overflow-hidden group hover:shadow-lg transition-all"
+              >
+                <div className="relative h-40 bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                  <Image
+                    src={article.coverImage}
+                    alt={article.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
+                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-xs font-medium bg-brand-600 text-white capitalize">
+                    {article.category}
+                  </span>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2 group-hover:text-brand-600 transition-colors">{article.title}</h3>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    {article.author.name} &middot; {article.readTime} min read
+                  </p>
+                </div>
+              </Link>
             ))}
           </div>
         </section>

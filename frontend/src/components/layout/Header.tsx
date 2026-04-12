@@ -2,21 +2,23 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter, useParams, usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import { Icon } from '@iconify/react';
+import { SearchAutocomplete } from '@/components/ui/SearchAutocomplete';
 
 export function Header() {
-  const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
   const params = useParams();
+  const pathname = usePathname();
   const locale = (params?.locale as string) || 'en';
+  const { theme, setTheme } = useTheme();
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/${locale}/search?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
+  const toggleLocale = () => {
+    const newLocale = locale === 'ar' ? 'en' : 'ar';
+    const newPath = pathname.replace(`/${locale}`, `/${newLocale}`);
+    router.push(newPath);
   };
 
   return (
@@ -26,6 +28,10 @@ export function Header() {
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           <span>Your trusted mobile phone specifications platform</span>
           <div className="hidden sm:flex items-center gap-4">
+            <Link href={`/${locale}/articles`} className="hover:text-brand-200 transition-colors flex items-center gap-1">
+              <Icon icon="mdi:newspaper-variant-outline" width={14} />
+              News
+            </Link>
             <Link href={`/${locale}/compare`} className="hover:text-brand-200 transition-colors flex items-center gap-1">
               <Icon icon="mdi:compare" width={14} />
               Compare
@@ -47,59 +53,64 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Search bar */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-xl">
-            <div className="relative">
-              <Icon
-                icon="mdi:magnify"
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                width={20}
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search phones, brands, specs..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-600 hover:bg-brand-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+          {/* Search bar with autocomplete */}
+          <SearchAutocomplete className="flex-1 max-w-xl" />
+
+          {/* Nav + Controls */}
+          <div className="flex items-center gap-1">
+            <nav className="hidden lg:flex items-center gap-1">
+              <Link
+                href={`/${locale}/brands`}
+                className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
-                Search
-              </button>
-            </div>
-          </form>
+                Brands
+              </Link>
+              <Link
+                href={`/${locale}/search`}
+                className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                Phones
+              </Link>
+              <Link
+                href={`/${locale}/articles`}
+                className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                News
+              </Link>
+              <Link
+                href={`/${locale}/compare`}
+                className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              >
+                Compare
+              </Link>
+            </nav>
 
-          {/* Nav */}
-          <nav className="hidden lg:flex items-center gap-1">
-            <Link
-              href={`/${locale}/brands`}
-              className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            {/* Dark mode toggle */}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label="Toggle dark mode"
             >
-              Brands
-            </Link>
-            <Link
-              href={`/${locale}/search`}
-              className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Phones
-            </Link>
-            <Link
-              href={`/${locale}/compare`}
-              className="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Compare
-            </Link>
-          </nav>
+              <Icon icon={theme === 'dark' ? 'mdi:weather-sunny' : 'mdi:weather-night'} width={20} />
+            </button>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 text-gray-600 dark:text-gray-300"
-          >
-            <Icon icon={mobileMenuOpen ? 'mdi:close' : 'mdi:menu'} width={24} />
-          </button>
+            {/* Language switcher */}
+            <button
+              onClick={toggleLocale}
+              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs font-bold"
+              aria-label="Switch language"
+            >
+              {locale === 'ar' ? 'EN' : 'AR'}
+            </button>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 text-gray-600 dark:text-gray-300"
+            >
+              <Icon icon={mobileMenuOpen ? 'mdi:close' : 'mdi:menu'} width={24} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -113,10 +124,13 @@ export function Header() {
             <Link href={`/${locale}/search`} className="block px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg" onClick={() => setMobileMenuOpen(false)}>
               Phones
             </Link>
+            <Link href={`/${locale}/articles`} className="block px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg" onClick={() => setMobileMenuOpen(false)}>
+              News
+            </Link>
             <Link href={`/${locale}/compare`} className="block px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg" onClick={() => setMobileMenuOpen(false)}>
               Compare
             </Link>
-            <Link href="/admin" className="block px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg" onClick={() => setMobileMenuOpen(false)}>
+            <Link href={`/${locale}/admin`} className="block px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg" onClick={() => setMobileMenuOpen(false)}>
               Admin
             </Link>
           </nav>

@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { phones, brands } from '@/data/mock-phones';
+import { articles } from '@/data/mock-articles';
 
 const STATS = [
-  { label: 'Total Phones', value: '10', icon: 'mdi:cellphone', color: 'bg-blue-500' },
+  { label: 'Total Phones', value: '15', icon: 'mdi:cellphone', color: 'bg-blue-500' },
   { label: 'Total Brands', value: '8', icon: 'mdi:domain', color: 'bg-green-500' },
   { label: 'Featured', value: '3', icon: 'mdi:star', color: 'bg-yellow-500' },
   { label: 'Page Views', value: '24.5K', icon: 'mdi:eye-outline', color: 'bg-purple-500' },
@@ -17,6 +18,9 @@ const SIDEBAR_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: 'mdi:view-dashboard' },
   { id: 'phones', label: 'Phones', icon: 'mdi:cellphone' },
   { id: 'brands', label: 'Brands', icon: 'mdi:domain' },
+  { id: 'articles', label: 'Articles', icon: 'mdi:newspaper-variant-outline' },
+  { id: 'users', label: 'Users', icon: 'mdi:account-group' },
+  { id: 'analytics', label: 'Analytics', icon: 'mdi:chart-bar' },
   { id: 'media', label: 'Media Library', icon: 'mdi:image-multiple' },
   { id: 'ads', label: 'Sponsored Ads', icon: 'mdi:advertisements' },
   { id: 'settings', label: 'Settings', icon: 'mdi:cog' },
@@ -77,6 +81,9 @@ export default function AdminPage() {
           {activeSection === 'dashboard' && <DashboardSection />}
           {activeSection === 'phones' && <PhonesSection />}
           {activeSection === 'brands' && <BrandsSection />}
+          {activeSection === 'articles' && <ArticlesSection />}
+          {activeSection === 'users' && <UsersSection />}
+          {activeSection === 'analytics' && <AnalyticsSection />}
           {activeSection === 'media' && <MediaSection />}
           {activeSection === 'ads' && <AdsSection />}
           {activeSection === 'settings' && <SettingsSection />}
@@ -321,6 +328,204 @@ function AdsSection() {
             </div>
             <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Active</span>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ArticlesSection() {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">All Articles</h2>
+        <button className="btn-primary text-sm">
+          <Icon icon="mdi:plus" width={18} />
+          New Article
+        </button>
+      </div>
+      <div className="card overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50 dark:bg-gray-800/50">
+            <tr>
+              <th className="text-left p-3 text-xs font-semibold text-gray-500 uppercase">Title</th>
+              <th className="text-left p-3 text-xs font-semibold text-gray-500 uppercase">Category</th>
+              <th className="text-left p-3 text-xs font-semibold text-gray-500 uppercase">Author</th>
+              <th className="text-left p-3 text-xs font-semibold text-gray-500 uppercase">Date</th>
+              <th className="text-left p-3 text-xs font-semibold text-gray-500 uppercase">Status</th>
+              <th className="text-right p-3 text-xs font-semibold text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            {articles.map((article) => (
+              <tr key={article.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30">
+                <td className="p-3">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">{article.title}</p>
+                  <p className="text-xs text-gray-500">/{article.slug}</p>
+                </td>
+                <td className="p-3">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 capitalize">{article.category}</span>
+                </td>
+                <td className="p-3 text-sm text-gray-600 dark:text-gray-400">{article.author.name}</td>
+                <td className="p-3 text-sm text-gray-600 dark:text-gray-400">{article.publishedAt}</td>
+                <td className="p-3">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Published</span>
+                </td>
+                <td className="p-3 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-brand-600"><Icon icon="mdi:pencil-outline" width={16} /></button>
+                    <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-red-500"><Icon icon="mdi:delete-outline" width={16} /></button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+const MOCK_USERS = [
+  { id: 'u1', name: 'Mohammed Al-Saadi', email: 'admin@phonespec.com', role: 'Super Admin', status: 'Active', lastLogin: '2026-04-12' },
+  { id: 'u2', name: 'Sarah Johnson', email: 'sarah@phonespec.com', role: 'Editor', status: 'Active', lastLogin: '2026-04-11' },
+  { id: 'u3', name: 'Ahmed Hassan', email: 'ahmed@phonespec.com', role: 'Reviewer', status: 'Active', lastLogin: '2026-04-10' },
+  { id: 'u4', name: 'Tech Corp Inc.', email: 'brand@techcorp.com', role: 'Brand Manager', status: 'Active', lastLogin: '2026-04-09' },
+  { id: 'u5', name: 'Jane Smith', email: 'jane@phonespec.com', role: 'Support', status: 'Inactive', lastLogin: '2026-03-20' },
+];
+
+function UsersSection() {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Users & Roles</h2>
+        <button className="btn-primary text-sm"><Icon icon="mdi:account-plus" width={18} />Add User</button>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        {[{ label: 'Total Users', value: '5', icon: 'mdi:account-group', color: 'bg-blue-500' }, { label: 'Admins', value: '1', icon: 'mdi:shield-crown', color: 'bg-purple-500' }, { label: 'Editors', value: '2', icon: 'mdi:pencil', color: 'bg-green-500' }, { label: 'Brand Managers', value: '1', icon: 'mdi:domain', color: 'bg-orange-500' }].map((s) => (
+          <div key={s.label} className="card p-4 flex items-center gap-3">
+            <div className={'w-10 h-10 rounded-xl flex items-center justify-center ' + s.color}><Icon icon={s.icon} width={20} className="text-white" /></div>
+            <div><p className="text-xl font-bold text-gray-900 dark:text-white">{s.value}</p><p className="text-xs text-gray-500">{s.label}</p></div>
+          </div>
+        ))}
+      </div>
+      <div className="card overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50 dark:bg-gray-800/50">
+            <tr>
+              <th className="text-left p-3 text-xs font-semibold text-gray-500 uppercase">User</th>
+              <th className="text-left p-3 text-xs font-semibold text-gray-500 uppercase">Role</th>
+              <th className="text-left p-3 text-xs font-semibold text-gray-500 uppercase">Status</th>
+              <th className="text-left p-3 text-xs font-semibold text-gray-500 uppercase">Last Login</th>
+              <th className="text-right p-3 text-xs font-semibold text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            {MOCK_USERS.map((user) => (
+              <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/30">
+                <td className="p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center"><Icon icon="mdi:account" width={16} className="text-brand-600" /></div>
+                    <div><p className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</p><p className="text-xs text-gray-500">{user.email}</p></div>
+                  </div>
+                </td>
+                <td className="p-3"><span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">{user.role}</span></td>
+                <td className="p-3"><span className={'px-2 py-0.5 rounded-full text-xs font-medium ' + (user.status === 'Active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400')}>{user.status}</span></td>
+                <td className="p-3 text-sm text-gray-600 dark:text-gray-400">{user.lastLogin}</td>
+                <td className="p-3 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-brand-600"><Icon icon="mdi:pencil-outline" width={16} /></button>
+                    <button className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-red-500"><Icon icon="mdi:delete-outline" width={16} /></button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+const ANALYTICS_DATA = [
+  { month: 'Jan', views: 12400, searches: 8200, clicks: 1100 },
+  { month: 'Feb', views: 15600, searches: 9800, clicks: 1350 },
+  { month: 'Mar', views: 18200, searches: 11500, clicks: 1600 },
+  { month: 'Apr', views: 24500, searches: 14200, clicks: 2100 },
+];
+
+const ACTIVITY_LOG = [
+  { id: 'a1', action: 'Phone added: Samsung Galaxy A56', user: 'Admin', time: '2 hours ago', icon: 'mdi:cellphone-plus' },
+  { id: 'a2', action: 'Article published: Best Budget Phones 2026', user: 'Sarah', time: '4 hours ago', icon: 'mdi:newspaper-variant' },
+  { id: 'a3', action: 'Brand updated: OnePlus logo changed', user: 'Admin', time: '6 hours ago', icon: 'mdi:domain' },
+  { id: 'a4', action: 'Ad campaign created: Honor Magic 7 Pro Sidebar', user: 'Tech Corp', time: '1 day ago', icon: 'mdi:advertisements' },
+  { id: 'a5', action: 'User role changed: Ahmed → Reviewer', user: 'Admin', time: '2 days ago', icon: 'mdi:account-edit' },
+];
+
+function AnalyticsSection() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="card p-5 text-center">
+          <Icon icon="mdi:eye" width={28} className="mx-auto text-blue-500 mb-2" />
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">70.7K</p>
+          <p className="text-sm text-gray-500">Total Page Views</p>
+          <p className="text-xs text-green-600 mt-1">+34.6% from last month</p>
+        </div>
+        <div className="card p-5 text-center">
+          <Icon icon="mdi:magnify" width={28} className="mx-auto text-purple-500 mb-2" />
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">43.7K</p>
+          <p className="text-sm text-gray-500">Total Searches</p>
+          <p className="text-xs text-green-600 mt-1">+23.5% from last month</p>
+        </div>
+        <div className="card p-5 text-center">
+          <Icon icon="mdi:cursor-default-click" width={28} className="mx-auto text-orange-500 mb-2" />
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">6.15K</p>
+          <p className="text-sm text-gray-500">Total Ad Clicks</p>
+          <p className="text-xs text-green-600 mt-1">+31.3% from last month</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="card p-5">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Monthly Traffic</h3>
+          <div className="space-y-3">
+            {ANALYTICS_DATA.map((d) => (
+              <div key={d.month} className="flex items-center gap-3">
+                <span className="text-sm font-medium text-gray-500 w-8">{d.month}</span>
+                <div className="flex-1 h-6 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-brand-500 rounded-full" style={{ width: `${(d.views / 25000) * 100}%` }} />
+                </div>
+                <span className="text-sm font-medium text-gray-900 dark:text-white w-16 text-right">{(d.views / 1000).toFixed(1)}K</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card p-5">
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h3>
+          <div className="space-y-3">
+            {ACTIVITY_LOG.map((log) => (
+              <div key={log.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                <div className="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-900/20 flex items-center justify-center shrink-0">
+                  <Icon icon={log.icon} width={16} className="text-brand-600 dark:text-brand-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-gray-900 dark:text-white">{log.action}</p>
+                  <p className="text-xs text-gray-500">{log.user} &middot; {log.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="card p-5">
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Top Searched Terms</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {['Samsung Galaxy S25', 'iPhone 16 Pro', 'Honor X8d', 'best camera phone', 'budget phones 2026', '5G phones', 'Xiaomi 14', 'OnePlus 13'].map((term) => (
+            <div key={term} className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 text-sm text-gray-700 dark:text-gray-300 text-center">{term}</div>
+          ))}
         </div>
       </div>
     </div>
