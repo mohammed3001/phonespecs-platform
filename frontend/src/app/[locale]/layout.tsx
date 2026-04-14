@@ -2,11 +2,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
-import { ThemeProvider } from 'next-themes';
-import { Toaster } from 'react-hot-toast';
+import { getMessages } from 'next-intl/server';
 import '../globals.css';
 import { getSiteSettings } from '@/lib/settings';
+import { ThemeWrapper } from '@/components/providers/ThemeWrapper';
+import { CookieConsentWrapper } from '@/components/ui/CookieConsent';
+import { ScrollToTopWrapper } from '@/components/ui/ScrollToTop';
 
 interface Props {
   children: React.ReactNode;
@@ -15,20 +16,19 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const settings = await getSiteSettings();
-  const t = await getTranslations({ locale: params.locale, namespace: 'seo' });
 
   return {
-    metadataBase: new URL(settings.siteUrl || 'https://localhost:3000'),
+    metadataBase: new URL(settings.siteUrl || settings.site_url || 'https://localhost:3000'),
     title: {
-      template: `%s | ${settings.siteName}`,
-      default: settings.siteName || 'PhoneSpec',
+      template: `%s | ${settings.siteName || settings.site_name || 'PhoneSpec'}`,
+      default: settings.siteName || settings.site_name || 'PhoneSpec',
     },
-    description: settings.siteDescription,
+    description: settings.siteDescription || settings.site_description || 'Mobile phone specs & reviews',
     icons: {
-      icon: settings.faviconUrl || '/favicon.ico',
+      icon: settings.faviconUrl || settings.favicon_url || '/favicon.ico',
     },
     openGraph: {
-      siteName: settings.siteName,
+      siteName: settings.siteName || settings.site_name || 'PhoneSpec',
       locale: params.locale,
       type: 'website',
     },
@@ -55,7 +55,6 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
       lang={locale}
       dir={dir}
       suppressHydrationWarning
-      className={settings.darkMode === 'dark' ? 'dark' : ''}
     >
       <head>
         <link
@@ -63,21 +62,13 @@ export default async function LocaleLayout({ children, params: { locale } }: Pro
           rel="stylesheet"
         />
       </head>
-      <body className={`${fontClass} antialiased bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors`}>
+      <body className={`${fontClass} antialiased bg-white text-gray-900 transition-colors`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme={settings.defaultTheme || 'system'}
-            enableSystem
-          >
+          <ThemeWrapper defaultTheme={settings.defaultTheme || settings.default_theme || 'light'} dir={dir as 'ltr' | 'rtl'}>
             {children}
-            <Toaster
-              position={dir === 'rtl' ? 'top-left' : 'top-right'}
-              toastOptions={{
-                className: 'dark:bg-gray-800 dark:text-white',
-              }}
-            />
-          </ThemeProvider>
+            <CookieConsentWrapper />
+            <ScrollToTopWrapper />
+          </ThemeWrapper>
         </NextIntlClientProvider>
       </body>
     </html>
