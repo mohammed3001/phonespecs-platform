@@ -8,8 +8,8 @@ interface Phone {
   name: string;
   slug: string;
   brand: { name: string };
-  basePrice: number | null;
-  specs: { definition: { name: string; key: string; groupId: string; group: { name: string } }; value: string }[];
+  priceUsd: number | null;
+  specs: { spec: { name: string; key: string; groupId: string; group: { name: string } }; value: string }[];
 }
 
 export default function ComparePage() {
@@ -21,7 +21,7 @@ export default function ComparePage() {
   const searchPhones = useCallback(async (query: string) => {
     if (!query.trim()) { setResults([]); return; }
     try {
-      const res = await fetch(`/api/phones?query=${encodeURIComponent(query)}&limit=5`);
+      const res = await fetch(`/api/phones?q=${encodeURIComponent(query)}&limit=5`);
       const data = await res.json();
       if (data.success) setResults(data.data);
     } catch { setResults([]); }
@@ -49,13 +49,13 @@ export default function ComparePage() {
   const specGroups: Record<string, { name: string; specs: Record<string, string[]> }> = {};
   phones.forEach((phone) => {
     phone.specs?.forEach((spec) => {
-      const groupName = spec.definition.group?.name || "Other";
-      const groupId = spec.definition.groupId;
+      const groupName = spec.spec.group?.name || "Other";
+      const groupId = spec.spec.groupId;
       if (!specGroups[groupId]) {
         specGroups[groupId] = { name: groupName, specs: {} };
       }
-      if (!specGroups[groupId].specs[spec.definition.key]) {
-        specGroups[groupId].specs[spec.definition.key] = Array(phones.length).fill("—");
+      if (!specGroups[groupId].specs[spec.spec.key]) {
+        specGroups[groupId].specs[spec.spec.key] = Array(phones.length).fill("—");
       }
     });
   });
@@ -63,9 +63,9 @@ export default function ComparePage() {
   // Fill in values
   phones.forEach((phone, idx) => {
     phone.specs?.forEach((spec) => {
-      const groupId = spec.definition.groupId;
-      if (specGroups[groupId]?.specs[spec.definition.key]) {
-        specGroups[groupId].specs[spec.definition.key][idx] = spec.value;
+      const groupId = spec.spec.groupId;
+      if (specGroups[groupId]?.specs[spec.spec.key]) {
+        specGroups[groupId].specs[spec.spec.key][idx] = spec.value;
       }
     });
   });
@@ -110,8 +110,8 @@ export default function ComparePage() {
               </div>
               <h3 className="text-sm font-bold text-gray-900 text-center truncate">{phone.name}</h3>
               <p className="text-xs text-gray-500 text-center">{phone.brand?.name}</p>
-              {phone.basePrice && (
-                <p className="text-sm font-bold text-blue-600 text-center mt-1">${phone.basePrice}</p>
+              {phone.priceUsd && (
+                <p className="text-sm font-bold text-blue-600 text-center mt-1">${phone.priceUsd}</p>
               )}
             </div>
           ))}
@@ -180,7 +180,7 @@ export default function ComparePage() {
                     <td className="px-4 py-3 text-sm font-medium text-gray-700">Price</td>
                     {phones.map((phone) => (
                       <td key={phone.id} className="px-4 py-3 text-center text-sm font-bold text-blue-600">
-                        {phone.basePrice ? `$${phone.basePrice}` : "—"}
+                        {phone.priceUsd ? `$${phone.priceUsd}` : "—"}
                       </td>
                     ))}
                   </tr>
