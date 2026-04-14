@@ -1,230 +1,271 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
+import { useState } from "react";
+import Header from "@/components/public/Header";
+import Footer from "@/components/public/Footer";
+import { SpecIcon, GroupIcon } from "@/components/shared/SpecIcon";
 
 interface Phone {
   id: string;
   name: string;
   slug: string;
-  brand: { name: string };
+  mainImage: string | null;
+  marketStatus: string;
   priceUsd: number | null;
-  specs: { spec: { name: string; key: string; groupId: string; group: { name: string } }; value: string }[];
+  priceDisplay: string | null;
+  reviewScore: number;
+  brand: { name: string; slug: string };
+  specs: {
+    value: string;
+    spec: {
+      name: string;
+      key: string;
+      unit: string | null;
+      showInCompare: boolean;
+      sortOrder: number;
+      groupId: string;
+      group: { name: string; slug: string; sortOrder: number };
+    };
+  }[];
 }
 
 export default function ComparePage() {
   const [phones, setPhones] = useState<Phone[]>([]);
-  const [search, setSearch] = useState("");
-  const [results, setResults] = useState<Phone[]>([]);
-  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Phone[]>([]);
 
-  const searchPhones = useCallback(async (query: string) => {
-    if (!query.trim()) { setResults([]); return; }
+  const [activeSlot, setActiveSlot] = useState<number | null>(null);
+
+  const searchPhones = async (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) { setSearchResults([]); return; }
     try {
       const res = await fetch(`/api/phones?q=${encodeURIComponent(query)}&limit=5`);
       const data = await res.json();
-      if (data.success) setResults(data.data);
-    } catch { setResults([]); }
-  }, []);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => searchPhones(search), 300);
-    return () => clearTimeout(timeout);
-  }, [search, searchPhones]);
+      if (data.success) setSearchResults(data.data);
+    } catch { setSearchResults([]); }
+  };
 
   const addPhone = (phone: Phone) => {
     if (phones.length >= 4) return;
     if (phones.find((p) => p.id === phone.id)) return;
     setPhones([...phones, phone]);
-    setSearch("");
-    setResults([]);
-    setShowSearch(false);
+    setSearchQuery("");
+    setSearchResults([]);
+    setActiveSlot(null);
   };
 
   const removePhone = (id: string) => {
     setPhones(phones.filter((p) => p.id !== id));
   };
 
-  // Get all unique spec groups and keys from selected phones
-  const specGroups: Record<string, { name: string; specs: Record<string, string[]> }> = {};
-  phones.forEach((phone) => {
-    phone.specs?.forEach((spec) => {
-      const groupName = spec.spec.group?.name || "Other";
-      const groupId = spec.spec.groupId;
-      if (!specGroups[groupId]) {
-        specGroups[groupId] = { name: groupName, specs: {} };
-      }
-      if (!specGroups[groupId].specs[spec.spec.key]) {
-        specGroups[groupId].specs[spec.spec.key] = Array(phones.length).fill("—");
-      }
-    });
-  });
+  // Gather all spec groups across phones
+  const allGroups: Record<string, { name: string; slug: string; sortOrder: number; specs: Record<string, { name: string; key: string; unit: string | null; sortOrder: number }> }> = {};
 
-  // Fill in values
-  phones.forEach((phone, idx) => {
-    phone.specs?.forEach((spec) => {
-      const groupId = spec.spec.groupId;
-      if (specGroups[groupId]?.specs[spec.spec.key]) {
-        specGroups[groupId].specs[spec.spec.key][idx] = spec.value;
+  for (const phone of phones) {
+    for (const ps of phone.specs) {
+      if (!ps.spec.showInCompare) continue;
+      const groupSlug = ps.spec.group.slug;
+      if (!allGroups[groupSlug]) {
+        allGroups[groupSlug] = {
+          name: ps.spec.group.name,
+          slug: groupSlug,
+          sortOrder: ps.spec.group.sortOrder,
+          specs: {},
+        };
       }
-    });
-  });
+      if (!allGroups[groupSlug].specs[ps.spec.key]) {
+        allGroups[groupSlug].specs[ps.spec.key] = {
+          name: ps.spec.name,
+          key: ps.spec.key,
+          unit: ps.spec.unit,
+          sortOrder: ps.spec.sortOrder,
+        };
+      }
+    }
+  }
+
+  const sortedGroups = Object.values(allGroups).sort((a, b) => a.sortOrder - b.sortOrder);
+
+  const emptySlots = Math.max(0, 2 - phones.length);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="text-xl font-bold">
-              <span className="text-blue-600">Mobile</span>Platform
-            </Link>
-            <nav className="hidden md:flex items-center gap-6 text-sm">
-              <Link href="/phones" className="text-gray-600 hover:text-blue-600">Phones</Link>
-              <Link href="/brands" className="text-gray-600 hover:text-blue-600">Brands</Link>
-              <Link href="/compare" className="text-blue-600 font-medium">Compare</Link>
-              <Link href="/news" className="text-gray-600 hover:text-blue-600">News</Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Compare Phones</h1>
-          <p className="text-gray-500 mt-2">Select up to 4 phones to compare their specifications side by side</p>
+      {/* Page Header */}
+      <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 relative overflow-hidden">
+        <div className="absolute inset-0 mesh-gradient opacity-40" />
+        <div className="absolute inset-0 grid-pattern" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-16 text-center">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">
+            Compare Phones
+          </h1>
+          <p className="text-blue-200/80 mt-3 text-lg max-w-xl mx-auto">
+            Put up to 4 phones side by side to find the best match for your needs
+          </p>
         </div>
+      </div>
 
-        {/* Phone selection cards */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
+        {/* Phone Selector Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {phones.map((phone) => (
-            <div key={phone.id} className="bg-white rounded-xl border p-4 relative">
+            <div key={phone.id} className="bg-white rounded-2xl border border-gray-200 p-4 relative group">
               <button
                 onClick={() => removePhone(phone.id)}
-                className="absolute top-2 right-2 w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs hover:bg-red-200"
+                className="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
               >
                 &times;
               </button>
-              <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-2xl mx-auto mb-3">
-                📱
+              <div className="w-full h-28 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center mb-3">
+                <span className="text-4xl">📱</span>
               </div>
-              <h3 className="text-sm font-bold text-gray-900 text-center truncate">{phone.name}</h3>
-              <p className="text-xs text-gray-500 text-center">{phone.brand?.name}</p>
-              {phone.priceUsd && (
-                <p className="text-sm font-bold text-blue-600 text-center mt-1">${phone.priceUsd}</p>
-              )}
+              <p className="text-xs text-gray-400 font-medium">{phone.brand.name}</p>
+              <h3 className="text-sm font-bold text-gray-900 truncate">{phone.name}</h3>
+              <p className="text-sm font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent mt-1">
+                {phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd.toLocaleString()}` : "TBA")}
+              </p>
             </div>
           ))}
 
-          {phones.length < 4 && (
+          {/* Empty Slots */}
+          {Array.from({ length: Math.max(emptySlots, 4 - phones.length) }).slice(0, 4 - phones.length).map((_, i) => (
+            <button
+              key={`empty-${i}`}
+              onClick={() => setActiveSlot(phones.length + i)}
+              className={`bg-white rounded-2xl border-2 border-dashed p-4 flex flex-col items-center justify-center min-h-[180px] transition-all ${
+                activeSlot === phones.length + i
+                  ? "border-blue-400 bg-blue-50"
+                  : "border-gray-300 hover:border-blue-400 hover:bg-blue-50/50"
+              }`}
+            >
+              <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-2">
+                <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+              <p className="text-sm font-medium text-gray-500">Add Phone</p>
+            </button>
+          ))}
+        </div>
+
+        {/* Search */}
+        {phones.length < 4 && (
+          <div className="max-w-lg mx-auto mb-10">
             <div className="relative">
-              <button
-                onClick={() => setShowSearch(!showSearch)}
-                className="w-full bg-white rounded-xl border-2 border-dashed border-gray-300 p-4 hover:border-blue-400 hover:bg-blue-50 transition-colors flex flex-col items-center justify-center min-h-[160px]"
-              >
-                <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-xl mb-2">+</div>
-                <span className="text-sm text-gray-500">Add Phone</span>
-              </button>
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => searchPhones(e.target.value)}
+                placeholder="Search for a phone to compare..."
+                className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-300 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+              />
+            </div>
 
-              {showSearch && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border z-20 p-3">
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search phones..."
-                    className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    autoFocus
-                  />
-                  {results.length > 0 && (
-                    <div className="mt-2 max-h-48 overflow-y-auto">
-                      {results.map((phone) => (
-                        <button
-                          key={phone.id}
-                          onClick={() => addPhone(phone)}
-                          className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg flex items-center gap-3"
-                        >
-                          <span className="text-lg">📱</span>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900">{phone.name}</p>
-                            <p className="text-xs text-gray-500">{phone.brand?.name}</p>
-                          </div>
-                        </button>
-                      ))}
+            {/* Search Results */}
+            {searchResults.length > 0 && (
+              <div className="mt-2 bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden">
+                {searchResults.map((phone) => (
+                  <button
+                    key={phone.id}
+                    onClick={() => addPhone(phone)}
+                    disabled={!!phones.find((p) => p.id === phone.id)}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed border-b last:border-0"
+                  >
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl">📱</span>
                     </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-900 truncate">{phone.name}</p>
+                      <p className="text-xs text-gray-500">{phone.brand?.name}</p>
+                    </div>
+                    <span className="text-sm font-bold text-blue-600 flex-shrink-0">
+                      {phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd.toLocaleString()}` : "")}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
-        {/* Comparison table */}
+        {/* Comparison Table */}
         {phones.length >= 2 && (
-          <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50 border-b">
-                    <th className="text-left px-4 py-3 text-sm font-medium text-gray-500 w-48">Specification</th>
-                    {phones.map((phone) => (
-                      <th key={phone.id} className="text-center px-4 py-3 text-sm font-medium text-gray-900">
-                        {phone.name}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Price row */}
-                  <tr className="border-b bg-blue-50">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-700">Price</td>
-                    {phones.map((phone) => (
-                      <td key={phone.id} className="px-4 py-3 text-center text-sm font-bold text-blue-600">
-                        {phone.priceUsd ? `$${phone.priceUsd}` : "—"}
-                      </td>
-                    ))}
-                  </tr>
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            {sortedGroups.map((group) => (
+              <div key={group.slug}>
+                {/* Group Header */}
+                <div className="flex items-center gap-2.5 px-6 py-4 bg-gray-50 border-b border-t first:border-t-0">
+                  <GroupIcon groupSlug={group.slug} size={18} className="text-blue-600" />
+                  <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider">{group.name}</h3>
+                </div>
 
-                  {/* Spec groups */}
-                  {Object.entries(specGroups).map(([groupId, group]) => (
-                    <>
-                      <tr key={`group-${groupId}`} className="bg-gray-50">
-                        <td colSpan={phones.length + 1} className="px-4 py-2 text-xs font-bold text-gray-600 uppercase tracking-wide">
-                          {group.name}
-                        </td>
-                      </tr>
-                      {Object.entries(group.specs).map(([key, values]) => (
-                        <tr key={key} className="border-b hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm text-gray-700 capitalize">{key.replace(/_/g, " ")}</td>
-                          {values.map((value, idx) => (
-                            <td key={idx} className="px-4 py-3 text-center text-sm text-gray-900">
-                              {value}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </>
+                {/* Specs Rows */}
+                {Object.values(group.specs)
+                  .sort((a, b) => a.sortOrder - b.sortOrder)
+                  .map((spec) => (
+                    <div
+                      key={spec.key}
+                      className="flex border-b border-gray-100 hover:bg-blue-50/30 transition-colors"
+                    >
+                      {/* Spec Name */}
+                      <div className="w-48 flex-shrink-0 flex items-center gap-2.5 px-6 py-3.5 border-r border-gray-100 bg-gray-50/50">
+                        <SpecIcon specKey={spec.key} size={14} className="text-gray-400 flex-shrink-0" />
+                        <span className="text-sm text-gray-600 font-medium">{spec.name}</span>
+                      </div>
+
+                      {/* Values */}
+                      <div className="flex-1 grid" style={{ gridTemplateColumns: `repeat(${phones.length}, 1fr)` }}>
+                        {phones.map((phone) => {
+                          const phoneSpec = phone.specs.find((s) => s.spec.key === spec.key);
+                          return (
+                            <div
+                              key={phone.id}
+                              className="px-4 py-3.5 text-sm font-medium text-gray-900 border-r last:border-0 border-gray-100 flex items-center"
+                            >
+                              {phoneSpec ? (
+                                <span>{phoneSpec.value}{spec.unit ? ` ${spec.unit}` : ""}</span>
+                              ) : (
+                                <span className="text-gray-300">—</span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
+              </div>
+            ))}
           </div>
         )}
 
+        {/* Empty State */}
         {phones.length < 2 && (
-          <div className="bg-white rounded-xl border p-12 text-center">
-            <div className="text-4xl mb-4">⚖️</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Select phones to compare</h3>
-            <p className="text-sm text-gray-500">Add at least 2 phones to see a side-by-side comparison of their specifications</p>
+          <div className="text-center py-16">
+            <div className="flex items-center justify-center gap-6 mb-8">
+              <div className="w-24 h-32 bg-white rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center text-4xl text-gray-300">
+                📱
+              </div>
+              <span className="text-2xl font-bold text-gray-300">vs</span>
+              <div className="w-24 h-32 bg-white rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center text-4xl text-gray-300">
+                📱
+              </div>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">
+              {phones.length === 0 ? "Add phones to compare" : "Add one more phone"}
+            </h3>
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
+              Search and select {phones.length === 0 ? "at least 2" : "1 more"} phone to start comparing specifications side by side
+            </p>
           </div>
         )}
-      </main>
+      </div>
 
-      <footer className="bg-gray-900 text-gray-400 py-8 mt-16">
-        <div className="max-w-7xl mx-auto px-4 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} MobilePlatform. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

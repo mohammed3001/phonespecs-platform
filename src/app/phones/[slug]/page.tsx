@@ -2,86 +2,44 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-
-const specIconMap: Record<string, string> = {
-  storage: "💾", ram: "🧠", main_camera: "📷", front_camera: "🤳",
-  display_size: "📺", battery: "🔋", fingerprint_sensor: "👆", charger: "⚡",
-  resistance_rating: "💧", wifi: "📶", glass_protection: "🛡️", bluetooth: "📡",
-  display_type: "📺", resolution: "🔲", refresh_rate: "🔄", camera_features: "🎯",
-  processor: "⚙️", os: "📱", wireless_charging: "🔌", five_g: "📡",
-  nfc: "📲", dimensions: "📐", weight: "⚖️", colors: "🎨",
-  face_unlock: "👤",
-};
+import Header from "@/components/public/Header";
+import Footer from "@/components/public/Footer";
+import { SpecIcon, GroupIcon } from "@/components/shared/SpecIcon";
+import PhoneCard from "@/components/public/PhoneCard";
 
 async function getPhone(slug: string) {
   const phone = await prisma.phone.findUnique({
     where: { slug },
     include: {
       brand: true,
-      images: { orderBy: { sortOrder: "asc" } },
-      variants: { orderBy: { sortOrder: "asc" } },
       specs: {
-        include: {
-          spec: {
-            include: { group: true },
-          },
-        },
-      },
-      faqs: { where: { isActive: true }, orderBy: { sortOrder: "asc" } },
-      reviews: {
-        where: { isApproved: true },
-        include: {
-          user: { select: { name: true, avatar: true } },
-          ratings: { include: { category: true } },
-        },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      },
-      discussions: {
-        include: {
-          user: { select: { name: true } },
-          _count: { select: { replies: true } },
-        },
-        orderBy: { createdAt: "desc" },
-        take: 5,
+        include: { spec: { include: { group: true } } },
       },
     },
   });
-
-  if (phone) {
-    await prisma.phone.update({
-      where: { id: phone.id },
-      data: { viewCount: { increment: 1 } },
-    });
-  }
-
   return phone;
 }
 
 async function getRelatedPhones(brandId: string, phoneId: string) {
   return prisma.phone.findMany({
     where: { brandId, isPublished: true, id: { not: phoneId } },
-    include: { brand: { select: { name: true, slug: true } } },
+    include: {
+      brand: { select: { name: true, slug: true } },
+      specs: {
+        include: { spec: { include: { group: true } } },
+        where: { spec: { showInCard: true } },
+      },
+    },
     take: 4,
   });
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const phone = await prisma.phone.findUnique({
-    where: { slug: params.slug },
-    include: { brand: true },
-  });
-
+  const phone = await getPhone(params.slug);
   if (!phone) return { title: "Phone Not Found" };
-
   return {
-    title: `${phone.name} Specifications, Price & Review - MobilePlatform`,
-    description: phone.overview || `Full specifications and review of ${phone.name} by ${phone.brand.name}`,
-    openGraph: {
-      title: `${phone.name} - MobilePlatform`,
-      description: phone.overview || `${phone.name} specifications and review`,
-      type: "website",
-    },
+    title: `${phone.name} Specifications & Review - MobilePlatform`,
+    description: phone.overview || `Full specifications, price, and review of ${phone.name}.`,
   };
 }
 
@@ -91,8 +49,12 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
 
   const relatedPhones = await getRelatedPhones(phone.brandId, phone.id);
 
-  // Group specs by their group
-  const groupedSpecs: Record<string, { group: { name: string; slug: string; icon: string | null; sortOrder: number }; specs: typeof phone.specs }> = {};
+  // Group specs by category
+  const groupedSpecs: Record<string, {
+    group: { name: string; slug: string; icon: string | null; sortOrder: number };
+    specs: typeof phone.specs;
+  }> = {};
+
   for (const ps of phone.specs) {
     const groupSlug = ps.spec.group.slug;
     if (!groupedSpecs[groupSlug]) {
@@ -100,308 +62,293 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
     }
     groupedSpecs[groupSlug].specs.push(ps);
   }
-  const sortedGroups = Object.values(groupedSpecs).sort((a, b) => a.group.sortOrder - b.group.sortOrder);
 
-  // Key specs (highlighted)
+  const sortedGroups = Object.values(groupedSpecs).sort(
+    (a, b) => a.group.sortOrder - b.group.sortOrder
+  );
+
   const keySpecs = phone.specs
     .filter((s) => s.spec.isHighlighted)
     .sort((a, b) => a.spec.sortOrder - b.spec.sortOrder);
 
-  const statusColors: Record<string, string> = {
-    available: "text-green-600 bg-green-50 border-green-200",
-    coming_soon: "text-amber-600 bg-amber-50 border-amber-200",
-    discontinued: "text-gray-500 bg-gray-100 border-gray-200",
+  const status: Record<string, { label: string; color: string }> = {
+    available: { label: "Available", color: "text-emerald-700 bg-emerald-50 ring-emerald-600/20" },
+    coming_soon: { label: "Coming Soon", color: "text-amber-700 bg-amber-50 ring-amber-600/20" },
+    discontinued: { label: "Discontinued", color: "text-gray-600 bg-gray-100 ring-gray-500/20" },
+    rumored: { label: "Rumored", color: "text-violet-700 bg-violet-50 ring-violet-600/20" },
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="text-xl font-bold">
-              <span className="text-blue-600">Mobile</span>Platform
-            </Link>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="/phones" className="text-sm font-medium text-gray-700 hover:text-blue-600">Phones</Link>
-              <Link href="/compare" className="text-sm font-medium text-gray-700 hover:text-blue-600">Compare</Link>
-              <Link href="/news" className="text-sm font-medium text-gray-700 hover:text-blue-600">News</Link>
-              <Link href="/brands" className="text-sm font-medium text-gray-700 hover:text-blue-600">Brands</Link>
-            </nav>
-            <Link href="/admin" className="text-sm text-gray-500 hover:text-blue-600 hidden md:inline">Admin</Link>
-          </div>
-        </div>
-      </header>
+  const phoneStatus = status[phone.marketStatus] || status.available;
 
-      {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 py-3">
-        <nav className="flex items-center gap-2 text-sm text-gray-500">
-          <Link href="/" className="hover:text-blue-600">Home</Link>
-          <span>/</span>
-          <Link href={`/phones?brand=${phone.brand.slug}`} className="hover:text-blue-600">{phone.brand.name}</Link>
-          <span>/</span>
-          <span className="text-gray-900 font-medium">{phone.name}</span>
-        </nav>
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
+
+      {/* Breadcrumbs */}
+      <div className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+          <nav className="flex items-center gap-2 text-sm text-gray-500">
+            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            <Link href="/phones" className="hover:text-blue-600 transition-colors">Phones</Link>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            <Link href={`/phones?brand=${phone.brand.slug}`} className="hover:text-blue-600 transition-colors">{phone.brand.name}</Link>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            <span className="text-gray-900 font-medium truncate">{phone.name}</span>
+          </nav>
+        </div>
       </div>
 
       {/* Phone Header */}
-      <section className="max-w-7xl mx-auto px-4 pb-8">
-        <div className="bg-white rounded-2xl border shadow-sm overflow-hidden">
-          <div className="p-6 md:p-8">
-            <div className="flex flex-col md:flex-row gap-8">
-              {/* Image */}
-              <div className="md:w-1/3">
-                <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center text-8xl">
-                  📱
-                </div>
-                {phone.images.length > 0 && (
-                  <div className="flex gap-2 mt-4 overflow-x-auto">
-                    {phone.images.map((img) => (
-                      <div key={img.id} className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center text-2xl">
-                        📱
+      <section className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+          <div className="flex flex-col md:flex-row gap-8 md:gap-12">
+            {/* Phone Image */}
+            <div className="flex-shrink-0 flex justify-center">
+              <div className="w-56 h-72 md:w-64 md:h-80 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl flex items-center justify-center border border-gray-200">
+                <span className="text-8xl">📱</span>
+              </div>
+            </div>
+
+            {/* Phone Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <Link
+                  href={`/phones?brand=${phone.brand.slug}`}
+                  className="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+                >
+                  {phone.brand.name}
+                </Link>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold ring-1 ring-inset ${phoneStatus.color}`}>
+                  {phoneStatus.label}
+                </span>
+              </div>
+
+              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+                {phone.name}
+              </h1>
+
+              <div className="flex flex-wrap items-center gap-4 mt-4">
+                <span className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+                  {phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd.toLocaleString()}` : "Price TBA")}
+                </span>
+                {phone.reviewScore > 0 && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-lg">
+                    <svg className="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <span className="text-lg font-bold text-amber-700">{phone.reviewScore.toFixed(1)}</span>
+                    <span className="text-xs text-amber-600">/10</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                {phone.releaseDate && (
+                  <span className="flex items-center gap-1.5">
+                    <SpecIcon specKey="" size={14} className="text-gray-400" />
+                    Released {phone.releaseDate}
+                  </span>
+                )}
+                <span className="flex items-center gap-1.5">
+                  <SpecIcon specKey="" size={14} className="text-gray-400" />
+                  Updated {new Date(phone.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </span>
+              </div>
+
+              {/* Key Specs Grid */}
+              {keySpecs.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Key Specifications</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {keySpecs.map((s) => (
+                      <div key={s.spec.key} className="flex items-center gap-2.5 px-3.5 py-3 bg-gray-50 rounded-xl border border-gray-100">
+                        <SpecIcon specKey={s.spec.key} size={20} className="text-blue-500 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-[11px] text-gray-400 font-medium">{s.spec.name}</p>
+                          <p className="text-sm font-semibold text-gray-900 truncate">
+                            {s.value}{s.spec.unit ? ` ${s.spec.unit}` : ""}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
-
-              {/* Info */}
-              <div className="md:w-2/3">
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{phone.name}</h1>
-
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                  <span className={`px-3 py-1 rounded-full border text-sm font-medium ${statusColors[phone.marketStatus] || ""}`}>
-                    {phone.marketStatus.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-                  </span>
-                  {phone.releaseDate && (
-                    <span className="text-sm text-gray-500">Released: {phone.releaseDate}</span>
-                  )}
-                  <Link href={`/phones?brand=${phone.brand.slug}`} className="text-sm text-blue-600 hover:underline font-medium">
-                    {phone.brand.name}
-                  </Link>
                 </div>
+              )}
 
-                <div className="text-3xl font-bold text-blue-600 mb-6">
-                  {phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd.toLocaleString()}` : "Price TBA")}
-                </div>
-
-                {phone.variants.length > 0 && (
-                  <div className="mb-6">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Variants:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {phone.variants.map((v) => (
-                        <span
-                          key={v.id}
-                          className={`px-3 py-1.5 rounded-lg border text-sm ${v.isDefault ? "border-blue-500 bg-blue-50 text-blue-700" : "border-gray-200 text-gray-700"}`}
-                        >
-                          {v.name}
-                          {v.priceUsd && <span className="ml-1 text-gray-500">${v.priceUsd}</span>}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Key Specs Card */}
-                {keySpecs.length > 0 && (
-                  <div className="bg-gray-50 rounded-xl p-5 mb-4">
-                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Key Specifications</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {keySpecs.map((s) => (
-                        <div key={s.spec.key} className="flex items-center gap-2">
-                          <span className="text-xl">{specIconMap[s.spec.key] || "📌"}</span>
-                          <div>
-                            <p className="text-xs text-gray-500">{s.spec.name}</p>
-                            <p className="text-sm font-semibold text-gray-900">
-                              {s.value}{s.spec.unit ? ` ${s.spec.unit}` : ""}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <a href="#full-specs" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium text-sm">
-                  See Full Specifications
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </a>
-
-                <p className="text-xs text-gray-400 mt-4">
-                  Updated: {new Date(phone.updatedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Nav Tabs */}
-          <div className="border-t bg-gray-50 px-6 overflow-x-auto">
-            <div className="flex gap-0">
-              {["Overview", "Specifications", "Reviews", "Discussions", "FAQs"].map((tab) => (
-                <a
-                  key={tab}
-                  href={`#${tab.toLowerCase()}`}
-                  className="px-4 py-3 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-white border-b-2 border-transparent hover:border-blue-600 transition-colors whitespace-nowrap"
+              {/* Actions */}
+              <div className="flex flex-wrap gap-3 mt-6">
+                <Link
+                  href="#specifications"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
                 >
-                  {tab}
-                </a>
-              ))}
+                  <SpecIcon specKey="" size={16} className="text-white" />
+                  See Full Specs
+                </Link>
+                <Link
+                  href={`/compare?phones=${phone.slug}`}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 text-sm font-semibold rounded-xl border border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all"
+                >
+                  <SpecIcon specKey="" size={16} className="text-gray-400" />
+                  Compare
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Content Sections */}
-      <div className="max-w-7xl mx-auto px-4 pb-12 space-y-8">
-        {/* Overview */}
-        {phone.overview && (
-          <section id="overview" className="bg-white rounded-2xl border p-6 md:p-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Overview</h2>
-            <p className="text-gray-700 leading-relaxed">{phone.overview}</p>
-          </section>
-        )}
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Content */}
+          <div className="flex-1 min-w-0 space-y-8">
+            {/* Overview */}
+            {phone.overview && (
+              <section className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Overview</h2>
+                <p className="text-gray-600 leading-relaxed whitespace-pre-line">{phone.overview}</p>
+              </section>
+            )}
 
-        {/* Full Specifications */}
-        <section id="full-specs" className="bg-white rounded-2xl border p-6 md:p-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Full Specifications</h2>
-          <div className="space-y-6">
-            {sortedGroups.map(({ group, specs }) => (
-              <div key={group.slug}>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                  {group.icon && <span>{specIconMap[group.slug] || "📋"}</span>}
-                  {group.name}
-                </h3>
-                <div className="border rounded-xl overflow-hidden">
-                  <table className="w-full">
-                    <tbody className="divide-y">
-                      {specs
-                        .filter((s) => s.spec.showInDetail)
-                        .sort((a, b) => a.spec.sortOrder - b.spec.sortOrder)
-                        .map((s) => (
-                          <tr key={s.spec.key} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-sm text-gray-500 font-medium w-1/3 bg-gray-50/50">
-                              <div className="flex items-center gap-2">
-                                <span>{specIconMap[s.spec.key] || "📌"}</span>
-                                {s.spec.name}
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-sm text-gray-900">
-                              {s.value}{s.spec.unit ? ` ${s.spec.unit}` : ""}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
+            {/* Full Specifications */}
+            <section id="specifications" className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="px-6 md:px-8 py-6 border-b bg-gray-50">
+                <h2 className="text-xl font-bold text-gray-900">Full Specifications</h2>
+                <p className="text-sm text-gray-500 mt-1">{phone.name} complete technical specifications</p>
               </div>
-            ))}
+              <div className="divide-y divide-gray-100">
+                {sortedGroups.map(({ group, specs }) => (
+                  <div key={group.slug}>
+                    <div className="px-6 md:px-8 py-4 bg-gray-50/50 flex items-center gap-2.5">
+                      <GroupIcon groupSlug={group.slug} size={18} className="text-blue-600" />
+                      <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider">{group.name}</h3>
+                    </div>
+                    <div className="divide-y divide-gray-50">
+                      {specs.sort((a, b) => a.spec.sortOrder - b.spec.sortOrder).map((ps) => (
+                        <div
+                          key={ps.spec.key}
+                          className="flex items-center px-6 md:px-8 py-3.5 hover:bg-blue-50/30 transition-colors"
+                        >
+                          <div className="flex items-center gap-2.5 w-48 flex-shrink-0">
+                            <SpecIcon specKey={ps.spec.key} size={16} className="text-gray-400" />
+                            <span className="text-sm text-gray-500 font-medium">{ps.spec.name}</span>
+                          </div>
+                          <span className="text-sm font-semibold text-gray-900">
+                            {ps.value}{ps.spec.unit ? ` ${ps.spec.unit}` : ""}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* FAQ Section */}
+            <section className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+              <div className="space-y-4">
+                {[
+                  {
+                    q: `What is the price of ${phone.name}?`,
+                    a: phone.priceDisplay
+                      ? `The ${phone.name} is priced at ${phone.priceDisplay}.`
+                      : `The official price of ${phone.name} has not been announced yet.`,
+                  },
+                  {
+                    q: `When was ${phone.name} released?`,
+                    a: phone.releaseDate
+                      ? `The ${phone.name} was released on ${phone.releaseDate}.`
+                      : `The release date for ${phone.name} has not been announced yet.`,
+                  },
+                  {
+                    q: `What are the key specs of ${phone.name}?`,
+                    a: keySpecs.length > 0
+                      ? `Key specifications include: ${keySpecs.map((s) => `${s.spec.name}: ${s.value}${s.spec.unit ? ` ${s.spec.unit}` : ""}`).join(", ")}.`
+                      : `Detailed specifications are available in the specifications section above.`,
+                  },
+                ].map((faq, i) => (
+                  <details
+                    key={i}
+                    className="group rounded-xl border border-gray-200 overflow-hidden"
+                  >
+                    <summary className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-gray-50 transition-colors font-semibold text-gray-900 text-sm">
+                      {faq.q}
+                      <svg className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </summary>
+                    <div className="px-5 pb-4 text-sm text-gray-600 leading-relaxed">{faq.a}</div>
+                  </details>
+                ))}
+              </div>
+            </section>
           </div>
-        </section>
 
-        {/* Reviews */}
-        <section id="reviews" className="bg-white rounded-2xl border p-6 md:p-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Reviews</h2>
-          {phone.reviews.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <p className="text-lg mb-2">No reviews yet</p>
-              <p className="text-sm">Be the first to review this phone</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {phone.reviews.map((review) => (
-                <div key={review.id} className="border rounded-xl p-4">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-700">
-                      {review.user.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900 text-sm">{review.user.name}</p>
-                      <p className="text-xs text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
-                    </div>
-                    {review.overallScore && (
-                      <span className="ml-auto text-sm font-bold text-yellow-600">
-                        ⭐ {review.overallScore.toFixed(1)}
+          {/* Sidebar */}
+          <aside className="lg:w-80 flex-shrink-0 space-y-6">
+            {/* Quick Specs Card */}
+            <div className="bg-white rounded-2xl border border-gray-200 p-5 sticky top-24">
+              <h3 className="font-bold text-gray-900 text-sm mb-4">Quick Specs</h3>
+              <div className="space-y-3">
+                {phone.specs
+                  .filter((s) => s.spec.showInCard)
+                  .sort((a, b) => a.spec.sortOrder - b.spec.sortOrder)
+                  .map((s) => (
+                    <div key={s.spec.key} className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <SpecIcon specKey={s.spec.key} size={14} className="text-gray-400" />
+                        {s.spec.name}
+                      </div>
+                      <span className="text-sm font-semibold text-gray-900 text-right truncate max-w-[140px]">
+                        {s.value}{s.spec.unit ? ` ${s.spec.unit}` : ""}
                       </span>
-                    )}
-                  </div>
-                  {review.title && <h4 className="font-medium text-gray-900 mb-1">{review.title}</h4>}
-                  {review.content && <p className="text-sm text-gray-700">{review.content}</p>}
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+                    </div>
+                  ))}
+              </div>
 
-        {/* Discussions */}
-        <section id="discussions" className="bg-white rounded-2xl border p-6 md:p-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Discussions</h2>
-          {phone.discussions.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <p className="text-lg mb-2">No discussions yet</p>
-              <p className="text-sm">Start a discussion about this phone</p>
+              <div className="mt-5 pt-5 border-t space-y-3">
+                <Link
+                  href={`/compare?phones=${phone.slug}`}
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+                >
+                  Compare This Phone
+                </Link>
+                <Link
+                  href={`/phones?brand=${phone.brand.slug}`}
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors"
+                >
+                  More {phone.brand.name} Phones
+                </Link>
+              </div>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {phone.discussions.map((disc) => (
-                <div key={disc.id} className="border rounded-xl p-4 hover:bg-gray-50">
-                  <h4 className="font-medium text-gray-900">{disc.title}</h4>
-                  <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                    <span>{disc.user.name}</span>
-                    <span>{disc._count.replies} replies</span>
-                    <span>{new Date(disc.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* FAQs */}
-        {phone.faqs.length > 0 && (
-          <section id="faqs" className="bg-white rounded-2xl border p-6 md:p-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-            <div className="space-y-4">
-              {phone.faqs.map((faq) => (
-                <details key={faq.id} className="border rounded-xl overflow-hidden group">
-                  <summary className="px-4 py-3 cursor-pointer font-medium text-gray-900 hover:bg-gray-50 flex items-center justify-between">
-                    {faq.question}
-                    <svg className="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </summary>
-                  <div className="px-4 pb-4 text-sm text-gray-700">{faq.answer}</div>
-                </details>
-              ))}
-            </div>
-          </section>
-        )}
+          </aside>
+        </div>
 
         {/* Related Phones */}
         {relatedPhones.length > 0 && (
-          <section className="bg-white rounded-2xl border p-6 md:p-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">More from {phone.brand.name}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <section className="mt-12">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">More from {phone.brand.name}</h2>
+                <p className="text-gray-500 mt-1">Other phones by {phone.brand.name}</p>
+              </div>
+              <Link href={`/phones?brand=${phone.brand.slug}`} className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700">
+                View All
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
               {relatedPhones.map((rp) => (
-                <Link key={rp.id} href={`/phones/${rp.slug}`} className="border rounded-xl p-4 hover:shadow-md transition-shadow">
-                  <div className="w-full aspect-square bg-gray-100 rounded-lg flex items-center justify-center text-4xl mb-3">📱</div>
-                  <h3 className="font-medium text-gray-900 text-sm">{rp.name}</h3>
-                  <p className="text-xs text-gray-500 mt-1">{rp.brand.name}</p>
-                  {rp.priceDisplay && <p className="text-sm font-bold text-blue-600 mt-1">{rp.priceDisplay}</p>}
-                </Link>
+                <PhoneCard key={rp.id} phone={rp} />
               ))}
             </div>
           </section>
         )}
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} MobilePlatform. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
