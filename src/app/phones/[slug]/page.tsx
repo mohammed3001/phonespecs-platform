@@ -262,37 +262,115 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
               </section>
             )}
 
+            {/* Pros & Cons */}
+            {((phone.pros as string[] | null)?.length || (phone.cons as string[] | null)?.length) ? (
+              <section className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
+                <h2 className="text-xl font-bold text-gray-900 mb-5">Pros & Cons</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {(phone.pros as string[] | null)?.length ? (
+                    <div>
+                      <h3 className="flex items-center gap-2 text-sm font-bold text-emerald-700 uppercase tracking-wider mb-3">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>
+                        Pros
+                      </h3>
+                      <ul className="space-y-2">
+                        {(phone.pros as string[]).map((pro, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+                            {pro}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                  {(phone.cons as string[] | null)?.length ? (
+                    <div>
+                      <h3 className="flex items-center gap-2 text-sm font-bold text-red-700 uppercase tracking-wider mb-3">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" /></svg>
+                        Cons
+                      </h3>
+                      <ul className="space-y-2">
+                        {(phone.cons as string[]).map((con, i) => (
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                            {con}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </div>
+              </section>
+            ) : null}
+
             {/* Full Specifications */}
             <section id="specifications" className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
               <div className="px-6 md:px-8 py-6 border-b bg-gray-50">
-                <h2 className="text-xl font-bold text-gray-900">Full Specifications</h2>
-                <p className="text-sm text-gray-500 mt-1">{phone.name} complete technical specifications</p>
+                <h2 className="text-xl font-bold text-gray-900">{phone.name} Full Specifications</h2>
+                <p className="text-sm text-gray-500 mt-1">Complete technical specifications</p>
               </div>
               <div className="divide-y divide-gray-100">
-                {sortedGroups.map(({ group, specs }) => (
-                  <div key={group.slug}>
-                    <div className="px-6 md:px-8 py-4 bg-gray-50/50 flex items-center gap-2.5">
-                      <GroupIcon groupSlug={group.slug} size={18} className="text-blue-600" />
-                      <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider">{group.name}</h3>
-                    </div>
-                    <div className="divide-y divide-gray-50">
-                      {specs.sort((a, b) => a.spec.sortOrder - b.spec.sortOrder).map((ps) => (
-                        <div
-                          key={ps.spec.key}
-                          className="flex items-center px-6 md:px-8 py-3.5 hover:bg-blue-50/30 transition-colors"
-                        >
-                          <div className="flex items-center gap-2.5 w-48 flex-shrink-0">
-                            <SpecIcon specKey={ps.spec.key} size={16} className="text-gray-400" />
-                            <span className="text-sm text-gray-500 font-medium">{ps.spec.name}</span>
+                {sortedGroups.map(({ group, specs }) => {
+                  // Group specs by subSection for sub-section rendering (e.g. Primary Camera / Selfie Camera)
+                  const sortedSpecs = specs.sort((a, b) => a.spec.sortOrder - b.spec.sortOrder);
+                  const subSections: Record<string, typeof sortedSpecs> = {};
+                  const noSubSection: typeof sortedSpecs = [];
+                  for (const ps of sortedSpecs) {
+                    if (ps.spec.subSection) {
+                      if (!subSections[ps.spec.subSection]) subSections[ps.spec.subSection] = [];
+                      subSections[ps.spec.subSection].push(ps);
+                    } else {
+                      noSubSection.push(ps);
+                    }
+                  }
+                  const hasSubSections = Object.keys(subSections).length > 0;
+
+                  return (
+                    <div key={group.slug}>
+                      <div className="px-6 md:px-8 py-4 bg-gray-50/50 flex items-center gap-2.5">
+                        <GroupIcon groupSlug={group.slug} size={18} className="text-blue-600" />
+                        <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider">{group.name}</h3>
+                      </div>
+                      {/* Specs without subSection */}
+                      {noSubSection.length > 0 && (
+                        <div className="divide-y divide-gray-50">
+                          {noSubSection.map((ps) => (
+                            <div key={ps.spec.key} className="flex items-center px-6 md:px-8 py-3.5 hover:bg-blue-50/30 transition-colors">
+                              <div className="flex items-center gap-2.5 w-48 flex-shrink-0">
+                                <SpecIcon specKey={ps.spec.key} size={16} className="text-gray-400" />
+                                <span className="text-sm text-gray-500 font-medium">{ps.spec.name}</span>
+                              </div>
+                              <span className="text-sm font-semibold text-gray-900">
+                                {ps.value}{ps.spec.unit ? ` ${ps.spec.unit}` : ""}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      {/* Specs grouped by subSection */}
+                      {hasSubSections && Object.entries(subSections).map(([subName, subSpecs]) => (
+                        <div key={subName}>
+                          <div className="px-6 md:px-8 py-3 bg-blue-50/40 border-t border-gray-100">
+                            <h4 className="text-xs font-bold text-blue-700 uppercase tracking-wider">{subName}</h4>
                           </div>
-                          <span className="text-sm font-semibold text-gray-900">
-                            {ps.value}{ps.spec.unit ? ` ${ps.spec.unit}` : ""}
-                          </span>
+                          <div className="divide-y divide-gray-50">
+                            {subSpecs.map((ps) => (
+                              <div key={ps.spec.key} className="flex items-center px-6 md:px-8 py-3.5 hover:bg-blue-50/30 transition-colors">
+                                <div className="flex items-center gap-2.5 w-48 flex-shrink-0">
+                                  <SpecIcon specKey={ps.spec.key} size={16} className="text-gray-400" />
+                                  <span className="text-sm text-gray-500 font-medium">{ps.spec.name}</span>
+                                </div>
+                                <span className="text-sm font-semibold text-gray-900">
+                                  {ps.value}{ps.spec.unit ? ` ${ps.spec.unit}` : ""}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </section>
 
@@ -341,9 +419,10 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
           </div>
 
           {/* Sidebar */}
-          <aside className="lg:w-80 flex-shrink-0 space-y-6">
+          <aside className="lg:w-80 flex-shrink-0">
+            <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin">
             {/* Quick Specs Card */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-5 sticky top-24">
+            <div className="bg-white rounded-2xl border border-gray-200 p-5">
               <h3 className="font-bold text-gray-900 text-sm mb-4">Quick Specs</h3>
               <div className="space-y-3">
                 {phone.specs
@@ -390,6 +469,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
               variant="native"
               className="mt-4"
             />
+            </div>
           </aside>
         </div>
 

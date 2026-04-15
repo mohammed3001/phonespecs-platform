@@ -148,12 +148,26 @@ export default function AdminPhonesPage() {
                     <td className="px-4 py-3 text-sm text-gray-500">{phone.viewCount.toLocaleString()}</td>
                     <td className="px-4 py-3 text-sm text-gray-500">{phone._count.specs}</td>
                     <td className="px-4 py-3 text-right">
-                      <Link
-                        href={`/admin/phones/${phone.id}`}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                      >
-                        Edit
-                      </Link>
+                      <div className="flex items-center justify-end gap-3">
+                        <Link
+                          href={`/admin/phones/${phone.id}/specifications`}
+                          className="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                        >
+                          Specs
+                        </Link>
+                        <Link
+                          href={`/admin/phones/${phone.id}/images`}
+                          className="text-purple-600 hover:text-purple-800 text-xs font-medium"
+                        >
+                          Images
+                        </Link>
+                        <Link
+                          href={`/admin/phones/${phone.id}`}
+                          className="text-gray-600 hover:text-gray-800 text-xs font-medium"
+                        >
+                          Edit
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))

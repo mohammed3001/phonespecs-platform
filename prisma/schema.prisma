@@ -119,6 +119,8 @@ model Phone {
   priceUsd        Float?   @map("price_usd")
   priceDisplay    String?  @map("price_display")
   overview        String?
+  pros            Json?    // JSON array of strings
+  cons            Json?    // JSON array of strings
   isFeatured      Boolean  @default(false) @map("is_featured")
   isPublished     Boolean  @default(false) @map("is_published")
   viewCount       Int      @default(0) @map("view_count")
@@ -210,6 +212,7 @@ model SpecDefinition {
   showInCompare Boolean  @default(true) @map("show_in_compare")
   isFilterable  Boolean  @default(false) @map("is_filterable")
   isHighlighted Boolean  @default(false) @map("is_highlighted")
+  subSection    String?  @map("sub_section") // e.g. "Primary Camera", "Selfie Camera"
   sortOrder     Int      @default(0) @map("sort_order")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
