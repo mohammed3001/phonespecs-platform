@@ -4,6 +4,7 @@ import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
 import PhoneCard from "@/components/public/PhoneCard";
 import { SpecIcon } from "@/components/shared/SpecIcon";
+import { JsonLd, generateWebsiteJsonLd, generateOrganizationJsonLd } from "@/lib/json-ld";
 
 async function getFeaturedPhones() {
   return prisma.phone.findMany({
@@ -62,6 +63,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <JsonLd data={[generateWebsiteJsonLd(), generateOrganizationJsonLd()]} />
       <Header />
 
       {/* ========== HERO SECTION ========== */}

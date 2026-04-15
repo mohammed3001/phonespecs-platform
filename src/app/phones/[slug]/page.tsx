@@ -6,6 +6,9 @@ import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
 import { SpecIcon, GroupIcon } from "@/components/shared/SpecIcon";
 import PhoneCard from "@/components/public/PhoneCard";
+import Breadcrumb from "@/components/public/Breadcrumb";
+import { JsonLd, generatePhoneProductJsonLd, generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/json-ld";
+import { getSiteUrl } from "@/lib/site-url";
 
 async function getPhone(slug: string) {
   const phone = await prisma.phone.findUnique({
@@ -14,6 +17,9 @@ async function getPhone(slug: string) {
       brand: true,
       specs: {
         include: { spec: { include: { group: true } } },
+      },
+      faqs: {
+        orderBy: { sortOrder: "asc" },
       },
     },
   });
@@ -37,9 +43,32 @@ async function getRelatedPhones(brandId: string, phoneId: string) {
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const phone = await getPhone(params.slug);
   if (!phone) return { title: "Phone Not Found" };
+
+  const baseUrl = getSiteUrl();
+  const title = phone.metaTitle || `${phone.name} Specifications, Price & Review`;
+  const description = phone.metaDescription || phone.overview || `Full specifications, price, and review of ${phone.name}. Compare ${phone.name} with other smartphones.`;
+  const url = `${baseUrl}/phones/${phone.slug}`;
+
   return {
-    title: `${phone.name} Specifications & Review - MobilePlatform`,
-    description: phone.overview || `Full specifications, price, and review of ${phone.name}.`,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: `${phone.name} - Full Specs & Price | MobilePlatform`,
+      description,
+      url,
+      type: "website",
+      siteName: "MobilePlatform",
+      images: phone.mainImage ? [{ url: phone.mainImage, alt: phone.name }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${phone.name} Specs & Price`,
+      description,
+      images: phone.mainImage ? [phone.mainImage] : undefined,
+    },
   };
 }
 
@@ -82,20 +111,27 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <JsonLd data={[
+        generatePhoneProductJsonLd(phone),
+        generateBreadcrumbJsonLd([
+          { name: "Home", href: "/" },
+          { name: "Phones", href: "/phones" },
+          { name: phone.brand.name, href: `/brands/${phone.brand.slug}` },
+          { name: phone.name, href: `/phones/${phone.slug}` },
+        ]),
+        ...(phone.faqs && phone.faqs.length > 0 ? [generateFaqJsonLd(phone.faqs)] : []),
+      ]} />
       <Header />
 
       {/* Breadcrumbs */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-          <nav className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            <Link href="/phones" className="hover:text-blue-600 transition-colors">Phones</Link>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            <Link href={`/phones?brand=${phone.brand.slug}`} className="hover:text-blue-600 transition-colors">{phone.brand.name}</Link>
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            <span className="text-gray-900 font-medium truncate">{phone.name}</span>
-          </nav>
+          <Breadcrumb items={[
+            { label: "Home", href: "/" },
+            { label: "Phones", href: "/phones" },
+            { label: phone.brand.name, href: `/brands/${phone.brand.slug}` },
+            { label: phone.name },
+          ]} />
         </div>
       </div>
 
@@ -334,7 +370,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">More from {phone.brand.name}</h2>
                 <p className="text-gray-500 mt-1">Other phones by {phone.brand.name}</p>
               </div>
-              <Link href={`/phones?brand=${phone.brand.slug}`} className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700">
+              <Link href={`/brands/${phone.brand.slug}`} className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700">
                 View All
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
               </Link>
@@ -346,6 +382,33 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
             </div>
           </section>
         )}
+
+        {/* Smart Internal Links — Category Pages */}
+        <section className="mt-12 bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Explore More</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <Link href="/phones/best-camera-phones" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all text-sm">
+              <SpecIcon specKey="main_camera" size={18} className="text-blue-500 flex-shrink-0" />
+              <span className="font-medium text-gray-700">Best Camera</span>
+            </Link>
+            <Link href="/phones/best-battery-life" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-green-200 hover:bg-green-50/50 transition-all text-sm">
+              <SpecIcon specKey="battery" size={18} className="text-green-500 flex-shrink-0" />
+              <span className="font-medium text-gray-700">Best Battery</span>
+            </Link>
+            <Link href="/phones/best-performance" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-red-200 hover:bg-red-50/50 transition-all text-sm">
+              <SpecIcon specKey="processor" size={18} className="text-red-500 flex-shrink-0" />
+              <span className="font-medium text-gray-700">Best Performance</span>
+            </Link>
+            <Link href="/phones/best-display" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50/50 transition-all text-sm">
+              <SpecIcon specKey="display_size" size={18} className="text-purple-500 flex-shrink-0" />
+              <span className="font-medium text-gray-700">Best Display</span>
+            </Link>
+            <Link href="/phones/flagship" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-amber-200 hover:bg-amber-50/50 transition-all text-sm">
+              <SpecIcon specKey="" size={18} className="text-amber-500 flex-shrink-0" />
+              <span className="font-medium text-gray-700">Flagship</span>
+            </Link>
+          </div>
+        </section>
       </div>
 
       <Footer />

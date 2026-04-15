@@ -4,10 +4,27 @@ import type { Metadata } from "next";
 import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
 import PhoneCard from "@/components/public/PhoneCard";
+import { JsonLd, generateCollectionPageJsonLd, generateBreadcrumbJsonLd } from "@/lib/json-ld";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
-  title: "All Phones - MobilePlatform",
-  description: "Browse all smartphones with full specifications, prices, and reviews.",
+  title: "All Phones - Compare Specifications & Prices",
+  description: "Browse all smartphones with full specifications, prices, and reviews. Filter by brand, sort by price, and find the perfect phone.",
+  alternates: {
+    canonical: `${getSiteUrl()}/phones`,
+  },
+  openGraph: {
+    title: "All Phones - Compare Specifications & Prices | MobilePlatform",
+    description: "Browse all smartphones with full specifications, prices, and reviews.",
+    url: `${getSiteUrl()}/phones`,
+    type: "website",
+    siteName: "MobilePlatform",
+  },
+  twitter: {
+    card: "summary",
+    title: "All Phones | MobilePlatform",
+    description: "Browse all smartphones with full specifications, prices, and reviews.",
+  },
 };
 
 async function getPhones(searchParams: Record<string, string | undefined>) {
@@ -82,6 +99,13 @@ export default async function PhonesPage({
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <JsonLd data={[
+        generateCollectionPageJsonLd("All Smartphones", "Browse all smartphones with full specifications, prices, and reviews.", "/phones"),
+        generateBreadcrumbJsonLd([
+          { name: "Home", href: "/" },
+          { name: "Phones", href: "/phones" },
+        ]),
+      ]} />
       <Header />
 
       {/* Page Header */}

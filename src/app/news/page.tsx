@@ -2,10 +2,27 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
+import { JsonLd, generateCollectionPageJsonLd, generateBreadcrumbJsonLd, generateArticleJsonLd } from "@/lib/json-ld";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
-  title: "News & Reviews - MobilePlatform",
-  description: "Latest smartphone news, expert reviews, and industry insights.",
+  title: "News & Reviews - Latest Smartphone Updates",
+  description: "Latest smartphone news, expert reviews, and industry insights. Stay updated with the newest phone releases, leaks, and technology trends.",
+  alternates: {
+    canonical: `${getSiteUrl()}/news`,
+  },
+  openGraph: {
+    title: "Smartphone News & Reviews | MobilePlatform",
+    description: "Latest smartphone news, expert reviews, and industry insights.",
+    url: `${getSiteUrl()}/news`,
+    type: "website",
+    siteName: "MobilePlatform",
+  },
+  twitter: {
+    card: "summary",
+    title: "Smartphone News & Reviews | MobilePlatform",
+    description: "Latest smartphone news, expert reviews, and industry insights.",
+  },
 };
 
 export default function NewsPage() {
@@ -72,6 +89,14 @@ export default function NewsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <JsonLd data={[
+        generateCollectionPageJsonLd("Smartphone News & Reviews", "Latest smartphone news, expert reviews, and industry insights.", "/news"),
+        generateBreadcrumbJsonLd([
+          { name: "Home", href: "/" },
+          { name: "News", href: "/news" },
+        ]),
+        ...articles.map((a) => generateArticleJsonLd({ ...a, slug: `article-${a.id}` })),
+      ]} />
       <Header />
 
       {/* Page Header */}

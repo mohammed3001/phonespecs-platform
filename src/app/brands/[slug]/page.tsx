@@ -7,6 +7,8 @@ import prisma from "@/lib/prisma";
 import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
 import PhoneCard from "@/components/public/PhoneCard";
+import { JsonLd, generateBrandOrganizationJsonLd, generateBreadcrumbJsonLd, generateItemListJsonLd } from "@/lib/json-ld";
+import { getSiteUrl } from "@/lib/site-url";
 
 interface BrandWithPhones {
   id: string;
@@ -80,18 +82,30 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const brand = await getBrand(params.slug);
   if (!brand) return { title: "Brand Not Found" };
 
+  const baseUrl = getSiteUrl();
   const title = `${brand.name} Phones - Specifications & Prices | MobilePlatform`;
   const description = brand.description
     || `Browse all ${brand.name} smartphones. Compare specs, prices, and reviews for ${brand.phones.length} ${brand.name} phones.`;
+  const url = `${baseUrl}/brands/${brand.slug}`;
 
   return {
     title,
     description,
+    alternates: {
+      canonical: url,
+    },
     openGraph: {
       title,
       description,
+      url,
       type: "website",
       siteName: "MobilePlatform",
+      images: brand.logo ? [{ url: brand.logo, alt: brand.name }] : undefined,
+    },
+    twitter: {
+      card: "summary",
+      title: `${brand.name} Phones | MobilePlatform`,
+      description,
     },
   };
 }
@@ -112,6 +126,19 @@ export default async function BrandDetailPage({ params }: { params: { slug: stri
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <JsonLd data={[
+        generateBrandOrganizationJsonLd(brand),
+        generateBreadcrumbJsonLd([
+          { name: "Home", href: "/" },
+          { name: "Brands", href: "/brands" },
+          { name: brand.name, href: `/brands/${brand.slug}` },
+        ]),
+        generateItemListJsonLd(
+          brand.phones.map((p, i) => ({ name: p.name, slug: p.slug, position: i + 1 })),
+          `${brand.name} Smartphones`,
+          `All ${brand.name} smartphones with full specifications and prices`
+        ),
+      ]} />
       <Header />
 
       {/* Brand Hero */}

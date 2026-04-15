@@ -3,10 +3,27 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
+import { JsonLd, generateCollectionPageJsonLd, generateBreadcrumbJsonLd } from "@/lib/json-ld";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
-  title: "All Brands - MobilePlatform",
-  description: "Browse all smartphone brands and manufacturers with detailed profiles.",
+  title: "All Smartphone Brands - Manufacturers & Profiles",
+  description: "Browse all smartphone brands and manufacturers. Explore detailed profiles, phone catalogs, and specifications for every major mobile brand.",
+  alternates: {
+    canonical: `${getSiteUrl()}/brands`,
+  },
+  openGraph: {
+    title: "All Smartphone Brands | MobilePlatform",
+    description: "Browse all smartphone brands and manufacturers with detailed profiles.",
+    url: `${getSiteUrl()}/brands`,
+    type: "website",
+    siteName: "MobilePlatform",
+  },
+  twitter: {
+    card: "summary",
+    title: "All Smartphone Brands | MobilePlatform",
+    description: "Browse all smartphone brands and manufacturers with detailed profiles.",
+  },
 };
 
 async function getBrands() {
@@ -23,6 +40,13 @@ export default async function BrandsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
+      <JsonLd data={[
+        generateCollectionPageJsonLd("Smartphone Brands", "Browse all smartphone brands and manufacturers with detailed profiles.", "/brands"),
+        generateBreadcrumbJsonLd([
+          { name: "Home", href: "/" },
+          { name: "Brands", href: "/brands" },
+        ]),
+      ]} />
       <Header />
 
       {/* Page Header */}
