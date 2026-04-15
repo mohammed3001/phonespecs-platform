@@ -45,6 +45,7 @@ const sidebarGroups = [
   {
     label: "System",
     items: [
+      { name: "Search Analytics", href: "/admin/search-analytics", icon: "mdi:chart-line" },
       { name: "SEO Settings", href: "/admin/seo", icon: "mdi:magnify" },
       { name: "Redirects", href: "/admin/redirects", icon: "mdi:call-missed" },
       { name: "Settings", href: "/admin/settings", icon: "mdi:cog-outline" },

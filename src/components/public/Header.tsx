@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Icon } from "@iconify/react";
 
 const navItems = [
@@ -12,18 +12,40 @@ const navItems = [
   { name: "News", href: "/news", icon: "mdi:newspaper-variant-outline" },
 ];
 
+interface AutocompletePhone {
+  name: string;
+  slug: string;
+  brandName: string;
+  priceDisplay: string | null;
+  priceUsd: number | null;
+  marketStatus: string;
+  _formatted?: { name: string };
+}
+
+interface AutocompleteBrand {
+  name: string;
+  slug: string;
+  phoneCount: number;
+  _formatted?: { name: string };
+}
+
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Array<{
-    id: string; name: string; slug: string; brand: { name: string };
-    priceUsd: number | null; priceDisplay: string | null;
-  }>>([]);
+  const [phones, setPhones] = useState<AutocompletePhone[]>([]);
+  const [brands, setBrands] = useState<AutocompleteBrand[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [scrolled, setScrolled] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const searchTimeoutRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<NodeJS.Timeout>();
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  // Total selectable items count
+  const totalItems = phones.length + brands.length + (searchQuery.trim() ? 1 : 0); // +1 for "View all results"
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -33,26 +55,108 @@ export default function Header() {
 
   useEffect(() => {
     if (searchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
+      setTimeout(() => searchInputRef.current?.focus(), 50);
     }
   }, [searchOpen]);
 
   useEffect(() => {
     setMobileMenuOpen(false);
     setSearchOpen(false);
+    setSearchQuery("");
+    setPhones([]);
+    setBrands([]);
   }, [pathname]);
 
-  const handleSearch = (query: string) => {
+  const closeSearch = useCallback(() => {
+    setSearchOpen(false);
+    setSearchQuery("");
+    setPhones([]);
+    setBrands([]);
+    setSelectedIndex(-1);
+    setLoading(false);
+  }, []);
+
+  // Keyboard shortcuts: Ctrl+K or / to open search, ESC to close
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+      if (e.key === "/" && !searchOpen && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+      if (e.key === "Escape" && searchOpen) {
+        e.preventDefault();
+        closeSearch();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [searchOpen, closeSearch]);
+
+  const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
-    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    if (!query.trim()) { setSearchResults([]); return; }
-    searchTimeoutRef.current = setTimeout(async () => {
+    setSelectedIndex(-1);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!query.trim()) {
+      setPhones([]);
+      setBrands([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    debounceRef.current = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/phones?q=${encodeURIComponent(query)}&limit=6`);
+        const res = await fetch(`/api/search/autocomplete?q=${encodeURIComponent(query)}`);
         const data = await res.json();
-        if (data.success) setSearchResults(data.data);
-      } catch { setSearchResults([]); }
-    }, 250);
+        if (data.success) {
+          setPhones(data.phones || []);
+          setBrands(data.brands || []);
+        }
+      } catch {
+        setPhones([]);
+        setBrands([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 150);
+  }, []);
+
+  const handleKeyNav = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev < totalItems - 1 ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : totalItems - 1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (selectedIndex === -1 || selectedIndex === phones.length + brands.length) {
+        // Go to full search
+        if (searchQuery.trim()) {
+          router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+          closeSearch();
+        }
+      } else if (selectedIndex < phones.length) {
+        router.push(`/phones/${phones[selectedIndex].slug}`);
+        trackClick(searchQuery, phones[selectedIndex].slug);
+        closeSearch();
+      } else {
+        const brandIdx = selectedIndex - phones.length;
+        router.push(`/brands/${brands[brandIdx].slug}`);
+        closeSearch();
+      }
+    }
+  };
+
+  const trackClick = (query: string, slug: string) => {
+    fetch("/api/search/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, slug }),
+    }).catch(() => {});
   };
 
   return (
@@ -103,10 +207,14 @@ export default function Header() {
               {/* Search Button */}
               <button
                 onClick={() => setSearchOpen(true)}
-                className="p-2.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-blue-600 bg-gray-50 hover:bg-blue-50 rounded-xl transition-all border border-gray-200 hover:border-blue-200"
                 aria-label="Search"
               >
-                <Icon icon="mdi:magnify" width={20} />
+                <Icon icon="mdi:magnify" width={18} />
+                <span className="hidden sm:inline text-sm">Search...</span>
+                <kbd className="hidden lg:inline-flex items-center px-1.5 py-0.5 bg-white rounded text-[10px] font-mono text-gray-400 border border-gray-200 ml-2">
+                  ⌘K
+                </kbd>
               </button>
 
               {/* Admin Link */}
@@ -167,71 +275,191 @@ export default function Header() {
 
       {/* Search Overlay */}
       {searchOpen && (
-        <div className="fixed inset-0 z-[60]">
+        <div className="fixed inset-0 z-[60]" ref={overlayRef}>
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-            onClick={() => { setSearchOpen(false); setSearchQuery(""); setSearchResults([]); }}
+            onClick={closeSearch}
           />
-          <div className="relative max-w-2xl mx-auto mt-20 px-4">
-            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border">
-              <div className="flex items-center gap-3 px-5 py-4 border-b">
-                <Icon icon="mdi:magnify" width={22} className="text-gray-400 flex-shrink-0" />
+          <div className="relative max-w-2xl mx-auto mt-16 sm:mt-20 px-4">
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-200 animate-in fade-in slide-in-from-top-4 duration-200">
+              {/* Search Input */}
+              <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+                <Icon icon="mdi:magnify" width={22} className="text-blue-500 flex-shrink-0" />
                 <input
                   ref={searchInputRef}
                   type="text"
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
-                  placeholder="Search for any phone..."
+                  onKeyDown={handleKeyNav}
+                  placeholder="Search phones, brands, specs..."
                   className="flex-1 text-lg outline-none placeholder-gray-400"
+                  autoComplete="off"
                 />
+                {loading && (
+                  <div className="w-5 h-5 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin flex-shrink-0" />
+                )}
                 <button
-                  onClick={() => { setSearchOpen(false); setSearchQuery(""); setSearchResults([]); }}
-                  className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                  onClick={closeSearch}
+                  className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
                 >
                   <Icon icon="mdi:close" width={18} className="text-gray-400" />
                 </button>
               </div>
 
-              {searchResults.length > 0 && (
-                <div className="max-h-80 overflow-y-auto">
-                  {searchResults.map((phone) => (
-                    <Link
-                      key={phone.id}
-                      href={`/phones/${phone.slug}`}
-                      onClick={() => { setSearchOpen(false); setSearchQuery(""); setSearchResults([]); }}
-                      className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <Icon icon="mdi:cellphone" width={24} className="text-gray-400" />
+              {/* Results */}
+              {(phones.length > 0 || brands.length > 0) && (
+                <div className="max-h-[60vh] overflow-y-auto">
+                  {/* Phones */}
+                  {phones.length > 0 && (
+                    <div>
+                      <div className="px-5 pt-3 pb-1">
+                        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Phones</p>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 truncate">{phone.name}</p>
-                        <p className="text-sm text-gray-500">{phone.brand?.name}</p>
+                      {phones.map((phone, i) => (
+                        <Link
+                          key={phone.slug}
+                          href={`/phones/${phone.slug}`}
+                          onClick={() => { trackClick(searchQuery, phone.slug); closeSearch(); }}
+                          className={`flex items-center gap-4 px-5 py-3 transition-colors ${
+                            selectedIndex === i ? "bg-blue-50" : "hover:bg-gray-50"
+                          }`}
+                        >
+                          <div className="w-11 h-11 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <Icon icon="mdi:cellphone" width={22} className="text-gray-400" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className="font-semibold text-gray-900 truncate text-sm"
+                              dangerouslySetInnerHTML={{
+                                __html: phone._formatted?.name || phone.name,
+                              }}
+                            />
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs text-gray-500">{phone.brandName}</span>
+                              {phone.marketStatus === "available" && (
+                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <p className="font-bold text-blue-600 text-sm">
+                              {phone.priceDisplay || (phone.priceUsd ? `$${Number(phone.priceUsd).toLocaleString()}` : "")}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Brands */}
+                  {brands.length > 0 && (
+                    <div>
+                      <div className="px-5 pt-3 pb-1 border-t border-gray-100">
+                        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Brands</p>
                       </div>
-                      <div className="text-right flex-shrink-0">
-                        <p className="font-bold text-blue-600">
-                          {phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd.toLocaleString()}` : "")}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
+                      {brands.map((brand, i) => (
+                        <Link
+                          key={brand.slug}
+                          href={`/brands/${brand.slug}`}
+                          onClick={closeSearch}
+                          className={`flex items-center gap-4 px-5 py-3 transition-colors ${
+                            selectedIndex === phones.length + i ? "bg-blue-50" : "hover:bg-gray-50"
+                          }`}
+                        >
+                          <div className="w-11 h-11 bg-gradient-to-br from-violet-50 to-violet-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <Icon icon="mdi:domain" width={22} className="text-violet-500" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p
+                              className="font-semibold text-gray-900 truncate text-sm"
+                              dangerouslySetInnerHTML={{
+                                __html: brand._formatted?.name || brand.name,
+                              }}
+                            />
+                            <p className="text-xs text-gray-500 mt-0.5">{brand.phoneCount} phones</p>
+                          </div>
+                          <Icon icon="mdi:chevron-right" width={18} className="text-gray-300" />
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* View all results */}
+                  {searchQuery.trim() && (
+                    <div className="border-t border-gray-100">
+                      <Link
+                        href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}
+                        onClick={closeSearch}
+                        className={`flex items-center justify-center gap-2 px-5 py-3.5 text-sm font-medium transition-colors ${
+                          selectedIndex === phones.length + brands.length
+                            ? "bg-blue-50 text-blue-700"
+                            : "text-blue-600 hover:bg-blue-50"
+                        }`}
+                      >
+                        <Icon icon="mdi:magnify" width={16} />
+                        View all results for &ldquo;{searchQuery.trim()}&rdquo;
+                        <Icon icon="mdi:arrow-right" width={16} />
+                      </Link>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {searchQuery && searchResults.length === 0 && (
+              {/* Loading state */}
+              {loading && phones.length === 0 && brands.length === 0 && (
+                <div className="px-5 py-8 text-center">
+                  <div className="w-8 h-8 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto" />
+                  <p className="text-sm text-gray-400 mt-3">Searching...</p>
+                </div>
+              )}
+
+              {/* No results */}
+              {!loading && searchQuery.trim() && phones.length === 0 && brands.length === 0 && (
                 <div className="px-5 py-8 text-center text-gray-500">
                   <Icon icon="mdi:cellphone-off" width={40} className="mx-auto mb-2 text-gray-300" />
-                  <p className="font-medium">No phones found</p>
-                  <p className="text-sm mt-1">Try a different search term</p>
+                  <p className="font-medium">No results found</p>
+                  <p className="text-sm mt-1">Try a different search term or check your spelling</p>
+                  <Link
+                    href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}
+                    onClick={closeSearch}
+                    className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mt-3"
+                  >
+                    Advanced search
+                    <Icon icon="mdi:arrow-right" width={14} />
+                  </Link>
                 </div>
               )}
 
+              {/* Empty state */}
               {!searchQuery && (
-                <div className="px-5 py-6 text-center text-gray-400">
-                  <p className="text-sm">Start typing to search phones, brands, or specs</p>
-                  <div className="flex items-center justify-center gap-2 mt-3">
-                    <kbd className="px-2 py-0.5 bg-gray-100 rounded text-xs font-mono text-gray-500">ESC</kbd>
-                    <span className="text-xs">to close</span>
+                <div className="px-5 py-6">
+                  <p className="text-center text-sm text-gray-400 mb-4">
+                    Search phones, brands, or specs
+                  </p>
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    {["Samsung Galaxy", "iPhone 15", "Pixel 8", "Xiaomi 14", "OnePlus 12"].map((term) => (
+                      <button
+                        key={term}
+                        onClick={() => handleSearch(term)}
+                        className="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-50 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors border border-gray-200 hover:border-blue-200"
+                      >
+                        {term}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-center gap-4 mt-4 text-[11px] text-gray-400">
+                    <span className="flex items-center gap-1">
+                      <kbd className="px-1.5 py-0.5 bg-gray-100 rounded font-mono border border-gray-200">↑↓</kbd>
+                      navigate
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <kbd className="px-1.5 py-0.5 bg-gray-100 rounded font-mono border border-gray-200">↵</kbd>
+                      select
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <kbd className="px-1.5 py-0.5 bg-gray-100 rounded font-mono border border-gray-200">esc</kbd>
+                      close
+                    </span>
                   </div>
                 </div>
               )}

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "search:sync": "tsx scripts/search-sync.ts"
   },
   "dependencies": {
     "@iconify/react": "^6.0.2",
@@ -23,6 +24,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.4.2",
     "ioredis": "^5.10.1",
+    "meilisearch": "^0.57.0",
     "next": "14.2.35",
     "next-auth": "^4.24.13",
     "prisma": "^5.22.0",

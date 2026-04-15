@@ -31,6 +31,24 @@ services:
       timeout: 5s
       retries: 5
 
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    container_name: mp-meilisearch
+    environment:
+      MEILI_MASTER_KEY: mp_dev_master_key_change_in_production
+      MEILI_ENV: development
+      MEILI_LOG_LEVEL: INFO
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilidata:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   pgdata:
   redisdata:
+  meilidata:

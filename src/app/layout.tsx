@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const inter = Inter({
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
   },
   description: "Discover smartphone specifications, reviews, comparisons, and news. Find the perfect phone with detailed specs, expert reviews, and price comparisons.",
   keywords: "smartphones, mobile phones, specifications, reviews, comparisons, prices",
-  metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000"),
+  metadataBase: new URL(getSiteUrl()),
   openGraph: {
     type: "website",
     siteName: "MobilePlatform",

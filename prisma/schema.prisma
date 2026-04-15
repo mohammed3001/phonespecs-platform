@@ -809,3 +809,24 @@ model Payment {
 
   @@map("payments")
 }
+
+// ==================== SEARCH ANALYTICS ====================
+
+model SearchQuery {
+  id          String   @id @default(uuid())
+  query       String
+  normalizedQuery String @map("normalized_query")
+  resultCount Int      @default(0) @map("result_count")
+  clickedSlug String?  @map("clicked_slug")
+  filters     String?  // JSON string of applied filters
+  sortBy      String?  @map("sort_by")
+  source      String   @default("web") // web, autocomplete, api
+  userId      String?  @map("user_id")
+  sessionId   String?  @map("session_id")
+  responseMs  Int?     @map("response_ms")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([normalizedQuery])
+  @@index([createdAt])
+  @@map("search_queries")
+}
