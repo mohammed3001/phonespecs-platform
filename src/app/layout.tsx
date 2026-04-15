@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { getSiteUrl } from "@/lib/site-url";
-import Providers from "@/components/Providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -49,7 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className={`${inter.className} antialiased`}><Providers>{children}</Providers></body>
+      <body className={`${inter.className} antialiased`}>{children}</body>
     </html>
   );
 }

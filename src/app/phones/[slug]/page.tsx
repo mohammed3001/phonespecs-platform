@@ -8,8 +8,10 @@ import { SpecIcon, GroupIcon } from "@/components/shared/SpecIcon";
 import PhoneCard from "@/components/public/PhoneCard";
 import Breadcrumb from "@/components/public/Breadcrumb";
 import { JsonLd, generatePhoneProductJsonLd, generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/json-ld";
-import ReviewsSection from "@/components/public/ReviewsSection";
+import dynamic from "next/dynamic";
 import { getSiteUrl } from "@/lib/site-url";
+
+const ReviewsSection = dynamic(() => import("@/components/public/ReviewsSection"), { ssr: false });
 
 async function getPhone(slug: string) {
   const phone = await prisma.phone.findUnique({

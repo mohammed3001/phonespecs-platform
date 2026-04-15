@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 
@@ -10,8 +9,15 @@ interface ReviewFormProps {
   phoneName: string;
 }
 
+interface SessionUser {
+  name?: string;
+  email?: string;
+  id?: string;
+}
+
 export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
-  const { data: session } = useSession();
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -24,7 +30,30 @@ export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
     cons: "",
   });
 
-  if (!session?.user) {
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.user) {
+          setSessionUser(data.user);
+        }
+        setSessionLoading(false);
+      })
+      .catch(() => setSessionLoading(false));
+  }, []);
+
+  if (sessionLoading) {
+    return (
+      <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center">
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-1/3 mx-auto mb-2" />
+          <div className="h-3 bg-gray-200 rounded w-1/2 mx-auto" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!sessionUser) {
     return (
       <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center">
         <Icon icon="mdi:account-circle" className="w-10 h-10 text-gray-300 mx-auto mb-2" />
