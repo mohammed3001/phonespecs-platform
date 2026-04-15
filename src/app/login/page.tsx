@@ -87,6 +87,18 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Sign In"}
           </button>
 
+          <div className="mt-4 text-center space-y-2">
+            <p className="text-sm text-gray-500">
+              Don&apos;t have an account?{" "}
+              <a href="/register" className="text-blue-600 font-medium hover:text-blue-700">
+                Create one
+              </a>
+            </p>
+            <a href="/forgot-password" className="text-sm text-gray-400 hover:text-gray-600">
+              Forgot your password?
+            </a>
+          </div>
+
           <p className="text-center text-xs text-gray-400 mt-4">
             Admin: admin@mobileplatform.com / admin123
           </p>

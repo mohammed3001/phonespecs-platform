@@ -23,6 +23,8 @@ const sidebarGroups = [
     items: [
       { name: "Users", href: "/admin/users", icon: "mdi:account-group-outline" },
       { name: "Companies", href: "/admin/companies", icon: "mdi:office-building-outline" },
+      { name: "Reviews", href: "/admin/reviews", icon: "mdi:star-outline" },
+      { name: "Moderation", href: "/admin/moderation", icon: "mdi:shield-check-outline" },
     ],
   },
   {
@@ -46,6 +48,7 @@ const sidebarGroups = [
     label: "System",
     items: [
       { name: "Search Analytics", href: "/admin/search-analytics", icon: "mdi:chart-line" },
+      { name: "Spec History", href: "/admin/spec-history", icon: "mdi:clipboard-text-clock" },
       { name: "SEO Settings", href: "/admin/seo", icon: "mdi:magnify" },
       { name: "Redirects", href: "/admin/redirects", icon: "mdi:call-missed" },
       { name: "Settings", href: "/admin/settings", icon: "mdi:cog-outline" },

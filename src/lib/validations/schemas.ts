@@ -99,6 +99,65 @@ export const phoneQuerySchema = paginationSchema.extend({
   sort: z.enum(["newest", "price_asc", "price_desc", "name", "rating", "popular"]).default("newest"),
 });
 
+// ==================== Registration Schemas ====================
+
+export const registerSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().email("Invalid email address"),
+  password: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+export const passwordResetRequestSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+export const passwordResetSchema = z.object({
+  token: z.string().min(1),
+  password: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+});
+
+// ==================== Review Schemas ====================
+
+export const createReviewSchema = z.object({
+  phoneId: z.string().min(1, "Phone is required"),
+  title: z.string().min(3, "Title must be at least 3 characters").max(200),
+  content: z.string().min(20, "Review must be at least 20 characters").max(5000),
+  overallScore: z.number().min(1).max(10),
+  pros: z.string().max(1000).optional(),
+  cons: z.string().max(1000).optional(),
+  ratings: z.array(z.object({
+    categoryId: z.string().min(1),
+    score: z.number().min(1).max(10),
+  })).optional(),
+});
+
+export const moderateReviewSchema = z.object({
+  reviewId: z.string().min(1),
+  action: z.enum(["approve", "reject", "spam"]),
+  moderationNote: z.string().max(500).optional(),
+});
+
+// ==================== Moderation Report Schemas ====================
+
+export const createReportSchema = z.object({
+  entityType: z.enum(["review", "discussion", "reply"]),
+  entityId: z.string().min(1),
+  reason: z.enum(["spam", "inappropriate", "misleading", "offensive", "other"]),
+  description: z.string().max(500).optional(),
+});
+
 // ==================== Utility ====================
 
 export type CreatePhoneInput = z.infer<typeof createPhoneSchema>;
@@ -106,3 +165,5 @@ export type CreateBrandInput = z.infer<typeof createBrandSchema>;
 export type CreateArticleInput = z.infer<typeof createArticleSchema>;
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>;
 export type PhoneQuery = z.infer<typeof phoneQuerySchema>;
+export type RegisterInput = z.infer<typeof registerSchema>;
+export type CreateReviewInput = z.infer<typeof createReviewSchema>;

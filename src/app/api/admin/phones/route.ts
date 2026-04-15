@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import slugify from "slugify";
 import { createPhoneSchema, paginationSchema } from "@/lib/validations/schemas";
 import { ZodError } from "zod";
+import { createAuditLog } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
   try {
@@ -109,6 +110,25 @@ export async function POST(request: NextRequest) {
     await prisma.brand.update({
       where: { id: validated.brandId },
       data: { phoneCount: { increment: 1 } },
+    });
+
+    // Audit log with after state
+    const userId = (session.user as unknown as { id: string }).id;
+    await createAuditLog({
+      userId,
+      action: "phone_created",
+      entityType: "phone",
+      entityId: phone.id,
+      changes: `Created phone: ${phone.name}`,
+      afterState: {
+        name: phone.name,
+        slug: phone.slug,
+        brandId: phone.brandId,
+        marketStatus: phone.marketStatus,
+        priceUsd: phone.priceUsd,
+        isPublished: phone.isPublished,
+      },
+      ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
     });
 
     return NextResponse.json({ success: true, data: phone }, { status: 201 });

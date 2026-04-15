@@ -27,7 +27,7 @@ export async function GET(
           orderBy: { sortOrder: "asc" },
         },
         reviews: {
-          where: { isApproved: true },
+          where: { status: "approved" },
           include: {
             user: { select: { id: true, name: true, avatar: true } },
             ratings: { include: { category: true } },

@@ -10,29 +10,38 @@ datasource db {
 // ==================== AUTH & USERS ====================
 
 model User {
-  id             String    @id @default(uuid())
-  email          String    @unique
-  passwordHash   String    @map("password_hash")
-  name           String
-  avatar         String?
-  roleId         String?   @map("role_id")
-  role           Role?     @relation(fields: [roleId], references: [id])
-  companyId      String?   @map("company_id")
-  company        Company?  @relation(fields: [companyId], references: [id])
-  isActive       Boolean   @default(true) @map("is_active")
-  emailVerified  Boolean   @default(false) @map("email_verified")
-  lastLoginAt    DateTime? @map("last_login_at")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  id                     String    @id @default(uuid())
+  email                  String    @unique
+  passwordHash           String    @map("password_hash")
+  name                   String
+  avatar                 String?
+  userType               String    @default("user") @map("user_type") // admin, user, company, moderator
+  roleId                 String?   @map("role_id")
+  role                   Role?     @relation(fields: [roleId], references: [id])
+  companyId              String?   @map("company_id")
+  company                Company?  @relation(fields: [companyId], references: [id])
+  isActive               Boolean   @default(true) @map("is_active")
+  emailVerified          Boolean   @default(false) @map("email_verified")
+  emailVerificationToken String?   @map("email_verification_token")
+  emailVerificationExpiry DateTime? @map("email_verification_expiry")
+  passwordResetToken     String?   @map("password_reset_token")
+  passwordResetExpiry    DateTime? @map("password_reset_expiry")
+  lastLoginAt            DateTime? @map("last_login_at")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
 
-  articles          Article[]
-  articleRevisions  ArticleRevision[]
-  reviews           Review[]
-  discussions       Discussion[]
-  discussionReplies DiscussionReply[]
-  reviewResponses   ReviewResponse[]
-  auditLogs         AuditLog[]
-  media             Media[]
+  articles            Article[]
+  articleRevisions    ArticleRevision[]
+  reviews             Review[]
+  discussions         Discussion[]
+  discussionReplies   DiscussionReply[]
+  reviewResponses     ReviewResponse[]
+  auditLogs           AuditLog[]
+  media               Media[]
+  phoneSpecHistory    PhoneSpecHistory[]
+  phonesUpdated       Phone[]    @relation("PhoneUpdatedBy")
+  moderationReports   ModerationReport[]
+  moderationActions   ModerationReport[] @relation("ModeratedBy")
 
   @@map("users")
 }
@@ -118,6 +127,11 @@ model Phone {
   metaTitle       String?  @map("meta_title")
   metaDescription String?  @map("meta_description")
   publishedAt     DateTime? @map("published_at")
+  // Data provenance fields
+  dataSource      String?  @map("data_source") // official, leak, manual, api_import
+  lastVerifiedAt  DateTime? @map("last_verified_at")
+  updatedById     String?  @map("updated_by_id")
+  updatedBy       User?    @relation("PhoneUpdatedBy", fields: [updatedById], references: [id])
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
@@ -207,18 +221,43 @@ model SpecDefinition {
 }
 
 model PhoneSpec {
-  id           String         @id @default(uuid())
-  phoneId      String         @map("phone_id")
-  phone        Phone          @relation(fields: [phoneId], references: [id], onDelete: Cascade)
-  specId       String         @map("spec_id")
-  spec         SpecDefinition @relation(fields: [specId], references: [id], onDelete: Cascade)
-  value        String
-  numericValue Float?         @map("numeric_value")
+  id             String         @id @default(uuid())
+  phoneId        String         @map("phone_id")
+  phone          Phone          @relation(fields: [phoneId], references: [id], onDelete: Cascade)
+  specId         String         @map("spec_id")
+  spec           SpecDefinition @relation(fields: [specId], references: [id], onDelete: Cascade)
+  value          String
+  numericValue   Float?         @map("numeric_value")
+  // Provenance
+  source         String?        // official, leak, manual, gsmarena, kimovil
+  lastVerifiedAt DateTime?      @map("last_verified_at")
+  updatedById    String?        @map("updated_by_id")
+
+  history PhoneSpecHistory[]
 
   @@unique([phoneId, specId])
   @@index([phoneId])
   @@index([specId])
   @@map("phone_specs")
+}
+
+model PhoneSpecHistory {
+  id          Int            @id @default(autoincrement())
+  phoneSpecId String         @map("phone_spec_id")
+  phoneSpec   PhoneSpec      @relation(fields: [phoneSpecId], references: [id], onDelete: Cascade)
+  oldValue    String         @map("old_value")
+  newValue    String         @map("new_value")
+  oldNumeric  Float?         @map("old_numeric")
+  newNumeric  Float?         @map("new_numeric")
+  source      String?        // what source triggered the change
+  reason      String?        // why the change was made
+  changedById String?        @map("changed_by_id")
+  changedBy   User?          @relation(fields: [changedById], references: [id])
+  changedAt   DateTime       @default(now()) @map("changed_at")
+
+  @@index([phoneSpecId])
+  @@index([changedAt])
+  @@map("phone_spec_history")
 }
 
 // ==================== ARTICLES & CONTENT ====================
@@ -337,27 +376,33 @@ model RatingCategory {
 }
 
 model Review {
-  id           String   @id @default(uuid())
-  phoneId      String   @map("phone_id")
-  phone        Phone    @relation(fields: [phoneId], references: [id], onDelete: Cascade)
-  userId       String   @map("user_id")
-  user         User     @relation(fields: [userId], references: [id])
-  type         String   @default("user")
-  title        String?
-  content      String?
-  overallScore Float?   @map("overall_score")
-  pros         String?
-  cons         String?
-  isVerified   Boolean  @default(false) @map("is_verified")
-  isApproved   Boolean  @default(false) @map("is_approved")
-  helpfulCount Int      @default(0) @map("helpful_count")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(uuid())
+  phoneId         String   @map("phone_id")
+  phone           Phone    @relation(fields: [phoneId], references: [id], onDelete: Cascade)
+  userId          String   @map("user_id")
+  user            User     @relation(fields: [userId], references: [id])
+  type            String   @default("user")
+  title           String?
+  content         String?
+  overallScore    Float?   @map("overall_score")
+  pros            String?
+  cons            String?
+  isVerified      Boolean  @default(false) @map("is_verified")
+  // Moderation
+  status          String   @default("pending") // pending, approved, rejected, spam
+  moderationNote  String?  @map("moderation_note")
+  moderatedAt     DateTime? @map("moderated_at")
+  reportCount     Int      @default(0) @map("report_count")
+  helpfulCount    Int      @default(0) @map("helpful_count")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
-  ratings   ReviewRating[]
-  responses ReviewResponse[]
+  ratings           ReviewRating[]
+  responses         ReviewResponse[]
+  moderationReports ModerationReport[]
 
   @@index([phoneId])
+  @@index([status])
   @@map("reviews")
 }
 
@@ -760,20 +805,49 @@ model Redirect {
 // ==================== AUDIT LOG ====================
 
 model AuditLog {
-  id         Int      @id @default(autoincrement())
-  userId     String?  @map("user_id")
-  user       User?    @relation(fields: [userId], references: [id])
-  action     String
-  entityType String   @map("entity_type")
-  entityId   String?  @map("entity_id")
-  changes    String?
-  ipAddress  String?  @map("ip_address")
-  userAgent  String?  @map("user_agent")
-  createdAt  DateTime @default(now()) @map("created_at")
+  id          Int      @id @default(autoincrement())
+  userId      String?  @map("user_id")
+  user        User?    @relation(fields: [userId], references: [id])
+  action      String
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id")
+  changes     String?
+  beforeState String?  @map("before_state") // JSON snapshot of entity before change
+  afterState  String?  @map("after_state")  // JSON snapshot of entity after change
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
 
   @@index([entityType, entityId])
   @@index([userId])
+  @@index([action])
+  @@index([createdAt])
   @@map("audit_logs")
+}
+
+// ==================== MODERATION ====================
+
+model ModerationReport {
+  id           String   @id @default(uuid())
+  entityType   String   @map("entity_type") // review, discussion, reply
+  entityId     String   @map("entity_id")
+  reviewId     String?  @map("review_id")
+  review       Review?  @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  reporterId   String   @map("reporter_id")
+  reporter     User     @relation(fields: [reporterId], references: [id])
+  reason       String   // spam, inappropriate, misleading, offensive, other
+  description  String?
+  status       String   @default("pending") // pending, reviewed, resolved, dismissed
+  moderatedById String? @map("moderated_by_id")
+  moderatedBy  User?    @relation("ModeratedBy", fields: [moderatedById], references: [id])
+  moderationNote String? @map("moderation_note")
+  resolvedAt   DateTime? @map("resolved_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([entityType, entityId])
+  @@index([status])
+  @@index([reviewId])
+  @@map("moderation_reports")
 }
 
 // ==================== FAQ ====================

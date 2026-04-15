@@ -8,6 +8,7 @@ import { SpecIcon, GroupIcon } from "@/components/shared/SpecIcon";
 import PhoneCard from "@/components/public/PhoneCard";
 import Breadcrumb from "@/components/public/Breadcrumb";
 import { JsonLd, generatePhoneProductJsonLd, generateBreadcrumbJsonLd, generateFaqJsonLd } from "@/lib/json-ld";
+import ReviewsSection from "@/components/public/ReviewsSection";
 import { getSiteUrl } from "@/lib/site-url";
 
 async function getPhone(slug: string) {
@@ -179,7 +180,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 )}
               </div>
 
-              <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
                 {phone.releaseDate && (
                   <span className="flex items-center gap-1.5">
                     <SpecIcon specKey="" size={14} className="text-gray-400" />
@@ -190,6 +191,18 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                   <SpecIcon specKey="" size={14} className="text-gray-400" />
                   Updated {new Date(phone.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </span>
+                {phone.lastVerifiedAt && (
+                  <span className="flex items-center gap-1.5 text-emerald-600">
+                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.403 12.652a3 3 0 010-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" /></svg>
+                    Verified {new Date(phone.lastVerifiedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </span>
+                )}
+                {phone.dataSource && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Source: {phone.dataSource}
+                  </span>
+                )}
               </div>
 
               {/* Key Specs Grid */}
@@ -280,6 +293,9 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 ))}
               </div>
             </section>
+
+            {/* User Reviews */}
+            <ReviewsSection phoneId={phone.id} phoneName={phone.name} phoneSlug={phone.slug} />
 
             {/* FAQ Section */}
             <section className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
