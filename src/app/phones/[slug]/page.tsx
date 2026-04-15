@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 import { getSiteUrl } from "@/lib/site-url";
 
 const ReviewsSection = dynamic(() => import("@/components/public/ReviewsSection"), { ssr: false });
+const AdSlot = dynamic(() => import("@/components/ads/AdSlot"), { ssr: false });
 
 async function getPhone(slug: string) {
   const phone = await prisma.phone.findUnique({
@@ -377,6 +378,16 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 </Link>
               </div>
             </div>
+
+            {/* Sidebar Ad Slot */}
+            <AdSlot
+              slotSlug="phone-detail-sidebar"
+              pageType="phone_detail"
+              phoneId={phone.id}
+              brandId={phone.brandId}
+              variant="native"
+              className="mt-4"
+            />
           </aside>
         </div>
 
