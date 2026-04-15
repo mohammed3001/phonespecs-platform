@@ -8,6 +8,7 @@ import { Icon } from "@iconify/react";
 const navItems = [
   { name: "Phones", href: "/phones", icon: "mdi:cellphone" },
   { name: "Compare", href: "/compare", icon: "mdi:compare" },
+  { name: "Find My Phone", href: "/find-my-phone", icon: "mdi:compass-outline" },
   { name: "Brands", href: "/brands", icon: "mdi:domain" },
   { name: "News", href: "/news", icon: "mdi:newspaper-variant-outline" },
 ];

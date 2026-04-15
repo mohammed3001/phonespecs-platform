@@ -8,6 +8,7 @@ import { SpecIcon, GroupIcon } from "@/components/shared/SpecIcon";
 import { JsonLd, generateBreadcrumbJsonLd, generateCollectionPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
 import { Icon } from "@iconify/react";
+import ComparisonVerdict from "@/components/public/ComparisonVerdict";
 
 async function getComparisonPhones(slug: string) {
   // Parse "phone1-slug-vs-phone2-slug" format
@@ -182,6 +183,16 @@ export default async function ComparisonPage({ params }: { params: { slug: strin
           </div>
         </div>
       </section>
+
+      {/* Verdict */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10">
+        <ComparisonVerdict
+          phone1Id={phone1.id}
+          phone2Id={phone2.id}
+          phone1Name={phone1.name}
+          phone2Name={phone2.name}
+        />
+      </div>
 
       {/* Comparison Table */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full">

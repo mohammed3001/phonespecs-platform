@@ -11,6 +11,7 @@ import { JsonLd, generatePhoneProductJsonLd, generateBreadcrumbJsonLd, generateF
 import { getSiteUrl } from "@/lib/site-url";
 import ReviewsSection from "@/components/public/ReviewsSection";
 import AdSlot from "@/components/ads/AdSlot";
+import SpecIQPanel from "@/components/public/SpecIQPanel";
 
 async function getPhone(slug: string) {
   const phone = await prisma.phone.findUnique({
@@ -376,6 +377,9 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 </Link>
               </div>
             </div>
+
+            {/* Spec IQ */}
+            <SpecIQPanel phoneId={phone.id} />
 
             {/* Sidebar Ad Slot */}
             <AdSlot
