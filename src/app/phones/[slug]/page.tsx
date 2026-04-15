@@ -381,7 +381,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
 
             {/* Sidebar Ad Slot */}
             <AdSlot
-              slotSlug="phone-detail-sidebar"
+              slotSlug="phone-sidebar"
               pageType="phone_detail"
               phoneId={phone.id}
               brandId={phone.brandId}
