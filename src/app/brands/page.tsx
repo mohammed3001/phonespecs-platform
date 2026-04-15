@@ -45,7 +45,7 @@ export default async function BrandsPage() {
           {brands.map((brand) => (
             <Link
               key={brand.id}
-              href={`/phones?brand=${brand.slug}`}
+              href={`/brands/${brand.slug}`}
               className="group"
             >
               <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl hover:shadow-blue-600/5 hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 h-full">

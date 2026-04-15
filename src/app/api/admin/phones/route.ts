@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import slugify from "slugify";
+import { createPhoneSchema, paginationSchema } from "@/lib/validations/schemas";
+import { ZodError } from "zod";
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,15 +14,17 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
+    const params = paginationSchema.parse({
+      page: searchParams.get("page") || "1",
+      limit: searchParams.get("limit") || "20",
+    });
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
     const brand = searchParams.get("brand") || "";
-    const skip = (page - 1) * limit;
+    const skip = (params.page - 1) * params.limit;
 
     const where: Record<string, unknown> = {};
-    if (search) where.name = { contains: search };
+    if (search) where.name = { contains: search, mode: "insensitive" };
     if (status) where.marketStatus = status;
     if (brand) where.brand = { slug: brand };
 
@@ -33,7 +37,7 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: "desc" },
         skip,
-        take: limit,
+        take: params.limit,
       }),
       prisma.phone.count({ where }),
     ]);
@@ -41,9 +45,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: phones,
-      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      pagination: { page: params.page, limit: params.limit, total, totalPages: Math.ceil(total / params.limit) },
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json({ success: false, error: "Invalid query parameters", details: error.issues }, { status: 400 });
+    }
     console.error("Admin phones error:", error);
     return NextResponse.json({ success: false, error: "Failed to fetch phones" }, { status: 500 });
   }
@@ -57,22 +64,29 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const slug = slugify(body.name, { lower: true, strict: true });
+    const validated = createPhoneSchema.parse(body);
+    const slug = slugify(validated.name, { lower: true, strict: true });
+
+    // Check for duplicate slug
+    const existing = await prisma.phone.findUnique({ where: { slug } });
+    if (existing) {
+      return NextResponse.json({ success: false, error: "A phone with this name already exists" }, { status: 409 });
+    }
 
     const phone = await prisma.phone.create({
       data: {
-        name: body.name,
+        name: validated.name,
         slug,
-        brandId: body.brandId,
-        marketStatus: body.marketStatus || "available",
-        releaseDate: body.releaseDate || null,
-        priceUsd: body.priceUsd ? parseFloat(body.priceUsd) : null,
-        priceDisplay: body.priceDisplay || null,
-        overview: body.overview || null,
-        mainImage: body.mainImage || null,
-        isFeatured: body.isFeatured || false,
-        isPublished: body.isPublished || false,
-        publishedAt: body.isPublished ? new Date() : null,
+        brandId: validated.brandId,
+        marketStatus: validated.marketStatus,
+        releaseDate: validated.releaseDate || null,
+        priceUsd: validated.priceUsd ? Number(validated.priceUsd) : null,
+        priceDisplay: validated.priceDisplay || null,
+        overview: validated.overview || null,
+        mainImage: validated.mainImage || null,
+        isFeatured: validated.isFeatured,
+        isPublished: validated.isPublished,
+        publishedAt: validated.isPublished ? new Date() : null,
       },
       include: {
         brand: { select: { id: true, name: true, slug: true } },
@@ -80,27 +94,28 @@ export async function POST(request: NextRequest) {
     });
 
     // Create specs if provided
-    if (body.specs && Array.isArray(body.specs)) {
-      for (const spec of body.specs) {
-        await prisma.phoneSpec.create({
-          data: {
-            phoneId: phone.id,
-            specId: spec.specId,
-            value: spec.value,
-            numericValue: spec.numericValue || null,
-          },
-        });
-      }
+    if (validated.specs && validated.specs.length > 0) {
+      await prisma.phoneSpec.createMany({
+        data: validated.specs.map((spec) => ({
+          phoneId: phone.id,
+          specId: spec.specId,
+          value: spec.value,
+          numericValue: spec.numericValue || null,
+        })),
+      });
     }
 
     // Update brand phone count
     await prisma.brand.update({
-      where: { id: body.brandId },
+      where: { id: validated.brandId },
       data: { phoneCount: { increment: 1 } },
     });
 
     return NextResponse.json({ success: true, data: phone }, { status: 201 });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json({ success: false, error: "Validation failed", details: error.issues }, { status: 400 });
+    }
     console.error("Create phone error:", error);
     return NextResponse.json({ success: false, error: "Failed to create phone" }, { status: 500 });
   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface MediaItem {
   id: string;
@@ -84,9 +85,9 @@ export default function AdminMediaPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
           {media.map((item) => (
             <div key={item.id} className="bg-white rounded-xl border p-3 hover:shadow-md transition-shadow cursor-pointer group">
-              <div className="aspect-square bg-gray-100 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+              <div className="aspect-square bg-gray-100 rounded-lg mb-2 flex items-center justify-center overflow-hidden relative">
                 {item.mimeType.startsWith("image/") ? (
-                  <img src={item.url} alt={item.alt || item.originalName} className="w-full h-full object-cover" />
+                  <Image src={item.url} alt={item.alt || item.originalName} fill className="object-cover" sizes="(max-width: 768px) 50vw, 200px" />
                 ) : (
                   <span className="text-3xl">📄</span>
                 )}
