@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: { params: { price: string } }
   if (!config) return { title: "Not Found" };
 
   const baseUrl = getSiteUrl();
-  const url = `${baseUrl}/phones/under-${params.price}`;
+  const url = `${baseUrl}/phones/under/${params.price}`;
 
   return {
     title: `Best Phones ${config.label} in 2025 - Top Budget Picks`,
@@ -103,12 +103,12 @@ export default async function UnderPricePage({ params }: { params: { price: stri
         generateBreadcrumbJsonLd([
           { name: "Home", href: "/" },
           { name: "Phones", href: "/phones" },
-          { name: config.label, href: `/phones/under-${params.price}` },
+          { name: config.label, href: `/phones/under/${params.price}` },
         ]),
         generateCollectionPageJsonLd(
           `Best Phones ${config.label} in 2025`,
           config.description,
-          `/phones/under-${params.price}`
+          `/phones/under/${params.price}`
         ),
       ]} />
       <Header />
@@ -177,7 +177,7 @@ export default async function UnderPricePage({ params }: { params: { price: stri
           <h2 className="text-lg font-bold text-gray-900 mb-4">Other Price Ranges</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {priceRanges.map(([key, cfg]) => (
-              <Link key={key} href={`/phones/under-${key}`} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-emerald-300 hover:shadow-sm transition-all">
+              <Link key={key} href={`/phones/under/${key}`} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-emerald-300 hover:shadow-sm transition-all">
                 <Icon icon="mdi:currency-usd" className="w-6 h-6 text-emerald-500" />
                 <div>
                   <p className="font-semibold text-gray-900 text-sm">{cfg.label}</p>

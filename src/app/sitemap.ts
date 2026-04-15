@@ -54,10 +54,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/phones/best-performance`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
     { url: `${baseUrl}/phones/best-display`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
     // Price range pages
-    { url: `${baseUrl}/phones/under-300`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
-    { url: `${baseUrl}/phones/under-500`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
-    { url: `${baseUrl}/phones/under-700`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
-    { url: `${baseUrl}/phones/under-1000`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
+    { url: `${baseUrl}/phones/under/300`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
+    { url: `${baseUrl}/phones/under/500`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
+    { url: `${baseUrl}/phones/under/700`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
+    { url: `${baseUrl}/phones/under/1000`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
     { url: `${baseUrl}/phones/flagship`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
   ];
 

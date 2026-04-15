@@ -140,7 +140,7 @@ export default async function FlagshipPhonesPage() {
         </section>
 
         <section className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link href="/phones/under-500" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/under/500" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
             <Icon icon="mdi:currency-usd" className="w-6 h-6 text-emerald-500" />
             <div>
               <p className="font-semibold text-gray-900 text-sm">Under $500</p>
