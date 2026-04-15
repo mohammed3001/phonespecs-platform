@@ -196,10 +196,11 @@ export default function ComparePage() {
         {/* Comparison Table */}
         {phones.length >= 2 && (
           <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
             {sortedGroups.map((group) => (
               <div key={group.slug}>
                 {/* Group Header */}
-                <div className="flex items-center gap-2.5 px-6 py-4 bg-gray-50 border-b border-t first:border-t-0">
+                <div className="flex items-center gap-2.5 px-4 sm:px-6 py-4 bg-gray-50 border-b border-t first:border-t-0">
                   <GroupIcon groupSlug={group.slug} size={18} className="text-blue-600" />
                   <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider">{group.name}</h3>
                 </div>
@@ -213,19 +214,19 @@ export default function ComparePage() {
                       className="flex border-b border-gray-100 hover:bg-blue-50/30 transition-colors"
                     >
                       {/* Spec Name */}
-                      <div className="w-48 flex-shrink-0 flex items-center gap-2.5 px-6 py-3.5 border-r border-gray-100 bg-gray-50/50">
+                      <div className="w-32 sm:w-48 flex-shrink-0 flex items-center gap-2 sm:gap-2.5 px-3 sm:px-6 py-3.5 border-r border-gray-100 bg-gray-50/50">
                         <SpecIcon specKey={spec.key} size={14} className="text-gray-400 flex-shrink-0" />
-                        <span className="text-sm text-gray-600 font-medium">{spec.name}</span>
+                        <span className="text-xs sm:text-sm text-gray-600 font-medium">{spec.name}</span>
                       </div>
 
                       {/* Values */}
-                      <div className="flex-1 grid" style={{ gridTemplateColumns: `repeat(${phones.length}, 1fr)` }}>
+                      <div className="flex-1 grid" style={{ gridTemplateColumns: `repeat(${phones.length}, minmax(100px, 1fr))` }}>
                         {phones.map((phone) => {
                           const phoneSpec = phone.specs.find((s) => s.spec.key === spec.key);
                           return (
                             <div
                               key={phone.id}
-                              className="px-4 py-3.5 text-sm font-medium text-gray-900 border-r last:border-0 border-gray-100 flex items-center"
+                              className="px-3 sm:px-4 py-3.5 text-xs sm:text-sm font-medium text-gray-900 border-r last:border-0 border-gray-100 flex items-center"
                             >
                               {phoneSpec ? (
                                 <span>{phoneSpec.value}{spec.unit ? ` ${spec.unit}` : ""}</span>
@@ -240,6 +241,7 @@ export default function ComparePage() {
                   ))}
               </div>
             ))}
+            </div>
           </div>
         )}
 
