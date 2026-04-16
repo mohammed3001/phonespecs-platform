@@ -1,88 +1,127 @@
 import prisma from "./prisma";
+import {
+  SPEC_KEY_MAP,
+} from "./spec-extraction";
 
 /**
  * Spec IQ Engine — Computes percentile rankings for phone specifications.
  * 
- * For each numeric spec (battery, RAM, camera, etc.), computes where a phone
- * stands relative to all other phones in the database. Returns badges like
- * "Better than 82% of phones" for each rankable spec.
- * 
- * Higher-is-better specs: battery, ram, storage, main_camera, front_camera, 
- *   refresh_rate, charger, display_size
- * Lower-is-better specs: weight
- * Neutral specs (not ranked): bluetooth
+ * Uses the spec extraction layer to correctly map database keys to scoring
+ * categories. Generates badges for all rankable numeric specs.
  */
 
-// Spec ranking configuration: direction and display metadata
+// Spec ranking configuration using ACTUAL database keys
 const RANKABLE_SPECS: Record<string, {
   direction: "higher" | "lower";
   label: string;
   category: "performance" | "camera" | "battery" | "display" | "design";
   icon: string;
   badgeTemplate: string;
+  unit: string;
 }> = {
-  battery: {
+  [SPEC_KEY_MAP.batteryCapacity]: {
     direction: "higher",
-    label: "Battery Life",
+    label: "Battery Capacity",
     category: "battery",
     icon: "battery",
     badgeTemplate: "battery capacity",
+    unit: "mAh",
   },
-  ram: {
-    direction: "higher",
-    label: "RAM",
-    category: "performance",
-    icon: "ram",
-    badgeTemplate: "RAM",
-  },
-  storage: {
-    direction: "higher",
-    label: "Storage",
-    category: "performance",
-    icon: "storage",
-    badgeTemplate: "storage",
-  },
-  main_camera: {
-    direction: "higher",
-    label: "Main Camera",
-    category: "camera",
-    icon: "main_camera",
-    badgeTemplate: "main camera resolution",
-  },
-  front_camera: {
-    direction: "higher",
-    label: "Front Camera",
-    category: "camera",
-    icon: "front_camera",
-    badgeTemplate: "front camera resolution",
-  },
-  refresh_rate: {
-    direction: "higher",
-    label: "Refresh Rate",
-    category: "display",
-    icon: "refresh_rate",
-    badgeTemplate: "refresh rate",
-  },
-  charger: {
+  [SPEC_KEY_MAP.chargingSpeed]: {
     direction: "higher",
     label: "Fast Charging",
     category: "battery",
     icon: "charger",
     badgeTemplate: "charging speed",
+    unit: "W",
   },
-  display_size: {
+  [SPEC_KEY_MAP.ram]: {
+    direction: "higher",
+    label: "RAM",
+    category: "performance",
+    icon: "ram",
+    badgeTemplate: "RAM",
+    unit: "GB",
+  },
+  [SPEC_KEY_MAP.storage]: {
+    direction: "higher",
+    label: "Storage",
+    category: "performance",
+    icon: "storage",
+    badgeTemplate: "storage",
+    unit: "GB",
+  },
+  [SPEC_KEY_MAP.mainCameraMP]: {
+    direction: "higher",
+    label: "Main Camera",
+    category: "camera",
+    icon: "main_camera",
+    badgeTemplate: "main camera",
+    unit: "MP",
+  },
+  [SPEC_KEY_MAP.frontCameraMP]: {
+    direction: "higher",
+    label: "Front Camera",
+    category: "camera",
+    icon: "front_camera",
+    badgeTemplate: "front camera",
+    unit: "MP",
+  },
+  [SPEC_KEY_MAP.cameraZoom]: {
+    direction: "higher",
+    label: "Zoom",
+    category: "camera",
+    icon: "zoom",
+    badgeTemplate: "zoom capability",
+    unit: "x",
+  },
+  [SPEC_KEY_MAP.refreshRate]: {
+    direction: "higher",
+    label: "Refresh Rate",
+    category: "display",
+    icon: "refresh_rate",
+    badgeTemplate: "refresh rate",
+    unit: "Hz",
+  },
+  [SPEC_KEY_MAP.displaySize]: {
     direction: "higher",
     label: "Display Size",
     category: "display",
     icon: "display_size",
     badgeTemplate: "display size",
+    unit: "inches",
   },
-  weight: {
+  [SPEC_KEY_MAP.ppi]: {
+    direction: "higher",
+    label: "Pixel Density",
+    category: "display",
+    icon: "ppi",
+    badgeTemplate: "pixel density",
+    unit: "PPI",
+  },
+  [SPEC_KEY_MAP.weight]: {
     direction: "lower",
     label: "Weight",
     category: "design",
     icon: "weight",
     badgeTemplate: "lightweight design",
+    unit: "g",
+  },
+  [SPEC_KEY_MAP.thickness]: {
+    direction: "lower",
+    label: "Thickness",
+    category: "design",
+    icon: "thickness",
+    badgeTemplate: "slim design",
+    unit: "mm",
+  },
+  [SPEC_KEY_MAP.fabrication]: {
+    direction: "lower",
+    label: "Process Node",
+    category: "performance",
+    icon: "fabrication",
+    badgeTemplate: "chip fabrication",
+    unit: "nm",
   },
 };
 
@@ -106,7 +145,7 @@ export interface SpecIQSummary {
   tierLabel: string;
   badges: SpecIQBadge[];
   topStrengths: SpecIQBadge[]; // Top 3 best percentile specs
-  priceTier: string; // "budget" | "mid-range" | "flagship" | "ultra-premium"
+  priceTier: string;
   valueScore: number; // Score relative to price tier
 }
 
@@ -149,10 +188,8 @@ function getPriceTierLabel(tier: string): string {
 
 /**
  * Compute Spec IQ for a single phone.
- * Fetches all published phones' numeric specs and computes percentile rankings.
  */
 export async function computeSpecIQ(phoneId: string): Promise<SpecIQSummary | null> {
-  // Fetch the target phone
   const phone = await prisma.phone.findUnique({
     where: { id: phoneId },
     select: {
@@ -186,7 +223,7 @@ export async function computeSpecIQ(phoneId: string): Promise<SpecIQSummary | nu
   const totalPhones = allPhones.length;
   if (totalPhones < 2) return null;
 
-  // Build spec distributions: for each rankable spec, collect all values
+  // Build spec distributions for each rankable spec
   const specDistributions: Record<string, number[]> = {};
   for (const p of allPhones) {
     for (const ps of p.specs) {
@@ -227,7 +264,7 @@ export async function computeSpecIQ(phoneId: string): Promise<SpecIQSummary | nu
       config.direction === "higher" ? v < value : v > value
     ).length;
     const equalCount = distribution.filter((v) => v === value).length;
-    
+
     // Percentile = (below + 0.5 * equal) / total * 100
     const percentile = Math.round(
       ((belowCount + 0.5 * equalCount) / distribution.length) * 100
@@ -245,14 +282,16 @@ export async function computeSpecIQ(phoneId: string): Promise<SpecIQSummary | nu
         ? `Better than ${percentile}% of phones in ${config.badgeTemplate}`
         : percentile >= 50
           ? `Above average ${config.badgeTemplate}`
-          : `${config.badgeTemplate}`;
+          : percentile >= 25
+            ? `Average ${config.badgeTemplate}`
+            : `Below average ${config.badgeTemplate}`;
 
     badges.push({
       specKey: ps.spec.key,
-      specName: ps.spec.name,
+      specName: ps.spec.name || config.label,
       category: config.category,
       value,
-      unit: ps.spec.unit || "",
+      unit: config.unit || ps.spec.unit || "",
       percentile,
       rank,
       totalPhones: distribution.length,
@@ -274,7 +313,6 @@ export async function computeSpecIQ(phoneId: string): Promise<SpecIQSummary | nu
   const priceTier = getPriceTier(phone.priceUsd);
 
   // Value score: how good is the phone relative to its price tier?
-  // Compare overall score to expected score for price tier
   const expectedScore: Record<string, number> = {
     budget: 30,
     "mid-range": 50,
@@ -298,10 +336,8 @@ export async function computeSpecIQ(phoneId: string): Promise<SpecIQSummary | nu
 
 /**
  * Compute Spec IQ for multiple phones at once (batch operation).
- * More efficient than calling computeSpecIQ for each phone individually.
  */
 export async function computeBatchSpecIQ(phoneIds: string[]): Promise<Record<string, SpecIQSummary>> {
-  // Fetch all published phones with numeric specs (one query)
   const allPhones = await prisma.phone.findMany({
     where: { isPublished: true },
     select: {
@@ -367,14 +403,16 @@ export async function computeBatchSpecIQ(phoneIds: string[]): Promise<Record<str
           ? `Better than ${percentile}% of phones in ${config.badgeTemplate}`
           : percentile >= 50
             ? `Above average ${config.badgeTemplate}`
-            : `${config.badgeTemplate}`;
+            : percentile >= 25
+              ? `Average ${config.badgeTemplate}`
+              : `Below average ${config.badgeTemplate}`;
 
       badges.push({
         specKey: ps.spec.key,
-        specName: ps.spec.name,
+        specName: ps.spec.name || config.label,
         category: config.category,
         value,
-        unit: ps.spec.unit || "",
+        unit: config.unit || ps.spec.unit || "",
         percentile,
         rank,
         totalPhones: distribution.length,
@@ -392,7 +430,8 @@ export async function computeBatchSpecIQ(phoneIds: string[]): Promise<Record<str
 
     const overallTier = getTier(overallScore);
     const priceTier = getPriceTier(phone.priceUsd);
-    const expected = ({ budget: 30, "mid-range": 50, flagship: 70, "ultra-premium": 85, unknown: 50 } as Record<string, number>)[priceTier.toLowerCase().replace(" ", "-")] || 50;
+    const expectedMap: Record<string, number> = { budget: 30, "mid-range": 50, flagship: 70, "ultra-premium": 85, unknown: 50 };
+    const expected = expectedMap[priceTier] || 50;
     const valueScore = Math.min(100, Math.max(0, Math.round(overallScore + (overallScore - expected) * 0.5)));
 
     results[phoneId] = {
