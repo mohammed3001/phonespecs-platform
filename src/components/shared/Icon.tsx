@@ -78,6 +78,8 @@ import {
   BatteryCharging,
   Network,
   Lock,
+  Sun,
+  Moon,
   type LucideIcon,
 } from "lucide-react";
 
@@ -201,6 +203,10 @@ const iconMap: Record<string, LucideIcon> = {
   "mdi:access-point-network": Network,
   "mdi:speedometer": Gauge,
   "mdi:format-list-bulleted": ClipboardList,
+
+  // Weather / Theme
+  "mdi:weather-sunny": Sun,
+  "mdi:weather-night": Moon,
 };
 
 interface IconProps extends Omit<SVGProps<SVGSVGElement>, "ref"> {
