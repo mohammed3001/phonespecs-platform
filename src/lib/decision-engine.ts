@@ -206,6 +206,18 @@ export async function findMyPhone(preferences: UserPreferences): Promise<Decisio
 }
 
 /**
+ * UUID v4 pattern for distinguishing IDs from slugs.
+ */
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Build a Prisma `where` clause that matches by ID (UUID) or slug.
+ */
+function phoneWhere(idOrSlug: string): { id: string } | { slug: string } {
+  return UUID_REGEX.test(idOrSlug) ? { id: idOrSlug } : { slug: idOrSlug };
+}
+
+/**
  * Compute comparison verdicts between two phones.
  */
 export interface ComparisonVerdict {
@@ -223,32 +235,21 @@ export interface ComparisonVerdict {
 }
 
 export async function computeComparisonVerdict(
-  phone1Id: string,
-  phone2Id: string
+  phone1IdOrSlug: string,
+  phone2IdOrSlug: string
 ): Promise<ComparisonVerdict | null> {
+  const phoneSelect = {
+    id: true,
+    name: true,
+    priceUsd: true,
+    specs: {
+      include: { spec: { select: { key: true, name: true, unit: true } } },
+    },
+  } as const;
+
   const [phone1, phone2] = await Promise.all([
-    prisma.phone.findUnique({
-      where: { id: phone1Id },
-      select: {
-        id: true,
-        name: true,
-        priceUsd: true,
-        specs: {
-          include: { spec: { select: { key: true, name: true, unit: true } } },
-        },
-      },
-    }),
-    prisma.phone.findUnique({
-      where: { id: phone2Id },
-      select: {
-        id: true,
-        name: true,
-        priceUsd: true,
-        specs: {
-          include: { spec: { select: { key: true, name: true, unit: true } } },
-        },
-      },
-    }),
+    prisma.phone.findUnique({ where: phoneWhere(phone1IdOrSlug), select: phoneSelect }),
+    prisma.phone.findUnique({ where: phoneWhere(phone2IdOrSlug), select: phoneSelect }),
   ]);
 
   if (!phone1 || !phone2) return null;

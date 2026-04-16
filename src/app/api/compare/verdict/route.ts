@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
     if (!phone1Id || !phone2Id) {
       return NextResponse.json(
-        { success: false, error: "phone1 and phone2 IDs are required" },
+        { success: false, error: "phone1 and phone2 are required (UUID or slug)" },
         { status: 400 }
       );
     }

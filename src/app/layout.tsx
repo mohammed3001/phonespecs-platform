@@ -1,7 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { getSiteUrl } from "@/lib/site-url";
+import { checkEnv } from "@/lib/env-check";
 import "./globals.css";
+
+// Run env validation once on server startup
+checkEnv();
 
 const inter = Inter({
   subsets: ["latin"],
