@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -144,8 +145,12 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
           <div className="flex flex-col md:flex-row gap-8 md:gap-12">
             {/* Phone Image */}
             <div className="flex-shrink-0 flex justify-center">
-              <div className="w-56 h-72 md:w-64 md:h-80 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl flex items-center justify-center border border-gray-200">
-                <span className="text-8xl">📱</span>
+              <div className="w-56 h-72 md:w-64 md:h-80 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl flex items-center justify-center border border-gray-200 overflow-hidden">
+                {phone.mainImage ? (
+                  <Image src={phone.mainImage} alt={phone.name} width={256} height={320} className="w-full h-full object-contain p-2" priority />
+                ) : (
+                  <span className="text-8xl">📱</span>
+                )}
               </div>
             </div>
 

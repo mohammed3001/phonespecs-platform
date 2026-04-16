@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { SpecIcon } from "@/components/shared/SpecIcon";
 
@@ -53,8 +54,12 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
       <Link href={`/phones/${phone.slug}`} className="block group">
         <div className="bg-white rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all duration-300 p-4">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:from-blue-50 group-hover:to-violet-50 transition-colors">
-              <span className="text-2xl">📱</span>
+            <div className="w-14 h-14 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:from-blue-50 group-hover:to-violet-50 transition-colors overflow-hidden">
+              {phone.mainImage ? (
+                <Image src={phone.mainImage} alt={phone.name} width={56} height={56} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-2xl">📱</span>
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-gray-900 text-sm truncate group-hover:text-blue-600 transition-colors">{phone.name}</h3>
@@ -82,10 +87,14 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
         <div className="p-5">
           <div className="flex gap-4">
             {/* Phone Image */}
-            <div className={`bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:from-blue-50 group-hover:to-violet-50 transition-colors ${
+            <div className={`bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:from-blue-50 group-hover:to-violet-50 transition-colors overflow-hidden ${
               variant === "featured" ? "w-28 h-36" : "w-24 h-32"
             }`}>
-              <span className={variant === "featured" ? "text-5xl" : "text-4xl"}>📱</span>
+              {phone.mainImage ? (
+                <Image src={phone.mainImage} alt={phone.name} width={variant === "featured" ? 112 : 96} height={variant === "featured" ? 144 : 128} className="w-full h-full object-contain p-1" />
+              ) : (
+                <span className={variant === "featured" ? "text-5xl" : "text-4xl"}>📱</span>
+              )}
             </div>
 
             {/* Info */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
 import { SpecIcon, GroupIcon } from "@/components/shared/SpecIcon";
@@ -118,8 +119,12 @@ export default function ComparePage() {
               >
                 &times;
               </button>
-              <div className="w-full h-28 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center mb-3">
-                <span className="text-4xl">📱</span>
+              <div className="w-full h-28 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center mb-3 overflow-hidden">
+                {phone.mainImage ? (
+                  <Image src={phone.mainImage} alt={phone.name} width={80} height={112} className="h-full w-auto object-contain" />
+                ) : (
+                  <span className="text-4xl">📱</span>
+                )}
               </div>
               <p className="text-xs text-gray-400 font-medium">{phone.brand.name}</p>
               <h3 className="text-sm font-bold text-gray-900 truncate">{phone.name}</h3>
@@ -176,8 +181,12 @@ export default function ComparePage() {
                     disabled={!!phones.find((p) => p.id === phone.id)}
                     className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed border-b last:border-0"
                   >
-                    <div className="w-10 h-10 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <span className="text-xl">📱</span>
+                    <div className="w-10 h-10 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      {phone.mainImage ? (
+                        <Image src={phone.mainImage} alt={phone.name} width={40} height={40} className="w-full h-full object-contain" />
+                      ) : (
+                        <span className="text-xl">📱</span>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-900 truncate">{phone.name}</p>

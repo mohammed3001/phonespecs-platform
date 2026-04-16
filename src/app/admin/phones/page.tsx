@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 interface Phone {
@@ -124,8 +125,12 @@ export default function AdminPhonesPage() {
                   <tr key={phone.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-lg">
-                          📱
+                        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-lg overflow-hidden">
+                          {phone.mainImage ? (
+                            <Image src={phone.mainImage} alt={phone.name} width={40} height={40} className="w-full h-full object-contain" />
+                          ) : (
+                            <span>📱</span>
+                          )}
                         </div>
                         <div>
                           <p className="font-medium text-gray-900 text-sm">{phone.name}</p>

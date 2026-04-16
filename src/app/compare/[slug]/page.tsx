@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -163,7 +164,13 @@ export default async function ComparisonPage({ params }: { params: { slug: strin
               <div key={phone.id} className="bg-white/5 backdrop-blur-sm rounded-xl p-5 border border-white/10">
                 <Link href={`/phones/${phone.slug}`} className="group">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-2xl">📱</div>
+                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-2xl overflow-hidden">
+                      {phone.mainImage ? (
+                        <Image src={phone.mainImage} alt={phone.name} width={48} height={48} className="w-full h-full object-contain" />
+                      ) : (
+                        <span>📱</span>
+                      )}
+                    </div>
                     <div>
                       <p className="text-xs text-blue-200/60">{phone.brand.name}</p>
                       <h2 className="text-lg font-bold text-white group-hover:text-blue-300 transition-colors">{phone.name}</h2>

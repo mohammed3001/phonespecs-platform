@@ -99,7 +99,7 @@ async function main() {
   }
 
   // ==================== ADMIN USER ====================
-  const passwordHash = await bcrypt.hash("admin123", 12);
+  const passwordHash = await bcrypt.hash("Mp@dmin2024!Secure", 12);
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@mobileplatform.com" },
     update: {},
@@ -293,6 +293,7 @@ async function main() {
       brandSlug: "samsung",
       name: "Samsung Galaxy S24 Ultra",
       slug: "samsung-galaxy-s24-ultra",
+      mainImage: "/phones/samsung-galaxy-s24-ultra.svg",
       marketStatus: "available",
       releaseDate: "2024-01-17",
       priceUsd: 1299.99,
@@ -300,6 +301,8 @@ async function main() {
       overview: "The Samsung Galaxy S24 Ultra is the ultimate premium smartphone featuring a titanium frame, advanced AI capabilities, and the most powerful camera system Samsung has ever created. It comes with a built-in S Pen and a stunning 6.8-inch Dynamic AMOLED display.",
       isFeatured: true,
       isPublished: true,
+      dataSource: "official",
+      lastVerifiedAt: new Date("2024-06-15"),
       pros: ["Best-in-class 200MP camera with 100x Space Zoom", "Built-in S Pen for productivity", "Titanium frame with exceptional durability", "7 years of OS updates", "Brightest display in any smartphone"],
       cons: ["Heavy at 232g", "Expensive starting price", "S Pen silo takes internal space", "No charger in box"],
       specs: {
@@ -394,10 +397,13 @@ async function main() {
       brandSlug: "apple",
       name: "Apple iPhone 15 Pro Max",
       slug: "apple-iphone-15-pro-max",
+      mainImage: "/phones/apple-iphone-15-pro-max.svg",
       marketStatus: "available",
       releaseDate: "2023-09-22",
       priceUsd: 1199.99,
       priceDisplay: "$1,199",
+      dataSource: "official",
+      lastVerifiedAt: new Date("2024-05-20"),
       overview: "The iPhone 15 Pro Max features a titanium design, the powerful A17 Pro chip, a customizable Action Button, and the most advanced camera system ever in an iPhone with a 5x telephoto zoom.",
       isFeatured: true,
       isPublished: true,
@@ -488,10 +494,13 @@ async function main() {
       brandSlug: "xiaomi",
       name: "Xiaomi 14 Ultra",
       slug: "xiaomi-14-ultra",
+      mainImage: "/phones/xiaomi-14-ultra.svg",
       marketStatus: "available",
       releaseDate: "2024-02-22",
       priceUsd: 999.99,
       priceDisplay: "$999",
+      dataSource: "official",
+      lastVerifiedAt: new Date("2024-06-01"),
       overview: "The Xiaomi 14 Ultra is a photography powerhouse co-engineered with Leica, featuring a 1-inch main sensor with variable aperture and flagship performance.",
       isFeatured: true,
       isPublished: true,
@@ -575,9 +584,12 @@ async function main() {
       brandSlug: "google",
       name: "Google Pixel 8 Pro",
       slug: "google-pixel-8-pro",
+      mainImage: "/phones/google-pixel-8-pro.svg",
       marketStatus: "available",
       releaseDate: "2023-10-12",
       priceUsd: 999.00,
+      dataSource: "official",
+      lastVerifiedAt: new Date("2024-04-10"),
       priceDisplay: "$999",
       overview: "The Pixel 8 Pro is Google's most advanced phone, featuring the Tensor G3 chip with powerful AI capabilities, a pro-level camera system, and 7 years of OS and security updates.",
       isFeatured: false,
@@ -660,9 +672,12 @@ async function main() {
       brandSlug: "oneplus",
       name: "OnePlus 12",
       slug: "oneplus-12",
+      mainImage: "/phones/oneplus-12.svg",
       marketStatus: "available",
       releaseDate: "2024-01-23",
       priceUsd: 799.99,
+      dataSource: "official",
+      lastVerifiedAt: new Date("2024-05-15"),
       priceDisplay: "$799",
       overview: "The OnePlus 12 delivers flagship performance with Snapdragon 8 Gen 3, Hasselblad camera tuning, and the fastest 100W wired charging in its class.",
       isFeatured: false,
@@ -832,13 +847,19 @@ async function main() {
     const { brandSlug, specs, pros, cons, ...phoneFields } = phoneData;
     const phone = await prisma.phone.upsert({
       where: { slug: phoneFields.slug },
-      update: {},
+      update: {
+        mainImage: phoneFields.mainImage,
+        dataSource: phoneFields.dataSource,
+        lastVerifiedAt: phoneFields.lastVerifiedAt,
+        updatedById: adminUser.id,
+      },
       create: {
         ...phoneFields,
         brandId: createdBrands[brandSlug],
         publishedAt: new Date(),
         pros: pros || null,
         cons: cons || null,
+        updatedById: adminUser.id,
       },
     });
 
@@ -990,10 +1011,335 @@ async function main() {
     });
   }
 
+  // ==================== SEED REVIEWS ====================
+  console.log("🌱 Seeding reviews...");
+
+  // Create reviewer users
+  const reviewerHash = await bcrypt.hash("reviewer123", 12);
+  const reviewerNames = ["Alex Chen", "Sarah Miller", "Omar Hassan", "Priya Sharma", "James Wilson"];
+  const reviewerUsers: string[] = [];
+  for (let i = 0; i < reviewerNames.length; i++) {
+    const email = `reviewer${i + 1}@mobileplatform.com`;
+    const user = await prisma.user.upsert({
+      where: { email },
+      update: {},
+      create: {
+        email,
+        passwordHash: reviewerHash,
+        name: reviewerNames[i],
+        roleId: userRole.id,
+        isActive: true,
+        emailVerified: true,
+      },
+    });
+    reviewerUsers.push(user.id);
+  }
+
+  // Get all phone IDs
+  const allPhones = await prisma.phone.findMany({ select: { id: true, slug: true, name: true } });
+  const phoneMap: Record<string, string> = {};
+  for (const p of allPhones) {
+    phoneMap[p.slug] = p.id;
+  }
+
+  // Get rating categories
+  const ratingCats = await prisma.ratingCategory.findMany();
+  const ratingCatMap: Record<string, string> = {};
+  for (const rc of ratingCats) {
+    ratingCatMap[rc.slug] = rc.id;
+  }
+
+  const reviewsData = [
+    // Samsung Galaxy S24 Ultra reviews
+    { phoneSlug: "samsung-galaxy-s24-ultra", userId: 0, title: "The Ultimate Android Phone", content: "After using the S24 Ultra for three months, I can confidently say this is the best Android phone available. The 200MP camera captures incredible detail, and the AI features are genuinely useful — Circle to Search has become part of my daily workflow. The titanium frame feels premium without adding unnecessary weight. Battery life easily gets me through a full day of heavy use.", overallScore: 9.2, pros: "Outstanding camera system, AI features, S Pen, premium build", cons: "Expensive, heavy for some users", ratings: { "design": 9, "display-rating": 9.5, "camera-rating": 9.5, "performance-rating": 9, "battery-rating": 8.5, "software-rating": 9, "value-rating": 8 } },
+    { phoneSlug: "samsung-galaxy-s24-ultra", userId: 1, title: "Great Camera, But Pricey", content: "The camera system is phenomenal — the 100x Space Zoom actually produces usable photos, and nightography is a game-changer. The display is the best I've ever seen on a phone. However, at $1,299, it's hard to justify over the regular S24+. The S Pen is nice but I rarely use it. Software updates have been solid with monthly security patches.", overallScore: 8.5, pros: "Best camera in any smartphone, gorgeous display, good software support", cons: "Very expensive, S Pen novelty wears off, heavy", ratings: { "design": 8.5, "display-rating": 10, "camera-rating": 9.5, "performance-rating": 9, "battery-rating": 8, "software-rating": 8.5, "value-rating": 7 } },
+    { phoneSlug: "samsung-galaxy-s24-ultra", userId: 2, title: "Reliable Daily Driver", content: "I switched from the iPhone 14 Pro Max and have no regrets. The customization options on One UI 6.1 are fantastic, the multitasking with DeX is useful for productivity, and the 120Hz display makes everything feel fluid. Camera quality is top-notch. My only complaint is that it can get warm during extended gaming sessions.", overallScore: 8.8, pros: "Excellent multitasking, great camera, beautiful display", cons: "Gets warm during heavy use, no charger included", ratings: { "design": 9, "display-rating": 9, "camera-rating": 9, "performance-rating": 8.5, "battery-rating": 8.5, "software-rating": 9, "value-rating": 8.5 } },
+    { phoneSlug: "samsung-galaxy-s24-ultra", userId: 3, title: "Professional Photography Tool", content: "As a semi-professional photographer, the S24 Ultra has genuinely replaced my compact camera for travel. The 200MP sensor captures stunning detail, and the RAW processing gives me plenty of editing headroom. ProVideo mode is excellent for content creation. The large display is perfect for editing on the go.", overallScore: 9.0, pros: "Incredible camera detail, ProVideo mode, large display for editing", cons: "Large and heavy, expensive", ratings: { "design": 8, "display-rating": 9.5, "camera-rating": 10, "performance-rating": 9, "battery-rating": 8, "software-rating": 8.5, "value-rating": 8 } },
+
+    // Apple iPhone 15 Pro Max reviews
+    { phoneSlug: "apple-iphone-15-pro-max", userId: 1, title: "The Best iPhone Yet", content: "The titanium design makes a real difference — it's noticeably lighter than the 14 Pro Max. The 5x telephoto zoom produces incredible results, and the Action Button is genuinely useful once you set it up. USB-C finally brings universal charging. ProRes video recording at 4K is unmatched. Battery life is excellent — consistently getting 10+ hours of screen time.", overallScore: 9.0, pros: "Lightweight titanium, excellent telephoto, great battery life, USB-C", cons: "Expensive, limited customization, slow charging", ratings: { "design": 9.5, "display-rating": 9, "camera-rating": 9, "performance-rating": 9.5, "battery-rating": 9, "software-rating": 8.5, "value-rating": 7.5 } },
+    { phoneSlug: "apple-iphone-15-pro-max", userId: 2, title: "Solid But Iterative Update", content: "Coming from the 13 Pro Max, the improvements are nice but not revolutionary. The titanium frame looks great, and the camera improvements are noticeable in low light. However, iOS still feels restrictive compared to Android. The Action Button is a great addition. Performance is expectedly excellent with the A17 Pro chip.", overallScore: 8.3, pros: "Premium build quality, reliable performance, great ecosystem", cons: "Not a huge upgrade from 13/14 Pro Max, iOS limitations, expensive", ratings: { "design": 9, "display-rating": 8.5, "camera-rating": 8.5, "performance-rating": 9, "battery-rating": 8.5, "software-rating": 8, "value-rating": 7 } },
+    { phoneSlug: "apple-iphone-15-pro-max", userId: 4, title: "Perfect for Content Creators", content: "As a YouTuber, the iPhone 15 Pro Max is my primary camera. ProRes video, Cinematic Mode, and the new Log profile give me professional-grade footage. The USB 3 transfer speeds via USB-C are a game-changer for my workflow. Battery lasts through a full day of shooting. The only downside is the 48MP main sensor feels a bit behind Samsung's 200MP.", overallScore: 8.7, pros: "ProRes video, USB-C with fast transfer, excellent battery", cons: "48MP main sensor, no USB-C accessories in box", ratings: { "design": 9, "display-rating": 9, "camera-rating": 9, "performance-rating": 9.5, "battery-rating": 9, "software-rating": 8, "value-rating": 7.5 } },
+
+    // Google Pixel 8 Pro reviews
+    { phoneSlug: "google-pixel-8-pro", userId: 0, title: "AI Photography King", content: "The Pixel 8 Pro takes computational photography to another level. Magic Eraser, Best Take, and Audio Magic Eraser are incredibly useful. The main camera produces the most natural-looking photos of any smartphone. 7 years of updates is a massive selling point. The temperature sensor is a neat addition, though I rarely use it.", overallScore: 8.5, pros: "Best computational photography, 7 years of updates, clean software", cons: "Temperature sensor gimmicky, average battery, occasional bugs", ratings: { "design": 8, "display-rating": 8.5, "camera-rating": 9.5, "performance-rating": 8, "battery-rating": 7.5, "software-rating": 9.5, "value-rating": 8.5 } },
+    { phoneSlug: "google-pixel-8-pro", userId: 3, title: "Pure Android at Its Best", content: "If you want the cleanest, most intuitive Android experience, the Pixel 8 Pro delivers. Software is buttery smooth, updates come first, and the AI features are genuinely useful. Camera is outstanding for everyday shooting — the colors are natural and the night mode is the best in the industry. Battery life could be better though.", overallScore: 8.2, pros: "Clean Android experience, excellent camera, great AI features", cons: "Average battery life, Tensor G3 heats up, premium price for a Pixel", ratings: { "design": 8, "display-rating": 8.5, "camera-rating": 9, "performance-rating": 7.5, "battery-rating": 7, "software-rating": 10, "value-rating": 8 } },
+    { phoneSlug: "google-pixel-8-pro", userId: 4, title: "Great Value Flagship", content: "At $999, the Pixel 8 Pro offers flagship specs with the best software experience. The camera consistently outperforms more expensive phones in everyday scenarios. The 120Hz display is smooth and bright. My only real complaint is that the Tensor G3 can't match the raw performance of Snapdragon 8 Gen 3 in intensive tasks.", overallScore: 8.4, pros: "Excellent camera, great software, good value, 7 years updates", cons: "Tensor G3 not as powerful as Snapdragon, average battery", ratings: { "design": 8, "display-rating": 8, "camera-rating": 9, "performance-rating": 7.5, "battery-rating": 7.5, "software-rating": 9.5, "value-rating": 9 } },
+
+    // Xiaomi 14 Ultra reviews
+    { phoneSlug: "xiaomi-14-ultra", userId: 0, title: "A True Camera Phone", content: "The Leica partnership has produced something special. The 1-inch sensor captures photos with depth and character that no other phone can match. The variable aperture gives genuine creative control. Build quality is flagship-grade. HyperOS is much better than MIUI — cleaner and more intuitive. 90W charging means you never worry about battery.", overallScore: 8.8, pros: "Incredible Leica camera system, 1-inch sensor, fast charging, premium build", cons: "Limited global availability, expensive, large camera bump", ratings: { "design": 8.5, "display-rating": 9, "camera-rating": 10, "performance-rating": 9, "battery-rating": 9, "software-rating": 7.5, "value-rating": 8 } },
+    { phoneSlug: "xiaomi-14-ultra", userId: 2, title: "Photography Enthusiast's Dream", content: "The variable aperture (f/1.63-f/4.0) on the main sensor is a genuine innovation — it changes how you shoot on a phone. Low-light performance is exceptional. The dedicated camera grip accessory makes it feel like a real camera. However, the software still has some rough edges compared to Samsung or Apple.", overallScore: 8.5, pros: "Variable aperture, exceptional low-light, Leica color science, camera grip", cons: "Software not as polished, camera bump is huge, global availability", ratings: { "design": 8, "display-rating": 9, "camera-rating": 9.5, "performance-rating": 8.5, "battery-rating": 8.5, "software-rating": 7, "value-rating": 8 } },
+    { phoneSlug: "xiaomi-14-ultra", userId: 3, title: "Leica Magic in Your Pocket", content: "Coming from a Leica Q3 user, the color rendition and bokeh character from this phone are remarkably close to the real thing. The photos have a look that no other phone brand achieves. Snapdragon 8 Gen 3 handles everything with ease. Battery life is excellent with 90W charging. Worth every penny if photography is your passion.", overallScore: 9.0, pros: "Authentic Leica look, fantastic sensor, fast charging, great performance", cons: "Heavy and thick, not widely available, pricey", ratings: { "design": 8, "display-rating": 8.5, "camera-rating": 10, "performance-rating": 9, "battery-rating": 9, "software-rating": 7.5, "value-rating": 8.5 } },
+
+    // OnePlus 12 reviews
+    { phoneSlug: "oneplus-12", userId: 1, title: "Flagship Killer Returns", content: "OnePlus is back to form. The OnePlus 12 offers Snapdragon 8 Gen 3 performance, a stunning 2K display, and 100W charging — all for $200 less than Samsung or Apple flagships. The Hasselblad camera tuning produces great colors, though it can't quite match the S24 Ultra or iPhone 15 Pro Max in detail. OxygenOS 14 is clean and fast.", overallScore: 8.5, pros: "Excellent value, blazing fast charging, great display, smooth software", cons: "Camera not quite flagship-tier, no wireless charging in some models", ratings: { "design": 8.5, "display-rating": 9, "camera-rating": 8, "performance-rating": 9.5, "battery-rating": 9, "software-rating": 8.5, "value-rating": 9.5 } },
+    { phoneSlug: "oneplus-12", userId: 3, title: "Speed Champion", content: "100W wired charging means 0-100% in about 25 minutes. That alone makes this phone worth considering. Add in the Snapdragon 8 Gen 3 with 16GB RAM and you have arguably the fastest Android phone available. The Alert Slider is a unique and useful feature. Camera is good but not industry-leading.", overallScore: 8.3, pros: "Fastest charging, excellent performance, Alert Slider, great value", cons: "Camera inconsistent in low light, OxygenOS losing identity", ratings: { "design": 8, "display-rating": 8.5, "camera-rating": 7.5, "performance-rating": 9.5, "battery-rating": 9.5, "software-rating": 8, "value-rating": 9 } },
+    { phoneSlug: "oneplus-12", userId: 4, title: "Best Bang for Buck Flagship", content: "If you want the best specs per dollar, the OnePlus 12 is the answer. Every benchmark test tops Samsung and Apple, the display is gorgeous with 4500 nits peak brightness, and the haptics are surprisingly refined. Battery life is phenomenal. Only the camera holds it back from being the overall best.", overallScore: 8.6, pros: "Unbeatable performance per dollar, excellent battery, great display", cons: "Camera processing inconsistent, no IP68 in all markets", ratings: { "design": 8.5, "display-rating": 9, "camera-rating": 7.5, "performance-rating": 10, "battery-rating": 9, "software-rating": 8, "value-rating": 10 } },
+
+    // Nothing Phone (2a) reviews
+    { phoneSlug: "nothing-phone-2a", userId: 0, title: "Best Budget Phone of 2024", content: "The Nothing Phone (2a) proves you don't need to spend $1,000+ for a good smartphone experience. The Glyph interface is fun and genuinely useful for silent notifications. Nothing OS is incredibly clean — feels like what stock Android should be. Camera is decent for the price. The transparent design turns heads everywhere.", overallScore: 8.0, pros: "Unique design, clean software, great price, useful Glyph interface", cons: "Average camera, no wireless charging, plastic frame", ratings: { "design": 9, "display-rating": 7.5, "camera-rating": 7, "performance-rating": 7.5, "battery-rating": 8, "software-rating": 9, "value-rating": 9.5 } },
+    { phoneSlug: "nothing-phone-2a", userId: 2, title: "Style Meets Substance", content: "Nothing continues to be the most interesting brand in smartphones. The Phone (2a) at $349 offers a 120Hz AMOLED display, capable MediaTek Dimensity 7200 Pro, and that iconic transparent design. Nothing OS 2.5 is smooth and bloat-free. The camera won't compete with flagships, but it's perfectly fine for social media.", overallScore: 7.8, pros: "Head-turning design, excellent software, AMOLED display at this price", cons: "Mediocre camera, no wireless charging, limited US availability", ratings: { "design": 9.5, "display-rating": 7.5, "camera-rating": 6.5, "performance-rating": 7, "battery-rating": 7.5, "software-rating": 9, "value-rating": 9 } },
+    { phoneSlug: "nothing-phone-2a", userId: 4, title: "Refreshingly Different", content: "In a world of identical black rectangles, the Nothing Phone (2a) stands out. The Glyph lights are more than a gimmick — I use them for notification filtering daily. Performance is snappy for everyday tasks, and the display looks great. At this price point, it easily beats anything Samsung or Motorola offers.", overallScore: 8.2, pros: "Unique transparent design, Glyph interface, clean OS, great value", cons: "Camera average, no water resistance, limited accessories", ratings: { "design": 10, "display-rating": 7.5, "camera-rating": 7, "performance-rating": 7.5, "battery-rating": 8, "software-rating": 8.5, "value-rating": 9.5 } },
+  ];
+
+  for (const reviewData of reviewsData) {
+    const phoneId = phoneMap[reviewData.phoneSlug];
+    if (!phoneId) continue;
+    
+    const existingReview = await prisma.review.findFirst({
+      where: { phoneId, userId: reviewerUsers[reviewData.userId], title: reviewData.title },
+    });
+    if (existingReview) continue;
+
+    const review = await prisma.review.create({
+      data: {
+        phoneId,
+        userId: reviewerUsers[reviewData.userId],
+        type: "user",
+        title: reviewData.title,
+        content: reviewData.content,
+        overallScore: reviewData.overallScore,
+        pros: reviewData.pros,
+        cons: reviewData.cons,
+        isVerified: true,
+        status: "approved",
+      },
+    });
+
+    // Add category ratings
+    for (const [catSlug, score] of Object.entries(reviewData.ratings)) {
+      const catId = ratingCatMap[catSlug];
+      if (catId) {
+        await prisma.reviewRating.create({
+          data: {
+            reviewId: review.id,
+            categoryId: catId,
+            score: score as number,
+          },
+        });
+      }
+    }
+  }
+
+  // Update phone review scores
+  for (const phone of allPhones) {
+    const reviews = await prisma.review.findMany({
+      where: { phoneId: phone.id, status: "approved" },
+      select: { overallScore: true },
+    });
+    if (reviews.length > 0) {
+      const avg = reviews.reduce((sum, r) => sum + (r.overallScore || 0), 0) / reviews.length;
+      await prisma.phone.update({
+        where: { id: phone.id },
+        data: { reviewScore: Math.round(avg * 10) / 10, reviewCount: reviews.length },
+      });
+    }
+  }
+
+  // ==================== SEED ARTICLES ====================
+  console.log("🌱 Seeding articles...");
+
+  const newsCategory = await prisma.category.findUnique({ where: { slug: "news" } });
+  const reviewsCategory = await prisma.category.findUnique({ where: { slug: "reviews" } });
+
+  const articlesData = [
+    {
+      title: "Best Camera Phones of 2024: Samsung, Apple, and Xiaomi Compared",
+      slug: "best-camera-phones-2024-compared",
+      excerpt: "We compare the top camera phones of 2024 — Samsung Galaxy S24 Ultra, Apple iPhone 15 Pro Max, and Xiaomi 14 Ultra — to find which one truly captures the best photos.",
+      content: `## Best Camera Phones of 2024
+
+The smartphone camera war has never been more competitive. In 2024, three phones stand above the rest: the **Samsung Galaxy S24 Ultra** with its 200MP sensor and 100x Space Zoom, the **Apple iPhone 15 Pro Max** with its 5x telephoto and ProRes video, and the **Xiaomi 14 Ultra** with its Leica-tuned 1-inch sensor.
+
+### Samsung Galaxy S24 Ultra
+Samsung's flagship leads in sheer resolution and zoom range. The 200MP main sensor captures extraordinary detail, and the 100x Space Zoom — while not always practical — produces surprisingly usable results at 30x-50x. AI-powered features like Nightography and Object Detection set it apart.
+
+### Apple iPhone 15 Pro Max
+Apple's approach prioritizes consistency and video. The 48MP main sensor with a 5x telephoto produces the most reliable results across all lighting conditions. ProRes video recording and the new Log profile make it the undisputed king of mobile videography.
+
+### Xiaomi 14 Ultra
+The wildcard of the group, Xiaomi's partnership with Leica has produced something special. The 1-inch sensor with variable aperture (f/1.63-f/4.0) captures photos with a character and depth that neither Samsung nor Apple can replicate. It's the closest any phone has come to feeling like a real camera.
+
+### Verdict
+- **Best for detail and zoom**: Samsung Galaxy S24 Ultra
+- **Best for video**: Apple iPhone 15 Pro Max  
+- **Best for photography enthusiasts**: Xiaomi 14 Ultra
+
+All three are exceptional cameras that happen to be phones. Your choice depends on what matters most to you.`,
+      type: "review",
+      status: "published",
+      isFeatured: true,
+      categorySlug: "reviews",
+      phoneSlugs: ["samsung-galaxy-s24-ultra", "apple-iphone-15-pro-max", "xiaomi-14-ultra"],
+    },
+    {
+      title: "OnePlus 12 vs Nothing Phone (2a): Flagship vs Budget — Which Is the Better Value?",
+      slug: "oneplus-12-vs-nothing-phone-2a-value-comparison",
+      excerpt: "Is the OnePlus 12 worth three times the price of the Nothing Phone (2a)? We break down the real-world differences to help you decide.",
+      content: `## OnePlus 12 vs Nothing Phone (2a): The Value Debate
+
+In the Android world, value is king. The **OnePlus 12** at $799 delivers Snapdragon 8 Gen 3 performance with 100W charging, while the **Nothing Phone (2a)** at $349 offers a unique design with clean software. But which gives you more for your money?
+
+### Performance
+The OnePlus 12 is in a different league with its Snapdragon 8 Gen 3 and up to 16GB RAM. However, for everyday tasks — social media, messaging, web browsing — the Nothing Phone (2a)'s Dimensity 7200 Pro handles everything without breaking a sweat. You'll only notice the difference in gaming and heavy multitasking.
+
+### Camera
+The OnePlus 12's Hasselblad-tuned triple camera produces significantly better photos, especially in low light and with the telephoto lens. The Nothing Phone (2a)'s camera is adequate for social media but lacks the versatility and consistency of a true flagship.
+
+### Software & Design
+This is where Nothing shines. Nothing OS is arguably the cleanest Android skin available, and the transparent design with Glyph interface is genuinely innovative. OxygenOS 14 is good, but it's become increasingly similar to ColorOS.
+
+### Battery & Charging
+OnePlus wins with 100W wired charging (0-100% in 25 minutes) and a larger 5400mAh battery. The Nothing Phone (2a) has 45W charging and a 5000mAh battery — perfectly acceptable, but not exceptional.
+
+### Verdict
+The OnePlus 12 is the better phone objectively, but the Nothing Phone (2a) offers 80% of the experience at 44% of the price. For most users, the Nothing Phone (2a) is the smarter purchase.`,
+      type: "news",
+      status: "published",
+      isFeatured: false,
+      categorySlug: "comparisons",
+      phoneSlugs: ["oneplus-12", "nothing-phone-2a"],
+    },
+  ];
+
+  for (const articleData of articlesData) {
+    const { phoneSlugs, categorySlug, ...articleFields } = articleData;
+    const catId = categorySlug === "reviews" ? reviewsCategory?.id : newsCategory?.id;
+    const comparisonCat = await prisma.category.findUnique({ where: { slug: categorySlug } });
+    
+    const existingArticle = await prisma.article.findUnique({ where: { slug: articleFields.slug } });
+    if (existingArticle) continue;
+
+    const article = await prisma.article.create({
+      data: {
+        ...articleFields,
+        authorId: adminUser.id,
+        categoryId: comparisonCat?.id || catId || null,
+        publishedAt: new Date(),
+      },
+    });
+
+    // Link phones to article
+    for (const phoneSlug of phoneSlugs) {
+      const pId = phoneMap[phoneSlug];
+      if (pId) {
+        await prisma.articlePhone.create({
+          data: { articleId: article.id, phoneId: pId },
+        });
+      }
+    }
+  }
+
+  // ==================== SEED COMPANY ====================
+  console.log("🌱 Seeding company...");
+
+  const company = await prisma.company.upsert({
+    where: { slug: "samsung-electronics" },
+    update: {},
+    create: {
+      name: "Samsung Electronics",
+      slug: "samsung-electronics",
+      description: "Samsung Electronics is a South Korean multinational electronics corporation and one of the world's largest smartphone manufacturers, known for the Galaxy series of smartphones and tablets.",
+      website: "https://samsung.com",
+      type: "brand",
+      isVerified: true,
+      isActive: true,
+    },
+  });
+
+  // ==================== SEED ADVERTISER + CAMPAIGN ====================
+  console.log("🌱 Seeding advertiser and campaign...");
+
+  const advertiser = await prisma.advertiser.upsert({
+    where: { id: "seed-advertiser-samsung" },
+    update: {},
+    create: {
+      id: "seed-advertiser-samsung",
+      companyId: company.id,
+      name: "Samsung Mobile Marketing",
+      email: "marketing@samsung.com",
+      contactPerson: "David Kim",
+      balance: 5000,
+      isActive: true,
+    },
+  });
+
+  const campaign = await prisma.campaign.upsert({
+    where: { id: "seed-campaign-s24ultra" },
+    update: {},
+    create: {
+      id: "seed-campaign-s24ultra",
+      advertiserId: advertiser.id,
+      name: "Galaxy S24 Ultra Launch Campaign",
+      type: "banner",
+      pricingModel: "cpm",
+      status: "active",
+      budgetTotal: 2000,
+      budgetDaily: 100,
+      spentTotal: 347.50,
+      bidAmount: 2.50,
+      startDate: "2024-01-15",
+      endDate: "2024-12-31",
+      priority: 10,
+      frequencyCap: 3,
+      targeting: JSON.stringify({ brands: ["samsung"], categories: ["flagship"], countries: ["US", "UK", "DE"] }),
+    },
+  });
+
+  // Create ad creative
+  const samsungPhoneId = phoneMap["samsung-galaxy-s24-ultra"];
+  await prisma.adCreative.upsert({
+    where: { id: "seed-creative-s24ultra" },
+    update: {},
+    create: {
+      id: "seed-creative-s24ultra",
+      campaignId: campaign.id,
+      title: "Galaxy S24 Ultra — Redefine Possible",
+      description: "Experience the ultimate smartphone with 200MP camera, AI features, and titanium design. Starting at $1,299.",
+      image: "/phones/samsung-galaxy-s24-ultra.svg",
+      clickUrl: "https://samsung.com/galaxy-s24-ultra",
+      phoneId: samsungPhoneId || null,
+      isActive: true,
+    },
+  });
+
+  // Seed some ad impressions and clicks for realistic metrics
+  const homeHeroSlot = await prisma.adSlot.findUnique({ where: { slug: "home-hero" } });
+  const phoneSidebarSlot = await prisma.adSlot.findUnique({ where: { slug: "phone-sidebar" } });
+
+  if (homeHeroSlot) {
+    // Create sample impressions
+    for (let i = 0; i < 139; i++) {
+      await prisma.adImpression.create({
+        data: {
+          campaignId: campaign.id,
+          creativeId: "seed-creative-s24ultra",
+          slotId: homeHeroSlot.id,
+          userFingerprint: `user_${Math.floor(Math.random() * 50)}`,
+          country: ["US", "UK", "DE"][Math.floor(Math.random() * 3)],
+          createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+        },
+      });
+    }
+    // Create sample clicks
+    for (let i = 0; i < 12; i++) {
+      await prisma.adClick.create({
+        data: {
+          campaignId: campaign.id,
+          creativeId: "seed-creative-s24ultra",
+          slotId: homeHeroSlot.id,
+          userFingerprint: `user_${Math.floor(Math.random() * 50)}`,
+          country: ["US", "UK", "DE"][Math.floor(Math.random() * 3)],
+          createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+        },
+      });
+    }
+  }
+
   console.log("✅ Database seeded successfully!");
   console.log("\n📋 Admin Login:");
   console.log("   Email: admin@mobileplatform.com");
-  console.log("   Password: admin123");
+  console.log("   Password: Mp@dmin2024!Secure");
 }
 
 main()

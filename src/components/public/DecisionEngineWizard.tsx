@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 interface CategoryScore {
@@ -335,7 +336,7 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
                     : "border-gray-200 hover:border-blue-300"
                 }`}
               >
-                <span className="text-2xl">📱</span>
+                <span className="text-2xl">{brand.name.charAt(0)}</span>
                 <p className="text-sm font-semibold mt-1 text-gray-700">{brand.name}</p>
               </button>
             ))}
@@ -414,8 +415,12 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
                       )}
                       <div className="p-5">
                         <div className="flex items-start gap-4">
-                          <div className="flex-shrink-0 w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center text-3xl">
-                            📱
+                          <div className="flex-shrink-0 w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
+                            {rec.phone.mainImage ? (
+                              <Image src={rec.phone.mainImage} alt={rec.phone.name} width={56} height={56} className="w-full h-full object-contain" />
+                            ) : (
+                              <span className="text-3xl">📱</span>
+                            )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between">

@@ -5,9 +5,20 @@ import crypto from "crypto";
 import { registerSchema } from "@/lib/validations/schemas";
 import { ZodError } from "zod";
 import { createAuditLog } from "@/lib/audit";
+import { checkRateLimit, getClientIdentifier } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 registration attempts per minute per IP
+    const clientId = getClientIdentifier(request);
+    const rateLimit = checkRateLimit(`register:${clientId}`, { maxRequests: 5, windowSeconds: 60 });
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { success: false, error: "Too many registration attempts. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(Math.ceil((rateLimit.resetAt - Date.now()) / 1000)) } }
+      );
+    }
+
     const body = await request.json();
     const validated = registerSchema.parse(body);
 
