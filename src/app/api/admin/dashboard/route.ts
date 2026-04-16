@@ -10,6 +10,10 @@ export async function GET() {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
+    const now = new Date();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
     const [
       phoneCount,
       brandCount,
@@ -17,8 +21,37 @@ export async function GET() {
       userCount,
       reviewCount,
       campaignCount,
+      categoryCount,
+      tagCount,
+      companyCount,
+      mediaCount,
+      // Recent items
       recentPhones,
       recentAuditLogs,
+      // Review stats
+      pendingReviews,
+      approvedReviews,
+      rejectedReviews,
+      // Article stats
+      publishedArticles,
+      draftArticles,
+      // Ad stats
+      totalImpressions,
+      totalClicks,
+      activeCampaigns,
+      // Moderation
+      pendingReports,
+      // Content growth (last 30 days)
+      newPhonesThisMonth,
+      newUsersThisMonth,
+      newReviewsThisMonth,
+      newArticlesThisMonth,
+      // Recent errors/warnings from audit log
+      recentErrors,
+      // Phone view stats
+      totalPhoneViews,
+      // Recent 7 days audit activity by day
+      recentActivity,
     ] = await Promise.all([
       prisma.phone.count(),
       prisma.brand.count(),
@@ -26,17 +59,65 @@ export async function GET() {
       prisma.user.count(),
       prisma.review.count(),
       prisma.campaign.count(),
+      prisma.category.count(),
+      prisma.tag.count(),
+      prisma.company.count(),
+      prisma.media.count(),
+      // Recent phones
       prisma.phone.findMany({
         take: 5,
         orderBy: { createdAt: "desc" },
         include: { brand: { select: { name: true } } },
       }),
+      // Recent audit logs
       prisma.auditLog.findMany({
-        take: 10,
+        take: 15,
         orderBy: { createdAt: "desc" },
         include: { user: { select: { name: true, email: true } } },
       }),
+      // Review stats
+      prisma.review.count({ where: { status: "pending" } }),
+      prisma.review.count({ where: { status: "approved" } }),
+      prisma.review.count({ where: { status: "rejected" } }),
+      // Article stats
+      prisma.article.count({ where: { status: "published" } }),
+      prisma.article.count({ where: { status: "draft" } }),
+      // Ad stats
+      prisma.adImpression.count(),
+      prisma.adClick.count(),
+      prisma.campaign.count({ where: { status: "active" } }),
+      // Moderation
+      prisma.moderationReport.count({ where: { status: "pending" } }),
+      // Growth (last 30 days)
+      prisma.phone.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      prisma.user.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      prisma.review.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      prisma.article.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+      // Recent errors (DELETE actions and failed items)
+      prisma.auditLog.findMany({
+        where: {
+          OR: [
+            { action: "DELETE" },
+            { action: { contains: "ERROR" } },
+            { action: { contains: "FAIL" } },
+          ],
+          createdAt: { gte: sevenDaysAgo },
+        },
+        take: 5,
+        orderBy: { createdAt: "desc" },
+        include: { user: { select: { name: true } } },
+      }),
+      // Total phone views
+      prisma.phone.aggregate({ _sum: { viewCount: true } }),
+      // Activity per day (last 7 days)
+      prisma.auditLog.groupBy({
+        by: ["action"],
+        where: { createdAt: { gte: sevenDaysAgo } },
+        _count: true,
+      }),
     ]);
+
+    const ctr = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : "0.00";
 
     return NextResponse.json({
       success: true,
@@ -48,9 +129,42 @@ export async function GET() {
           users: userCount,
           reviews: reviewCount,
           campaigns: campaignCount,
+          categories: categoryCount,
+          tags: tagCount,
+          companies: companyCount,
+          media: mediaCount,
         },
+        reviewStats: {
+          pending: pendingReviews,
+          approved: approvedReviews,
+          rejected: rejectedReviews,
+          total: reviewCount,
+        },
+        articleStats: {
+          published: publishedArticles,
+          draft: draftArticles,
+          total: articleCount,
+        },
+        adStats: {
+          impressions: totalImpressions,
+          clicks: totalClicks,
+          ctr,
+          activeCampaigns,
+        },
+        moderationStats: {
+          pendingReports,
+        },
+        growth: {
+          phones: newPhonesThisMonth,
+          users: newUsersThisMonth,
+          reviews: newReviewsThisMonth,
+          articles: newArticlesThisMonth,
+        },
+        totalPhoneViews: totalPhoneViews._sum.viewCount || 0,
         recentPhones,
         recentAuditLogs,
+        recentErrors,
+        activityBreakdown: recentActivity,
       },
     });
   } catch (error) {

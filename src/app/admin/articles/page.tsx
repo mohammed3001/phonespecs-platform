@@ -30,6 +30,16 @@ export default function AdminArticlesPage() {
       .catch(() => setLoading(false));
   }, []);
 
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Delete article "${title}"?`)) return;
+    try {
+      const res = await fetch(`/api/admin/articles?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) setArticles((prev) => prev.filter((a) => a.id !== id));
+      else alert(data.error);
+    } catch { alert("Network error"); }
+  };
+
   const statusColors: Record<string, string> = {
     draft: "bg-gray-100 text-gray-600",
     published: "bg-green-100 text-green-700",
@@ -112,10 +122,13 @@ export default function AdminArticlesPage() {
                         ? new Date(article.publishedAt).toLocaleDateString()
                         : new Date(article.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <Link href={`/admin/articles/${article.id}`} className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    <td className="px-4 py-3 text-right space-x-2">
+                      <Link href={`/admin/articles/${article.id}/edit`} className="text-blue-600 hover:text-blue-800 text-sm font-medium">
                         Edit
                       </Link>
+                      <button onClick={() => handleDelete(article.id, article.title)} className="text-red-500 hover:text-red-700 text-sm font-medium">
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))
