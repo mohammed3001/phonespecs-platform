@@ -1279,7 +1279,7 @@ The OnePlus 12 is the better phone objectively, but the Nothing Phone (2a) offer
       spentTotal: 347.50,
       bidAmount: 2.50,
       startDate: "2024-01-15",
-      endDate: "2024-12-31",
+      endDate: "2027-12-31",
       priority: 10,
       frequencyCap: 3,
       targeting: JSON.stringify({ brands: ["samsung"], categories: ["flagship"], countries: ["US", "UK", "DE"] }),

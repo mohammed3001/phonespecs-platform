@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Icon } from "@iconify/react";
+import { Icon } from "@/components/shared/Icon";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });

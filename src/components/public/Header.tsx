@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Icon } from "@iconify/react";
+import { Icon } from "@/components/shared/Icon";
 
 const navItems = [
   { name: "Phones", href: "/phones", icon: "mdi:cellphone" },

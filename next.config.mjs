@@ -46,7 +46,7 @@ const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   experimental: {
-    optimizePackageImports: ["@iconify/react", "recharts", "date-fns"],
+    optimizePackageImports: ["recharts", "date-fns"],
   },
 };
 

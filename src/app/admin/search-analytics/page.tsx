@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { Icon } from "@iconify/react";
+import { Icon } from "@/components/shared/Icon";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";

@@ -8,7 +8,7 @@ import Footer from "@/components/public/Footer";
 import { SpecIcon, GroupIcon } from "@/components/shared/SpecIcon";
 import { JsonLd, generateBreadcrumbJsonLd, generateCollectionPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
-import { Icon } from "@iconify/react";
+import { Icon } from "@/components/shared/Icon";
 import ComparisonVerdict from "@/components/public/ComparisonVerdict";
 
 async function getComparisonPhones(slug: string) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Icon } from "@iconify/react";
+import { Icon } from "@/components/shared/Icon";
 
 interface DashboardStats {
   phones: number;

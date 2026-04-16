@@ -6,7 +6,7 @@ import Footer from "@/components/public/Footer";
 import PhoneCard from "@/components/public/PhoneCard";
 import { JsonLd, generateItemListJsonLd, generateBreadcrumbJsonLd, generateCollectionPageJsonLd } from "@/lib/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
-import { Icon } from "@iconify/react";
+import { Icon } from "@/components/shared/Icon";
 
 export const metadata: Metadata = {
   title: "Best Battery Life Phones 2025 - Longest Lasting Smartphones",

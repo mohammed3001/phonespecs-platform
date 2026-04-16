@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Icon } from "@iconify/react";
+import { Icon } from "@/components/shared/Icon";
 
 interface ReviewEntry {
   id: string;

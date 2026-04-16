@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Icon } from "@iconify/react";
+import { Icon } from "@/components/shared/Icon";
 
 export interface BreadcrumbItem {
   label: string;

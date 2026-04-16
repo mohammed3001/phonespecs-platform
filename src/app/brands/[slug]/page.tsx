@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Icon } from "@iconify/react";
+import { Icon } from "@/components/shared/Icon";
 import prisma from "@/lib/prisma";
 import Header from "@/components/public/Header";
 import Footer from "@/components/public/Footer";
