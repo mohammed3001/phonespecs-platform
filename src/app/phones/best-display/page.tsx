@@ -56,7 +56,7 @@ export default async function BestDisplayPage() {
   const phones = await getBestDisplayPhones();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateItemListJsonLd(
           phones.map((p, i) => ({ name: p.name, slug: p.slug, position: i + 1 })),
@@ -104,7 +104,7 @@ export default async function BestDisplayPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 flex-1">
         <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-gray-500">{phones.length} phones ranked by display quality</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{phones.length} phones ranked by display quality</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {phones.map((phone, index) => (
@@ -121,10 +121,10 @@ export default async function BestDisplayPage() {
           ))}
         </div>
 
-        <section className="mt-16 bg-white rounded-2xl border border-gray-200 p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">How We Rank Displays</h2>
+        <section className="mt-16 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">How We Rank Displays</h2>
           <div className="prose prose-gray max-w-none">
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Display rankings consider screen size, pixel density, panel type (AMOLED, IPS LCD, LTPO),
               refresh rate, peak brightness, color accuracy, and HDR support. We value a balance of 
               size, quality, and power efficiency.
@@ -133,25 +133,25 @@ export default async function BestDisplayPage() {
         </section>
 
         <section className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link href="/phones/best-camera-phones" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-camera-phones" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:camera" className="w-6 h-6 text-blue-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Camera</p>
-              <p className="text-xs text-gray-500">Top photography phones</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Camera</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Top photography phones</p>
             </div>
           </Link>
-          <Link href="/phones/best-performance" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-performance" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:speedometer" className="w-6 h-6 text-red-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Performance</p>
-              <p className="text-xs text-gray-500">Most powerful phones</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Performance</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Most powerful phones</p>
             </div>
           </Link>
-          <Link href="/phones/best-battery-life" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-battery-life" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:battery-high" className="w-6 h-6 text-green-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Battery</p>
-              <p className="text-xs text-gray-500">Longest lasting phones</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Battery</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Longest lasting phones</p>
             </div>
           </Link>
         </section>

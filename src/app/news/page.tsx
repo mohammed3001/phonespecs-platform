@@ -54,18 +54,18 @@ export default async function NewsPage() {
   }));
 
   const categoryColors: Record<string, string> = {
-    Rumor: "bg-purple-50 text-purple-700",
-    Review: "bg-blue-50 text-blue-700",
+    Rumor: "bg-purple-50 dark:bg-purple-900/20 text-purple-700",
+    Review: "bg-blue-50 dark:bg-blue-900/20 text-blue-700",
     Leak: "bg-amber-50 text-amber-700",
     News: "bg-emerald-50 text-emerald-700",
     Comparison: "bg-rose-50 text-rose-700",
     Guide: "bg-cyan-50 text-cyan-700",
-    Analysis: "bg-indigo-50 text-indigo-700",
+    Analysis: "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700",
     Technology: "bg-teal-50 text-teal-700",
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateCollectionPageJsonLd("Smartphone News & Reviews", "Latest smartphone news, expert reviews, and industry insights.", "/news"),
         generateBreadcrumbJsonLd([
@@ -94,8 +94,8 @@ export default async function NewsPage() {
         {articles.length === 0 ? (
           <div className="text-center py-20">
             <span className="text-6xl mb-6 block">📰</span>
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">No Articles Yet</h2>
-            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">No Articles Yet</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
               Articles are managed from the admin panel. Published articles will appear here automatically.
             </p>
           </div>
@@ -103,7 +103,7 @@ export default async function NewsPage() {
           <>
             {/* Featured Article */}
             <div className="mb-10">
-              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl hover:shadow-blue-600/5 transition-all duration-300 group">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:shadow-blue-600/5 transition-all duration-300 group">
                 <div className="flex flex-col md:flex-row">
                   <div className="md:w-2/5 h-64 md:h-auto bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center">
                     {articles[0].coverImage ? (
@@ -114,16 +114,16 @@ export default async function NewsPage() {
                   </div>
                   <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
                     <div className="flex items-center gap-3 mb-3">
-                      <span className={`px-2.5 py-0.5 rounded-md text-xs font-semibold ${categoryColors[articles[0].category] || "bg-gray-50 text-gray-700"}`}>
+                      <span className={`px-2.5 py-0.5 rounded-md text-xs font-semibold ${categoryColors[articles[0].category] || "bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200"}`}>
                         {articles[0].category}
                       </span>
                       <span className="text-xs text-gray-400">{articles[0].date}</span>
                       <span className="text-xs text-gray-400">{articles[0].readTime}</span>
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 group-hover:text-blue-600 transition-colors">
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">
                       {articles[0].title}
                     </h2>
-                    <p className="mt-3 text-gray-500 leading-relaxed">{articles[0].excerpt}</p>
+                    <p className="mt-3 text-gray-500 dark:text-gray-400 leading-relaxed">{articles[0].excerpt}</p>
                     <div className="mt-5">
                       <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 group-hover:gap-2.5 transition-all">
                         Read Article
@@ -141,7 +141,7 @@ export default async function NewsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {articles.slice(1).map((article) => (
                 <div key={article.id} className="group">
-                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl hover:shadow-blue-600/5 hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:shadow-blue-600/5 hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
                     <div className="h-44 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                       {article.coverImage ? (
                         <img src={article.coverImage} alt={article.title} className="w-full h-full object-cover" />
@@ -151,15 +151,15 @@ export default async function NewsPage() {
                     </div>
                     <div className="p-5 flex-1 flex flex-col">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className={`px-2.5 py-0.5 rounded-md text-xs font-semibold ${categoryColors[article.category] || "bg-gray-50 text-gray-700"}`}>
+                        <span className={`px-2.5 py-0.5 rounded-md text-xs font-semibold ${categoryColors[article.category] || "bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200"}`}>
                           {article.category}
                         </span>
                         <span className="text-xs text-gray-400">{article.readTime}</span>
                       </div>
-                      <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors leading-tight">
                         {article.title}
                       </h3>
-                      <p className="mt-2 text-sm text-gray-500 line-clamp-2 flex-1">
+                      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 line-clamp-2 flex-1">
                         {article.excerpt}
                       </p>
                       <div className="mt-4 flex items-center justify-between">

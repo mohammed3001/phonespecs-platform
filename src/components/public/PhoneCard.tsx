@@ -34,7 +34,7 @@ interface PhoneData {
 const statusConfig: Record<string, { label: string; color: string }> = {
   available: { label: "Available", color: "text-emerald-700 bg-emerald-50 ring-emerald-600/20" },
   coming_soon: { label: "Coming Soon", color: "text-amber-700 bg-amber-50 ring-amber-600/20" },
-  discontinued: { label: "Discontinued", color: "text-gray-600 bg-gray-100 ring-gray-500/20" },
+  discontinued: { label: "Discontinued", color: "text-gray-600 dark:text-gray-300 bg-gray-100 ring-gray-500/20" },
   rumored: { label: "Rumored", color: "text-violet-700 bg-violet-50 ring-violet-600/20" },
 };
 
@@ -52,7 +52,7 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
   if (variant === "compact") {
     return (
       <Link href={`/phones/${phone.slug}`} className="block group">
-        <div className="bg-white rounded-xl border border-gray-200 hover:border-blue-200 hover:shadow-md transition-all duration-300 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-200 hover:shadow-md transition-all duration-300 p-4">
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:from-blue-50 group-hover:to-violet-50 transition-colors overflow-hidden">
               {phone.mainImage ? (
@@ -62,8 +62,8 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-900 text-sm truncate group-hover:text-blue-600 transition-colors">{phone.name}</h3>
-              <p className="text-xs text-gray-500">{phone.brand.name}</p>
+              <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate group-hover:text-blue-600 transition-colors">{phone.name}</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{phone.brand.name}</p>
             </div>
             <div className="text-right flex-shrink-0">
               <p className="font-bold text-blue-600 text-sm">
@@ -78,7 +78,7 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
 
   return (
     <Link href={`/phones/${phone.slug}`} className="block group">
-      <div className={`bg-white rounded-2xl border border-gray-200 hover:border-blue-200 transition-all duration-300 overflow-hidden ${
+      <div className={`bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-200 transition-all duration-300 overflow-hidden ${
         variant === "featured" 
           ? "hover:shadow-xl hover:shadow-blue-600/5 hover:-translate-y-1" 
           : "hover:shadow-lg hover:shadow-black/5"
@@ -102,7 +102,7 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">{phone.brand.name}</p>
-                  <h3 className={`font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors mt-0.5 ${
+                  <h3 className={`font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors mt-0.5 ${
                     variant === "featured" ? "text-lg" : "text-base"
                   }`}>
                     {phone.name}
@@ -146,7 +146,7 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
                 {keySpecs.map((s) => (
                   <div key={s.spec.key} className="flex items-center gap-1.5">
                     <SpecIcon specKey={s.spec.key} size={14} className="text-blue-500 flex-shrink-0" />
-                    <span className="text-xs text-gray-700 font-medium truncate">
+                    <span className="text-xs text-gray-700 dark:text-gray-200 font-medium truncate">
                       {s.value}{s.spec.unit ? ` ${s.spec.unit}` : ""}
                     </span>
                   </div>
@@ -164,7 +164,7 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
                 {extraSpecs.map((s) => (
                   <div key={s.spec.key} className="flex items-center gap-1.5">
                     <SpecIcon specKey={s.spec.key} size={12} className="text-gray-400 flex-shrink-0" />
-                    <span className="text-[11px] text-gray-500 truncate">{s.value}</span>
+                    <span className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{s.value}</span>
                   </div>
                 ))}
               </div>

@@ -137,47 +137,47 @@ export default function NewCampaignPage() {
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Create Campaign</h1>
-          <p className="text-sm text-gray-500 mt-1">Set up a new advertising campaign with targeting and creatives</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Create Campaign</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Set up a new advertising campaign with targeting and creatives</p>
         </div>
         <button
           onClick={() => router.back()}
-          className="text-sm text-gray-500 hover:text-gray-700"
+          className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-200"
         >
           ← Back to Campaigns
         </button>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Campaign Details</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Campaign Details</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Campaign Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Campaign Name *</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g., Samsung Galaxy S24 Launch"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Advertiser *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Advertiser *</label>
               <select
                 value={form.advertiserId}
                 onChange={(e) => setForm({ ...form, advertiserId: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                className="w-full border rounded-lg px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="">Select Advertiser</option>
@@ -192,10 +192,10 @@ export default function NewCampaignPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Campaign Type</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Campaign Type</label>
               <div className="space-y-2">
                 {campaignTypes.map((t) => (
-                  <label key={t.value} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${form.type === t.value ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:bg-gray-50"}`}>
+                  <label key={t.value} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${form.type === t.value ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"}`}>
                     <input
                       type="radio"
                       name="type"
@@ -205,8 +205,8 @@ export default function NewCampaignPage() {
                       className="text-blue-600"
                     />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{t.label}</p>
-                      <p className="text-xs text-gray-500">{t.desc}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{t.label}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{t.desc}</p>
                     </div>
                   </label>
                 ))}
@@ -214,10 +214,10 @@ export default function NewCampaignPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pricing Model</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Pricing Model</label>
               <div className="space-y-2">
                 {pricingModels.map((m) => (
-                  <label key={m.value} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${form.pricingModel === m.value ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:bg-gray-50"}`}>
+                  <label key={m.value} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${form.pricingModel === m.value ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"}`}>
                     <input
                       type="radio"
                       name="pricingModel"
@@ -227,8 +227,8 @@ export default function NewCampaignPage() {
                       className="text-blue-600"
                     />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{m.label}</p>
-                      <p className="text-xs text-gray-500">{m.desc}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{m.label}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{m.desc}</p>
                     </div>
                   </label>
                 ))}
@@ -238,12 +238,12 @@ export default function NewCampaignPage() {
         </div>
 
         {/* Budget & Schedule */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Budget & Schedule</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Budget & Schedule</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Total Budget ($)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Total Budget ($)</label>
               <input
                 type="number"
                 step="0.01"
@@ -254,7 +254,7 @@ export default function NewCampaignPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Daily Budget ($)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Daily Budget ($)</label>
               <input
                 type="number"
                 step="0.01"
@@ -265,7 +265,7 @@ export default function NewCampaignPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bid Amount ($)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Bid Amount ($)</label>
               <input
                 type="number"
                 step="0.01"
@@ -279,7 +279,7 @@ export default function NewCampaignPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Start Date</label>
               <input
                 type="date"
                 value={form.startDate}
@@ -288,7 +288,7 @@ export default function NewCampaignPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">End Date</label>
               <input
                 type="date"
                 value={form.endDate}
@@ -297,7 +297,7 @@ export default function NewCampaignPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Frequency Cap (per day)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Frequency Cap (per day)</label>
               <input
                 type="number"
                 value={form.frequencyCap}
@@ -310,7 +310,7 @@ export default function NewCampaignPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Priority (0-100)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Priority (0-100)</label>
               <input
                 type="range"
                 min="0"
@@ -319,10 +319,10 @@ export default function NewCampaignPage() {
                 onChange={(e) => setForm({ ...form, priority: e.target.value })}
                 className="w-full"
               />
-              <p className="text-xs text-gray-500 mt-1">Priority: {form.priority} — Higher priority ads are served first</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Priority: {form.priority} — Higher priority ads are served first</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Initial Status</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Initial Status</label>
               <select
                 value={form.status}
                 onChange={(e) => setForm({ ...form, status: e.target.value })}
@@ -337,13 +337,13 @@ export default function NewCampaignPage() {
         </div>
 
         {/* Targeting */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Targeting</h2>
-          <p className="text-sm text-gray-500">Leave empty to target all traffic. Specify filters to narrow delivery.</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Targeting</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Leave empty to target all traffic. Specify filters to narrow delivery.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Device Types</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Device Types</label>
               <div className="space-y-1">
                 {["desktop", "mobile", "tablet"].map((d) => (
                   <label key={d} className="flex items-center gap-2 text-sm">
@@ -367,7 +367,7 @@ export default function NewCampaignPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Page Types</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Page Types</label>
               <div className="space-y-1">
                 {["homepage", "phone_detail", "brand_page", "search_results", "comparison", "news"].map((p) => (
                   <label key={p} className="flex items-center gap-2 text-sm">
@@ -393,13 +393,13 @@ export default function NewCampaignPage() {
         </div>
 
         {/* Creative */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">Ad Creative</h2>
-          <p className="text-sm text-gray-500">Add the first creative for this campaign. You can add more later.</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Ad Creative</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Add the first creative for this campaign. You can add more later.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Headline</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Headline</label>
               <input
                 type="text"
                 value={form.creativeTitle}
@@ -409,7 +409,7 @@ export default function NewCampaignPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Click URL</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Click URL</label>
               <input
                 type="url"
                 value={form.creativeClickUrl}
@@ -421,7 +421,7 @@ export default function NewCampaignPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Description</label>
             <textarea
               value={form.creativeDescription}
               onChange={(e) => setForm({ ...form, creativeDescription: e.target.value })}
@@ -433,7 +433,7 @@ export default function NewCampaignPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Image URL</label>
               <input
                 type="url"
                 value={form.creativeImage}
@@ -443,7 +443,7 @@ export default function NewCampaignPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Link to Phone (optional)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Link to Phone (optional)</label>
               <select
                 value={form.creativePhoneId}
                 onChange={(e) => setForm({ ...form, creativePhoneId: e.target.value })}
@@ -463,7 +463,7 @@ export default function NewCampaignPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-lg hover:bg-gray-50"
+            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50"
           >
             Cancel
           </button>

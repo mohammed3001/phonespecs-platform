@@ -61,7 +61,7 @@ const sortOptions = [
 const statusLabels: Record<string, { label: string; icon: string; color: string }> = {
   available: { label: "Available", icon: "mdi:check-circle", color: "text-emerald-600" },
   coming_soon: { label: "Coming Soon", icon: "mdi:clock-outline", color: "text-amber-600" },
-  discontinued: { label: "Discontinued", icon: "mdi:close-circle", color: "text-gray-500" },
+  discontinued: { label: "Discontinued", icon: "mdi:close-circle", color: "text-gray-500 dark:text-gray-400" },
   rumored: { label: "Rumored", icon: "mdi:help-circle", color: "text-violet-600" },
 };
 
@@ -168,9 +168,9 @@ function SearchPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Search Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex-1 w-full">
@@ -188,7 +188,7 @@ function SearchPageContent() {
                   type="text"
                   defaultValue={state.q}
                   placeholder="Search phones, brands, specs..."
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-base outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all"
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-base outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all"
                 />
               </form>
             </div>
@@ -198,7 +198,7 @@ function SearchPageContent() {
               <select
                 value={state.sort}
                 onChange={(e) => updateUrl({ sort: e.target.value })}
-                className="flex-1 sm:flex-none px-3 py-3 border border-gray-200 rounded-xl text-sm bg-white outline-none focus:border-blue-300 cursor-pointer"
+                className="flex-1 sm:flex-none px-3 py-3 border border-gray-200 dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-800 outline-none focus:border-blue-300 cursor-pointer"
               >
                 {sortOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -208,7 +208,7 @@ function SearchPageContent() {
               {/* Filter toggle (mobile) */}
               <button
                 onClick={() => setFiltersOpen(!filtersOpen)}
-                className="lg:hidden flex items-center gap-2 px-4 py-3 border border-gray-200 rounded-xl text-sm bg-white hover:bg-gray-50 transition-colors"
+                className="lg:hidden flex items-center gap-2 px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
               >
                 <Icon icon="mdi:filter-variant" width={18} />
                 Filters
@@ -223,10 +223,10 @@ function SearchPageContent() {
 
           {/* Result count & meta */}
           {!loading && (
-            <div className="mt-3 flex items-center gap-3 text-sm text-gray-500">
+            <div className="mt-3 flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
               <span>
                 {pagination.total} {pagination.total === 1 ? "result" : "results"}
-                {state.q && <> for &ldquo;<span className="font-medium text-gray-700">{state.q}</span>&rdquo;</>}
+                {state.q && <> for &ldquo;<span className="font-medium text-gray-700 dark:text-gray-200">{state.q}</span>&rdquo;</>}
               </span>
               <span className="text-gray-300">·</span>
               <span>{meta.processingTimeMs}ms</span>
@@ -247,11 +247,11 @@ function SearchPageContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         <div className="flex gap-6">
           {/* Sidebar Filters */}
-          <aside className={`${filtersOpen ? "fixed inset-0 z-50 bg-white overflow-y-auto p-6 lg:relative lg:inset-auto lg:z-auto lg:bg-transparent lg:p-0" : "hidden"} lg:block lg:w-64 flex-shrink-0`}>
+          <aside className={`${filtersOpen ? "fixed inset-0 z-50 bg-white dark:bg-gray-800 overflow-y-auto p-6 lg:relative lg:inset-auto lg:z-auto lg:bg-transparent lg:p-0" : "hidden"} lg:block lg:w-64 flex-shrink-0`}>
             {/* Mobile close button */}
             <div className="flex items-center justify-between mb-4 lg:hidden">
               <h2 className="text-lg font-bold">Filters</h2>
-              <button onClick={() => setFiltersOpen(false)} className="p-2 hover:bg-gray-100 rounded-lg">
+              <button onClick={() => setFiltersOpen(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
                 <Icon icon="mdi:close" width={20} />
               </button>
             </div>
@@ -275,7 +275,7 @@ function SearchPageContent() {
                           updateUrl({ brand: newBrands.filter(Boolean).join(",") });
                         }}
                         className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm transition-colors ${
-                          isActive ? "bg-blue-50 text-blue-700 font-medium" : "text-gray-700 hover:bg-gray-50"
+                          isActive ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 font-medium" : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                         }`}
                       >
                         <span className="flex items-center gap-2">
@@ -295,14 +295,14 @@ function SearchPageContent() {
               {/* Market Status filter */}
               <FilterSection title="Status" icon="mdi:information-outline">
                 {Object.entries(facets.marketStatus || {}).map(([statusKey, count]) => {
-                  const info = statusLabels[statusKey] || { label: statusKey, icon: "mdi:help", color: "text-gray-500" };
+                  const info = statusLabels[statusKey] || { label: statusKey, icon: "mdi:help", color: "text-gray-500 dark:text-gray-400" };
                   const isActive = state.status === statusKey;
                   return (
                     <button
                       key={statusKey}
                       onClick={() => updateUrl({ status: isActive ? "" : statusKey })}
                       className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm transition-colors ${
-                        isActive ? "bg-blue-50 text-blue-700 font-medium" : "text-gray-700 hover:bg-gray-50"
+                        isActive ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 font-medium" : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                       }`}
                     >
                       <span className="flex items-center gap-2">
@@ -330,7 +330,7 @@ function SearchPageContent() {
                         }
                       }}
                       className={`flex items-center w-full px-3 py-2 rounded-lg text-sm transition-colors ${
-                        isActive ? "bg-blue-50 text-blue-700 font-medium" : "text-gray-700 hover:bg-gray-50"
+                        isActive ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 font-medium" : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                       }`}
                     >
                       <Icon
@@ -359,7 +359,7 @@ function SearchPageContent() {
                         key={ram}
                         onClick={() => updateUrl({ ramMin: isActive ? "" : String(parseFloat(ram) || 0) })}
                         className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-sm transition-colors ${
-                          isActive ? "bg-blue-50 text-blue-700 font-medium" : "text-gray-700 hover:bg-gray-50"
+                          isActive ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 font-medium" : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                         }`}
                       >
                         <span>{ram}</span>
@@ -373,7 +373,7 @@ function SearchPageContent() {
               {facets.os && Object.keys(facets.os).length > 0 && (
                 <FilterSection title="Operating System" icon="mdi:cog">
                   {Object.entries(facets.os).map(([os, count]) => (
-                    <div key={os} className="flex items-center justify-between px-3 py-2 text-sm text-gray-700">
+                    <div key={os} className="flex items-center justify-between px-3 py-2 text-sm text-gray-700 dark:text-gray-200">
                       <span>{os}</span>
                       <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{count}</span>
                     </div>
@@ -398,7 +398,7 @@ function SearchPageContent() {
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse">
+                  <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 animate-pulse">
                     <div className="flex gap-4">
                       <div className="w-20 h-24 bg-gray-200 rounded-xl" />
                       <div className="flex-1 space-y-2">
@@ -429,7 +429,7 @@ function SearchPageContent() {
                     <button
                       disabled={pagination.page <= 1}
                       onClick={() => updateUrl({ page: String(pagination.page - 1) })}
-                      className="flex items-center gap-1 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      className="flex items-center gap-1 px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                     >
                       <Icon icon="mdi:chevron-left" width={18} />
                       Previous
@@ -454,7 +454,7 @@ function SearchPageContent() {
                             className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
                               pageNum === pagination.page
                                 ? "bg-blue-600 text-white"
-                                : "text-gray-600 hover:bg-gray-100"
+                                : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                             }`}
                           >
                             {pageNum}
@@ -466,7 +466,7 @@ function SearchPageContent() {
                     <button
                       disabled={pagination.page >= pagination.totalPages}
                       onClick={() => updateUrl({ page: String(pagination.page + 1) })}
-                      className="flex items-center gap-1 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                      className="flex items-center gap-1 px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                     >
                       Next
                       <Icon icon="mdi:chevron-right" width={18} />
@@ -477,8 +477,8 @@ function SearchPageContent() {
             ) : (
               <div className="text-center py-16">
                 <Icon icon="mdi:magnify-close" width={64} className="mx-auto mb-4 text-gray-300" />
-                <h2 className="text-xl font-bold text-gray-900 mb-2">No results found</h2>
-                <p className="text-gray-500 max-w-md mx-auto mb-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No results found</h2>
+                <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-6">
                   {state.q
                     ? `We couldn't find any phones matching "${state.q}". Try adjusting your search or filters.`
                     : "Try searching for a phone name, brand, or specification."}
@@ -487,7 +487,7 @@ function SearchPageContent() {
                   {activeFilterCount > 0 && (
                     <button
                       onClick={clearFilters}
-                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:bg-blue-900/30 rounded-lg transition-colors"
                     >
                       <Icon icon="mdi:filter-off" width={16} />
                       Clear all filters
@@ -495,7 +495,7 @@ function SearchPageContent() {
                   )}
                   <Link
                     href="/phones"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                   >
                     <Icon icon="mdi:cellphone" width={16} />
                     Browse all phones
@@ -513,13 +513,13 @@ function SearchPageContent() {
 function FilterSection({ title, icon, children }: { title: string; icon: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+        className="flex items-center justify-between w-full px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
       >
         <span className="flex items-center gap-2">
-          <Icon icon={icon} width={16} className="text-gray-500" />
+          <Icon icon={icon} width={16} className="text-gray-500 dark:text-gray-400" />
           {title}
         </span>
         <Icon icon={open ? "mdi:chevron-up" : "mdi:chevron-down"} width={18} className="text-gray-400" />
@@ -539,7 +539,7 @@ function SearchResultCard({
   const statusConfig: Record<string, { label: string; color: string }> = {
     available: { label: "Available", color: "text-emerald-700 bg-emerald-50 ring-emerald-600/20" },
     coming_soon: { label: "Coming Soon", color: "text-amber-700 bg-amber-50 ring-amber-600/20" },
-    discontinued: { label: "Discontinued", color: "text-gray-600 bg-gray-100 ring-gray-500/20" },
+    discontinued: { label: "Discontinued", color: "text-gray-600 dark:text-gray-300 bg-gray-100 ring-gray-500/20" },
     rumored: { label: "Rumored", color: "text-violet-700 bg-violet-50 ring-violet-600/20" },
   };
 
@@ -560,7 +560,7 @@ function SearchResultCard({
       onClick={() => onClickTrack(phone.slug)}
       className="block group"
     >
-      <div className="bg-white rounded-2xl border border-gray-200 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-600/5 transition-all duration-300 overflow-hidden h-full">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-600/5 transition-all duration-300 overflow-hidden h-full">
         <div className="p-5">
           <div className="flex gap-4">
             <div className="w-20 h-24 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:from-blue-50 group-hover:to-violet-50 transition-colors">
@@ -569,7 +569,7 @@ function SearchResultCard({
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">{phone.brandName}</p>
               <h3
-                className="font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors mt-0.5 text-sm"
+                className="font-bold text-gray-900 dark:text-white leading-tight group-hover:text-blue-600 transition-colors mt-0.5 text-sm"
                 dangerouslySetInnerHTML={{
                   __html: phone._formatted?.name || phone.name,
                 }}
@@ -589,7 +589,7 @@ function SearchResultCard({
           {specs.length > 0 && (
             <div className="mt-4 grid grid-cols-2 gap-x-3 gap-y-1.5">
               {specs.slice(0, 4).map((spec) => (
-                <div key={spec.key} className="flex items-center gap-1.5 text-xs text-gray-600">
+                <div key={spec.key} className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-300">
                   <Icon icon={spec.icon} width={13} className="text-gray-400 flex-shrink-0" />
                   <span className="truncate">{spec.value}</span>
                 </div>
@@ -600,7 +600,7 @@ function SearchResultCard({
           {/* Overview snippet */}
           {phone._formatted?.overview && (
             <p
-              className="mt-3 text-xs text-gray-500 line-clamp-2"
+              className="mt-3 text-xs text-gray-500 dark:text-gray-400 line-clamp-2"
               dangerouslySetInnerHTML={{ __html: phone._formatted.overview }}
             />
           )}
@@ -614,7 +614,7 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
           <div className="w-10 h-10 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
         </div>
       }

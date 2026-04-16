@@ -52,12 +52,12 @@ export default function RegisterPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-800 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Icon icon="mdi:email-check" className="w-8 h-8 text-emerald-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Account Created!</h2>
-            <p className="text-gray-600 text-sm mb-6">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Account Created!</h2>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-6">
               Please check your email to verify your account. Once verified, you can log in and start reviewing phones.
             </p>
             <Link
@@ -83,9 +83,9 @@ export default function RegisterPage() {
           <p className="text-emerald-200 mt-2">Create your account</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8">
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm flex items-center gap-2">
               <Icon icon="mdi:alert-circle" className="w-5 h-5 flex-shrink-0" />
               {error}
             </div>
@@ -93,56 +93,56 @@ export default function RegisterPage() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Full Name</label>
               <input
                 id="name"
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
-                className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 ${fieldErrors.name ? "border-red-300" : "border-gray-300"}`}
+                className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 dark:text-white ${fieldErrors.name ? "border-red-300" : "border-gray-300 dark:border-gray-600"}`}
                 placeholder="John Doe"
               />
               {fieldErrors.name && <p className="text-red-500 text-xs mt-1">{fieldErrors.name}</p>}
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Email Address</label>
               <input
                 id="email"
                 type="email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
-                className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 ${fieldErrors.email ? "border-red-300" : "border-gray-300"}`}
+                className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 dark:text-white ${fieldErrors.email ? "border-red-300" : "border-gray-300 dark:border-gray-600"}`}
                 placeholder="you@example.com"
               />
               {fieldErrors.email && <p className="text-red-500 text-xs mt-1">{fieldErrors.email}</p>}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Password</label>
               <input
                 id="password"
                 type="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
-                className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 ${fieldErrors.password ? "border-red-300" : "border-gray-300"}`}
+                className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 dark:text-white ${fieldErrors.password ? "border-red-300" : "border-gray-300 dark:border-gray-600"}`}
                 placeholder="Min 8 chars, uppercase, lowercase, number"
               />
               {fieldErrors.password && <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>}
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Confirm Password</label>
               <input
                 id="confirmPassword"
                 type="password"
                 value={form.confirmPassword}
                 onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
                 required
-                className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 ${fieldErrors.confirmPassword ? "border-red-300" : "border-gray-300"}`}
+                className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 dark:text-white ${fieldErrors.confirmPassword ? "border-red-300" : "border-gray-300 dark:border-gray-600"}`}
                 placeholder="Repeat your password"
               />
               {fieldErrors.confirmPassword && <p className="text-red-500 text-xs mt-1">{fieldErrors.confirmPassword}</p>}
@@ -168,7 +168,7 @@ export default function RegisterPage() {
           </button>
 
           <div className="mt-4 text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Already have an account?{" "}
               <Link href="/login" className="text-emerald-600 font-medium hover:text-emerald-700">
                 Sign in
@@ -176,7 +176,7 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+          <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
             <p className="text-xs text-gray-400 text-center">
               Password requirements: 8+ characters, uppercase, lowercase, number
             </p>

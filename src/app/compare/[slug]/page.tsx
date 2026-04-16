@@ -127,7 +127,7 @@ export default async function ComparisonPage({ params }: { params: { slug: strin
     }));
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateBreadcrumbJsonLd([
           { name: "Home", href: "/" },
@@ -161,10 +161,10 @@ export default async function ComparisonPage({ params }: { params: { slug: strin
           {/* Phone Headers */}
           <div className="grid grid-cols-2 gap-6">
             {[phone1, phone2].map((phone) => (
-              <div key={phone.id} className="bg-white/5 backdrop-blur-sm rounded-xl p-5 border border-white/10">
+              <div key={phone.id} className="bg-white dark:bg-gray-800/5 backdrop-blur-sm rounded-xl p-5 border border-white/10">
                 <Link href={`/phones/${phone.slug}`} className="group">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-2xl overflow-hidden">
+                    <div className="w-12 h-12 bg-white dark:bg-gray-800/10 rounded-xl flex items-center justify-center text-2xl overflow-hidden">
                       {phone.mainImage ? (
                         <Image src={phone.mainImage} alt={phone.name} width={48} height={48} className="w-full h-full object-contain" />
                       ) : (
@@ -203,17 +203,17 @@ export default async function ComparisonPage({ params }: { params: { slug: strin
 
       {/* Comparison Table */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full">
-        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
           {/* Table Header */}
-          <div className="grid grid-cols-[1fr_1fr_1fr] bg-gray-50 border-b text-sm font-semibold">
-            <div className="px-6 py-4 text-gray-500">Specification</div>
-            <div className="px-4 py-4 text-gray-900 text-center border-l">{phone1.name}</div>
-            <div className="px-4 py-4 text-gray-900 text-center border-l">{phone2.name}</div>
+          <div className="grid grid-cols-[1fr_1fr_1fr] bg-gray-50 dark:bg-gray-900 border-b text-sm font-semibold">
+            <div className="px-6 py-4 text-gray-500 dark:text-gray-400">Specification</div>
+            <div className="px-4 py-4 text-gray-900 dark:text-white text-center border-l">{phone1.name}</div>
+            <div className="px-4 py-4 text-gray-900 dark:text-white text-center border-l">{phone2.name}</div>
           </div>
 
           {/* Price Row */}
-          <div className="grid grid-cols-[1fr_1fr_1fr] border-b bg-blue-50/30">
-            <div className="px-6 py-3 text-sm font-medium text-gray-700 flex items-center gap-2">
+          <div className="grid grid-cols-[1fr_1fr_1fr] border-b bg-blue-50 dark:bg-blue-900/20/30">
+            <div className="px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center gap-2">
               <Icon icon="mdi:currency-usd" className="w-4 h-4 text-gray-400" />
               Price
             </div>
@@ -228,9 +228,9 @@ export default async function ComparisonPage({ params }: { params: { slug: strin
           {/* Grouped Specs */}
           {sortedGroups.map(({ group, specs }) => (
             <div key={group.slug}>
-              <div className="px-6 py-3 bg-gray-50/80 border-b flex items-center gap-2">
+              <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900/80 border-b flex items-center gap-2">
                 <GroupIcon groupSlug={group.slug} size={16} className="text-blue-600" />
-                <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">{group.name}</span>
+                <span className="text-xs font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider">{group.name}</span>
               </div>
               {specs.map((spec) => {
                 const isDifferent = spec.value1 !== spec.value2 && spec.value1 && spec.value2;
@@ -241,14 +241,14 @@ export default async function ComparisonPage({ params }: { params: { slug: strin
                       isDifferent ? "bg-amber-50/20" : ""
                     }`}
                   >
-                    <div className="px-6 py-2.5 text-sm text-gray-600 flex items-center gap-2">
+                    <div className="px-6 py-2.5 text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
                       <SpecIcon specKey={spec.key} size={14} className="text-gray-400 flex-shrink-0" />
                       {spec.name}
                     </div>
-                    <div className="px-4 py-2.5 text-sm text-center border-l text-gray-900">
+                    <div className="px-4 py-2.5 text-sm text-center border-l text-gray-900 dark:text-white">
                       {spec.value1 || "—"}
                     </div>
-                    <div className="px-4 py-2.5 text-sm text-center border-l text-gray-900">
+                    <div className="px-4 py-2.5 text-sm text-center border-l text-gray-900 dark:text-white">
                       {spec.value2 || "—"}
                     </div>
                   </div>
@@ -268,13 +268,13 @@ export default async function ComparisonPage({ params }: { params: { slug: strin
           </Link>
           <Link
             href={`/phones/${phone2.slug}`}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors font-semibold text-sm"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors font-semibold text-sm"
           >
             View {phone2.name} Details
           </Link>
           <Link
             href="/compare"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors font-semibold text-sm"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors font-semibold text-sm"
           >
             <Icon icon="mdi:compare" className="w-4 h-4" />
             Compare Other Phones

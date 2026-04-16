@@ -21,13 +21,13 @@ interface BreadcrumbProps {
 export default function Breadcrumb({ items, variant = "light" }: BreadcrumbProps) {
   const baseClasses = variant === "dark"
     ? "text-blue-200/60"
-    : "text-gray-500";
+    : "text-gray-500 dark:text-gray-400";
   const linkClasses = variant === "dark"
     ? "hover:text-white transition-colors"
     : "hover:text-blue-600 transition-colors";
   const activeClasses = variant === "dark"
     ? "text-white font-medium"
-    : "text-gray-900 font-medium";
+    : "text-gray-900 dark:text-white font-medium";
   const separatorClasses = variant === "dark"
     ? "text-blue-200/40"
     : "text-gray-400";

@@ -109,8 +109,8 @@ export default function AdminCategoriesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Organize articles into categories</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Categories</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Organize articles into categories</p>
         </div>
         <button
           onClick={() => { resetForm(); setShowForm(true); }}
@@ -122,14 +122,14 @@ export default function AdminCategoriesPage() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">{editing ? "Edit Category" : "New Category"}</h3>
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm dark:shadow-gray-900/30 p-6 space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{editing ? "Edit Category" : "New Category"}</h3>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">{error}</div>
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">{error}</div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Name *</label>
               <input
                 required
                 value={form.name}
@@ -141,24 +141,24 @@ export default function AdminCategoriesPage() {
                     slug: !editing && (!prev.slug || prev.slug === generateSlug(prev.name)) ? generateSlug(name) : prev.slug,
                   }));
                 }}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Slug *</label>
               <input
                 required
                 value={form.slug}
                 onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Parent Category</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Parent Category</label>
               <select
                 value={form.parentId}
                 onChange={(e) => setForm((prev) => ({ ...prev, parentId: e.target.value }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">None (Top Level)</option>
                 {categories.filter((c) => c.id !== editing?.id).map((c) => (
@@ -168,12 +168,12 @@ export default function AdminCategoriesPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Description</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
               rows={2}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex gap-2">
@@ -184,23 +184,23 @@ export default function AdminCategoriesPage() {
             >
               {saving ? "Saving..." : editing ? "Save Changes" : "Create Category"}
             </button>
-            <button type="button" onClick={resetForm} className="text-gray-600 px-4 py-2 text-sm hover:bg-gray-100 rounded-lg">
+            <button type="button" onClick={resetForm} className="text-gray-600 dark:text-gray-300 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
               Cancel
             </button>
           </div>
         </form>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-50 border-b">
-              <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Category</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Slug</th>
-              <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Parent</th>
-              <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase">Articles</th>
-              <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase">Order</th>
-              <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+            <tr className="bg-gray-50 dark:bg-gray-900 border-b">
+              <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Category</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Slug</th>
+              <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Parent</th>
+              <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Articles</th>
+              <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Order</th>
+              <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -214,23 +214,23 @@ export default function AdminCategoriesPage() {
               ))
             ) : categories.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={6} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                   No categories yet. Click &quot;Add Category&quot; to create one.
                 </td>
               </tr>
             ) : (
               categories.map((cat) => (
-                <tr key={cat.id} className="hover:bg-gray-50">
+                <tr key={cat.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <Icon icon="mdi:folder-outline" width={18} className="text-gray-400" />
-                      <span className="font-medium text-gray-900 text-sm">{cat.name}</span>
+                      <span className="font-medium text-gray-900 dark:text-white text-sm">{cat.name}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{cat.slug}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{cat.parent?.name || "—"}</td>
-                  <td className="px-4 py-3 text-center text-sm text-gray-600">{cat.articleCount}</td>
-                  <td className="px-4 py-3 text-center text-sm text-gray-500">{cat.sortOrder}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{cat.slug}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{cat.parent?.name || "—"}</td>
+                  <td className="px-4 py-3 text-center text-sm text-gray-600 dark:text-gray-300">{cat.articleCount}</td>
+                  <td className="px-4 py-3 text-center text-sm text-gray-500 dark:text-gray-400">{cat.sortOrder}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex justify-end gap-2">
                       <button onClick={() => startEdit(cat)} className="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</button>

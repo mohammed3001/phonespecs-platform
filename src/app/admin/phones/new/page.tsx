@@ -138,14 +138,14 @@ export default function AddPhonePage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-3">
-          <Link href="/admin/phones" className="text-gray-400 hover:text-gray-600">
+          <Link href="/admin/phones" className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Add New Phone</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Add New Phone</h1>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-8">
           <div className="animate-pulse space-y-4">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="h-10 bg-gray-200 rounded w-full"></div>
@@ -160,37 +160,37 @@ export default function AddPhonePage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <Link href="/admin/phones" className="text-gray-400 hover:text-gray-600">
+        <Link href="/admin/phones" className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Add New Phone</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Add New Phone</h1>
       </div>
 
       {/* Status Messages */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
           {error}
         </div>
       )}
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">
           {success}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
-        <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-          <div className="px-6 py-4 border-b bg-gray-50">
-            <h2 className="text-lg font-semibold text-gray-900">Basic Information</h2>
-            <p className="text-sm text-gray-500 mt-0.5">General details about the phone</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border overflow-hidden">
+          <div className="px-6 py-4 border-b bg-gray-50 dark:bg-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Basic Information</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">General details about the phone</p>
           </div>
           <div className="p-6 space-y-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 Phone Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -205,13 +205,13 @@ export default function AddPhonePage() {
 
             {/* Brand */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                 Brand <span className="text-red-500">*</span>
               </label>
               <select
                 value={brandId}
                 onChange={(e) => setBrandId(e.target.value)}
-                className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800"
                 required
               >
                 <option value="">Select a brand...</option>
@@ -226,11 +226,11 @@ export default function AddPhonePage() {
             {/* Market Status & Release Date */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Market Status</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Market Status</label>
                 <select
                   value={marketStatus}
                   onChange={(e) => setMarketStatus(e.target.value)}
-                  className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800"
                 >
                   <option value="available">Available</option>
                   <option value="coming_soon">Coming Soon</option>
@@ -239,7 +239,7 @@ export default function AddPhonePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Release Date</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Release Date</label>
                 <input
                   type="text"
                   value={releaseDate}
@@ -253,7 +253,7 @@ export default function AddPhonePage() {
             {/* Price */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Price (USD)</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Price (USD)</label>
                 <input
                   type="number"
                   step="0.01"
@@ -264,7 +264,7 @@ export default function AddPhonePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Display Price</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Display Price</label>
                 <input
                   type="text"
                   value={priceDisplay}
@@ -277,7 +277,7 @@ export default function AddPhonePage() {
 
             {/* Overview */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Overview</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Overview</label>
               <textarea
                 value={overview}
                 onChange={(e) => setOverview(e.target.value)}
@@ -294,39 +294,39 @@ export default function AddPhonePage() {
                   type="checkbox"
                   checked={isFeatured}
                   onChange={(e) => setIsFeatured(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
                 />
-                <span className="text-sm text-gray-700">Featured Phone</span>
+                <span className="text-sm text-gray-700 dark:text-gray-200">Featured Phone</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={isPublished}
                   onChange={(e) => setIsPublished(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500"
                 />
-                <span className="text-sm text-gray-700">Published</span>
+                <span className="text-sm text-gray-700 dark:text-gray-200">Published</span>
               </label>
             </div>
           </div>
         </div>
 
         {/* Specifications */}
-        <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-          <div className="px-6 py-4 border-b bg-gray-50">
-            <h2 className="text-lg font-semibold text-gray-900">Specifications</h2>
-            <p className="text-sm text-gray-500 mt-0.5">Fill in the specs you want — leave blank to skip</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border overflow-hidden">
+          <div className="px-6 py-4 border-b bg-gray-50 dark:bg-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Specifications</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Fill in the specs you want — leave blank to skip</p>
           </div>
           <div className="divide-y">
             {specGroups.map((group) => (
               <div key={group.id} className="p-6">
-                <h3 className="text-sm font-bold text-gray-600 uppercase tracking-wide mb-4">
+                <h3 className="text-sm font-bold text-gray-600 dark:text-gray-300 uppercase tracking-wide mb-4">
                   {group.name}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {group.definitions.map((def) => (
                     <div key={def.id}>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                         {def.name}
                         {def.unit && (
                           <span className="text-gray-400 font-normal ml-1">({def.unit})</span>
@@ -339,7 +339,7 @@ export default function AddPhonePage() {
                         <select
                           value={specValues[def.id] || ""}
                           onChange={(e) => handleSpecChange(def.id, e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                          className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800"
                         >
                           <option value="">Select...</option>
                           {def.selectOptions.split(",").map((opt) => (
@@ -352,7 +352,7 @@ export default function AddPhonePage() {
                         <select
                           value={specValues[def.id] || ""}
                           onChange={(e) => handleSpecChange(def.id, e.target.value)}
-                          className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                          className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800"
                         >
                           <option value="">Select...</option>
                           <option value="Yes">Yes</option>
@@ -365,18 +365,18 @@ export default function AddPhonePage() {
                           value={specValues[def.id] || ""}
                           onChange={(e) => handleSpecChange(def.id, e.target.value)}
                           placeholder={`Enter ${def.name.toLowerCase()}${def.unit ? ` in ${def.unit}` : ""}...`}
-                          className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       )}
                       <div className="flex gap-2 mt-1">
                         {def.showInCard && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded">Card</span>
+                          <span className="text-[10px] px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded">Card</span>
                         )}
                         {def.showInDetail && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-green-50 text-green-600 rounded">Detail</span>
+                          <span className="text-[10px] px-1.5 py-0.5 bg-green-50 dark:bg-green-900/20 text-green-600 rounded">Detail</span>
                         )}
                         {def.showInCompare && (
-                          <span className="text-[10px] px-1.5 py-0.5 bg-purple-50 text-purple-600 rounded">Compare</span>
+                          <span className="text-[10px] px-1.5 py-0.5 bg-purple-50 dark:bg-purple-900/20 text-purple-600 rounded">Compare</span>
                         )}
                       </div>
                     </div>
@@ -388,10 +388,10 @@ export default function AddPhonePage() {
         </div>
 
         {/* Submit */}
-        <div className="flex items-center justify-between bg-white rounded-xl shadow-sm border px-6 py-4">
+        <div className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border px-6 py-4">
           <Link
             href="/admin/phones"
-            className="text-sm text-gray-600 hover:text-gray-800"
+            className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800"
           >
             Cancel
           </Link>

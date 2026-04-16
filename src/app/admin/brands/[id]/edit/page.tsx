@@ -107,7 +107,7 @@ export default function EditBrandPage() {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="h-8 bg-gray-200 rounded w-48 animate-pulse" />
-        <div className="bg-white rounded-xl border p-6 animate-pulse space-y-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border p-6 animate-pulse space-y-4">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="h-10 bg-gray-200 rounded" />
           ))}
@@ -120,17 +120,17 @@ export default function EditBrandPage() {
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/admin/brands" className="p-2 hover:bg-gray-100 rounded-lg text-gray-500">
+          <Link href="/admin/brands" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-gray-500 dark:text-gray-400">
             <Icon icon="mdi:arrow-left" width={20} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Edit Brand</h1>
-            <p className="text-sm text-gray-500 mt-0.5">{form.name}</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Brand</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{form.name}</p>
           </div>
         </div>
         <button
           onClick={() => setShowDelete(true)}
-          className="text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5"
+          className="text-red-600 hover:text-red-800 hover:bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5"
         >
           <Icon icon="mdi:delete-outline" width={18} />
           Delete
@@ -138,14 +138,14 @@ export default function EditBrandPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
           <Icon icon="mdi:alert-circle" width={18} />
           {error}
         </div>
       )}
 
       {showDelete && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 rounded-lg p-4">
           <p className="text-sm text-red-800 font-medium mb-3">Are you sure you want to delete &quot;{form.name}&quot;?</p>
           <div className="flex gap-2">
             <button
@@ -157,7 +157,7 @@ export default function EditBrandPage() {
             </button>
             <button
               onClick={() => setShowDelete(false)}
-              className="bg-white text-gray-700 px-4 py-2 rounded-lg text-sm border hover:bg-gray-50"
+              className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg text-sm border hover:bg-gray-50 dark:hover:bg-gray-700/50"
             >
               Cancel
             </button>
@@ -165,70 +165,70 @@ export default function EditBrandPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border shadow-sm">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm dark:shadow-gray-900/30">
         <div className="p-6 space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Brand Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Brand Name *</label>
               <input
                 type="text"
                 required
                 value={form.name}
                 onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Slug *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Slug *</label>
               <input
                 type="text"
                 required
                 value={form.slug}
                 onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Description</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
               rows={3}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Website</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Website</label>
               <input
                 type="url"
                 value={form.website}
                 onChange={(e) => setForm((prev) => ({ ...prev, website: e.target.value }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Logo URL</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Logo URL</label>
               <input
                 type="text"
                 value={form.logo}
                 onChange={(e) => setForm((prev) => ({ ...prev, logo: e.target.value }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Sort Order</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Sort Order</label>
               <input
                 type="number"
                 value={form.sortOrder}
                 onChange={(e) => setForm((prev) => ({ ...prev, sortOrder: parseInt(e.target.value) || 0 }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="flex items-center gap-3 pt-6">
@@ -239,39 +239,39 @@ export default function EditBrandPage() {
                   onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.checked }))}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-blue-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:bg-gray-800 after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
               </label>
-              <span className="text-sm font-medium text-gray-700">Active</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Active</span>
             </div>
           </div>
 
           <div className="border-t pt-5">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">SEO</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">SEO</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Meta Title</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Meta Title</label>
                 <input
                   type="text"
                   value={form.metaTitle}
                   onChange={(e) => setForm((prev) => ({ ...prev, metaTitle: e.target.value }))}
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Meta Description</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">Meta Description</label>
                 <textarea
                   value={form.metaDescription}
                   onChange={(e) => setForm((prev) => ({ ...prev, metaDescription: e.target.value }))}
                   rows={2}
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="px-6 py-4 bg-gray-50 border-t rounded-b-xl flex items-center justify-between">
-          <Link href="/admin/brands" className="text-sm text-gray-600 hover:text-gray-900">Cancel</Link>
+        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-t rounded-b-xl flex items-center justify-between">
+          <Link href="/admin/brands" className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Cancel</Link>
           <button
             type="submit"
             disabled={saving}

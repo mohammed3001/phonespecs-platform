@@ -95,8 +95,8 @@ export default function AdminRedirectsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Redirects</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{redirects.length} redirects configured</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Redirects</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{redirects.length} redirects configured</p>
         </div>
         <button onClick={() => { setShowForm(true); setEditingId(null); setForm(emptyRedirect); }}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2">
@@ -105,23 +105,23 @@ export default function AdminRedirectsPage() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-gray-900">{editingId ? "Edit Redirect" : "New Redirect"}</h3>
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl border p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{editingId ? "Edit Redirect" : "New Redirect"}</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Source Path *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Source Path *</label>
               <input required value={form.sourcePath} onChange={(e) => setForm((p) => ({ ...p, sourcePath: e.target.value }))}
-                placeholder="/old-path" className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                placeholder="/old-path" className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Target Path *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Target Path *</label>
               <input required value={form.targetPath} onChange={(e) => setForm((p) => ({ ...p, targetPath: e.target.value }))}
-                placeholder="/new-path" className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                placeholder="/new-path" className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Type</label>
               <select value={form.type} onChange={(e) => setForm((p) => ({ ...p, type: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value={301}>301 (Permanent)</option>
                 <option value={302}>302 (Temporary)</option>
                 <option value={307}>307 (Temporary Preserve)</option>
@@ -131,8 +131,8 @@ export default function AdminRedirectsPage() {
             <div className="flex items-end">
               <label className="flex items-center gap-2 pb-2">
                 <input type="checkbox" checked={form.isActive} onChange={(e) => setForm((p) => ({ ...p, isActive: e.target.checked }))}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                <span className="text-sm text-gray-700">Active</span>
+                  className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500" />
+                <span className="text-sm text-gray-700 dark:text-gray-200">Active</span>
               </label>
             </div>
           </div>
@@ -140,49 +140,49 @@ export default function AdminRedirectsPage() {
             <button type="submit" disabled={saving} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
               {saving ? "Saving..." : editingId ? "Update" : "Create"}
             </button>
-            <button type="button" onClick={() => { setShowForm(false); setEditingId(null); }} className="text-gray-600 px-4 py-2 text-sm hover:bg-gray-100 rounded-lg">Cancel</button>
+            <button type="button" onClick={() => { setShowForm(false); setEditingId(null); }} className="text-gray-600 dark:text-gray-300 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
           </div>
         </form>
       )}
 
       {loading ? (
-        <div className="space-y-3">{[...Array(4)].map((_, i) => <div key={i} className="bg-white rounded-xl border p-4 animate-pulse"><div className="h-5 bg-gray-200 rounded w-64" /></div>)}</div>
+        <div className="space-y-3">{[...Array(4)].map((_, i) => <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border p-4 animate-pulse"><div className="h-5 bg-gray-200 rounded w-64" /></div>)}</div>
       ) : redirects.length === 0 ? (
-        <div className="bg-white rounded-xl border p-12 text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border p-12 text-center">
           <Icon icon="mdi:swap-horizontal" className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No redirects configured</h3>
-          <p className="text-sm text-gray-500">Add URL redirects to manage old or changed paths</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No redirects configured</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Add URL redirects to manage old or changed paths</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 border-b">
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Source</th>
-                <th className="text-center px-2 py-3 text-xs font-medium text-gray-500">→</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Target</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Type</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Hits</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <tr className="bg-gray-50 dark:bg-gray-900 border-b">
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Source</th>
+                <th className="text-center px-2 py-3 text-xs font-medium text-gray-500 dark:text-gray-400">→</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Target</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Type</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Hits</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">
               {redirects.map((r) => (
-                <tr key={r.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm font-mono text-gray-900">{r.sourcePath}</td>
+                <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                  <td className="px-4 py-3 text-sm font-mono text-gray-900 dark:text-white">{r.sourcePath}</td>
                   <td className="px-2 py-3 text-center text-gray-400">→</td>
                   <td className="px-4 py-3 text-sm font-mono text-blue-600">{r.targetPath}</td>
                   <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700">{r.type}</span>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700">{r.type}</span>
                   </td>
                   <td className="px-4 py-3">
                     <button onClick={() => toggleActive(r)}
-                      className={`px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer ${r.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium cursor-pointer ${r.isActive ? "bg-green-100 dark:bg-green-900/30 text-green-700" : "bg-gray-100 text-gray-500 dark:text-gray-400"}`}>
                       {r.isActive ? "Active" : "Inactive"}
                     </button>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{r.hitCount}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{r.hitCount}</td>
                   <td className="px-4 py-3 text-right space-x-2">
                     <button onClick={() => startEdit(r)} className="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</button>
                     <button onClick={() => handleDelete(r.id)} className="text-red-500 hover:text-red-700 text-sm font-medium">Delete</button>

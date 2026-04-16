@@ -63,8 +63,8 @@ export default function AdminAdvertisersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Advertisers</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage advertising accounts and balances</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Advertisers</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage advertising accounts and balances</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -79,17 +79,17 @@ export default function AdminAdvertisersPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">Total Advertisers</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{advertisers.length}</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border p-4">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Total Advertisers</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{advertisers.length}</p>
         </div>
-        <div className="bg-white rounded-xl border p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">Active</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl border p-4">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Active</p>
           <p className="text-2xl font-bold text-green-600 mt-1">{advertisers.filter((a) => a.isActive).length}</p>
         </div>
-        <div className="bg-white rounded-xl border p-4">
-          <p className="text-xs font-medium text-gray-500 uppercase">Total Balance</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border p-4">
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Total Balance</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
             ${advertisers.reduce((sum, a) => sum + a.balance, 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </p>
         </div>
@@ -97,11 +97,11 @@ export default function AdminAdvertisersPage() {
 
       {/* Create Form */}
       {showForm && (
-        <form onSubmit={handleCreate} className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">New Advertiser</h2>
+        <form onSubmit={handleCreate} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">New Advertiser</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Name *</label>
               <input
                 type="text"
                 value={form.name}
@@ -112,7 +112,7 @@ export default function AdminAdvertisersPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Email</label>
               <input
                 type="email"
                 value={form.email}
@@ -122,7 +122,7 @@ export default function AdminAdvertisersPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Contact Person</label>
               <input
                 type="text"
                 value={form.contactPerson}
@@ -132,7 +132,7 @@ export default function AdminAdvertisersPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Initial Balance ($)</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Initial Balance ($)</label>
               <input
                 type="number"
                 step="0.01"
@@ -154,7 +154,7 @@ export default function AdminAdvertisersPage() {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border hover:bg-gray-50"
+              className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-700/50"
             >
               Cancel
             </button>
@@ -163,17 +163,17 @@ export default function AdminAdvertisersPage() {
       )}
 
       {/* Advertisers Table */}
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 border-b">
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Advertiser</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Contact</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Company</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Campaigns</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Balance</th>
-                <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
+              <tr className="bg-gray-50 dark:bg-gray-900 border-b">
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Advertiser</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Contact</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Company</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Campaigns</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Balance</th>
+                <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -188,28 +188,28 @@ export default function AdminAdvertisersPage() {
               ) : advertisers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center">
-                    <p className="text-gray-500 font-medium">No advertisers yet</p>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">No advertisers yet</p>
                     <p className="text-gray-400 text-sm mt-1">Add your first advertiser to start creating campaigns</p>
                   </td>
                 </tr>
               ) : (
                 advertisers.map((adv) => (
-                  <tr key={adv.id} className="hover:bg-gray-50">
+                  <tr key={adv.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-gray-900 text-sm">{adv.name}</p>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{adv.name}</p>
                       <p className="text-xs text-gray-400">Since {new Date(adv.createdAt).toLocaleDateString()}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-sm text-gray-700">{adv.email || "—"}</p>
+                      <p className="text-sm text-gray-700 dark:text-gray-200">{adv.email || "—"}</p>
                       {adv.contactPerson && (
                         <p className="text-xs text-gray-400">{adv.contactPerson}</p>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
                       {adv.company?.name || "—"}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-sm font-medium text-gray-900">{adv._count.campaigns}</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">{adv._count.campaigns}</span>
                       <span className="text-xs text-gray-400 ml-1">campaign{adv._count.campaigns !== 1 ? "s" : ""}</span>
                     </td>
                     <td className="px-4 py-3">

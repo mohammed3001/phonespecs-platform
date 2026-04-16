@@ -153,14 +153,14 @@ export default function PhoneSpecificationsPage() {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-3">
-          <Link href="/admin/phones" className="text-gray-400 hover:text-gray-600">
+          <Link href="/admin/phones" className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Full Specifications</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Full Specifications</h1>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-8">
           <div className="animate-pulse space-y-4">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="h-10 bg-gray-200 rounded w-full" />
@@ -176,16 +176,16 @@ export default function PhoneSpecificationsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/admin/phones" className="text-gray-400 hover:text-gray-600">
+          <Link href="/admin/phones" className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               {phone?.name} Full Specifications
             </h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
               Edit all specification fields section by section
             </p>
           </div>
@@ -193,7 +193,7 @@ export default function PhoneSpecificationsPage() {
         <div className="flex items-center gap-3">
           <Link
             href={`/admin/phones/${phoneId}/images`}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+            className="px-4 py-2 bg-gray-100 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
           >
             📷 Images
           </Link>
@@ -211,8 +211,8 @@ export default function PhoneSpecificationsPage() {
       {message && (
         <div className={`px-4 py-3 rounded-lg text-sm ${
           message.type === "success"
-            ? "bg-green-50 border border-green-200 text-green-700"
-            : "bg-red-50 border border-red-200 text-red-700"
+            ? "bg-green-50 dark:bg-green-900/20 border border-green-200 text-green-700"
+            : "bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700"
         }`}>
           {message.text}
         </div>
@@ -232,14 +232,14 @@ export default function PhoneSpecificationsPage() {
         const hasSubSections = Object.keys(subSections).length > 0;
 
         return (
-          <div key={group.id} className="bg-white rounded-xl shadow-sm border overflow-hidden">
-            <div className="px-6 py-4 border-b bg-gray-50 flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+          <div key={group.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border overflow-hidden">
+            <div className="px-6 py-4 border-b bg-gray-50 dark:bg-gray-900 flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
                 <span className="text-blue-600 text-sm font-bold">{group.sortOrder}</span>
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">{group.name}</h2>
-                <p className="text-xs text-gray-500">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{group.name}</h2>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {group.definitions.length} fields
                 </p>
               </div>
@@ -251,7 +251,7 @@ export default function PhoneSpecificationsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {noSubSection.map((def) => (
                     <div key={def.id}>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                         {def.name}
                         {def.unit && <span className="text-gray-400 ml-1">({def.unit})</span>}
                       </label>
@@ -260,7 +260,7 @@ export default function PhoneSpecificationsPage() {
                         value={specValues[def.id] || ""}
                         onChange={(e) => handleSpecChange(def.id, e.target.value)}
                         placeholder={`Enter ${def.name.toLowerCase()}...`}
-                        className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   ))}
@@ -279,7 +279,7 @@ export default function PhoneSpecificationsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-3 border-l-2 border-blue-100">
                     {defs.map((def) => (
                       <div key={def.id}>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                           {def.name}
                           {def.unit && <span className="text-gray-400 ml-1">({def.unit})</span>}
                         </label>
@@ -288,7 +288,7 @@ export default function PhoneSpecificationsPage() {
                           value={specValues[def.id] || ""}
                           onChange={(e) => handleSpecChange(def.id, e.target.value)}
                           placeholder={`Enter ${def.name.toLowerCase()}...`}
-                          className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       </div>
                     ))}
@@ -301,13 +301,13 @@ export default function PhoneSpecificationsPage() {
       })}
 
       {/* Pros & Cons */}
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <div className="px-6 py-4 border-b bg-gray-50 flex items-center justify-between">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border overflow-hidden">
+        <div className="px-6 py-4 border-b bg-gray-50 dark:bg-gray-900 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
               <span className="text-emerald-600 text-sm">±</span>
             </div>
-            <h2 className="text-lg font-semibold text-gray-900">Pros & Cons</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Pros & Cons</h2>
           </div>
           <button
             onClick={handleSaveProsCons}
@@ -332,12 +332,12 @@ export default function PhoneSpecificationsPage() {
                     value={pro}
                     onChange={(e) => updatePro(i, e.target.value)}
                     placeholder="Enter a pro..."
-                    className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   />
                   {pros.length > 1 && (
                     <button
                       onClick={() => removePro(i)}
-                      className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded"
+                      className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 dark:bg-red-900/20 rounded"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -372,12 +372,12 @@ export default function PhoneSpecificationsPage() {
                     value={con}
                     onChange={(e) => updateCon(i, e.target.value)}
                     placeholder="Enter a con..."
-                    className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   />
                   {cons.length > 1 && (
                     <button
                       onClick={() => removeCon(i)}
-                      className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded"
+                      className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 dark:bg-red-900/20 rounded"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -401,8 +401,8 @@ export default function PhoneSpecificationsPage() {
       </div>
 
       {/* Bottom Save Bar */}
-      <div className="sticky bottom-0 bg-white border-t shadow-lg -mx-6 px-6 py-4 flex items-center justify-between">
-        <p className="text-sm text-gray-500">
+      <div className="sticky bottom-0 bg-white dark:bg-gray-800 border-t shadow-lg -mx-6 px-6 py-4 flex items-center justify-between">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           {Object.values(specValues).filter((v) => v && v.trim() !== "").length} of{" "}
           {groups.reduce((sum, g) => sum + g.definitions.length, 0)} fields filled
         </p>

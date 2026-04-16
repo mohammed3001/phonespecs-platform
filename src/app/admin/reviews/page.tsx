@@ -21,8 +21,8 @@ interface ReviewEntry {
 const statusColors: Record<string, string> = {
   pending: "bg-amber-50 text-amber-700 ring-amber-600/20",
   approved: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
-  rejected: "bg-red-50 text-red-700 ring-red-600/20",
-  spam: "bg-gray-100 text-gray-600 ring-gray-500/20",
+  rejected: "bg-red-50 dark:bg-red-900/20 text-red-700 ring-red-600/20",
+  spam: "bg-gray-100 text-gray-600 dark:text-gray-300 ring-gray-500/20",
 };
 
 export default function AdminReviewsPage() {
@@ -79,8 +79,8 @@ export default function AdminReviewsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Review Moderation</h1>
-          <p className="text-sm text-gray-500 mt-1">Approve, reject, or flag user reviews</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Review Moderation</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Approve, reject, or flag user reviews</p>
         </div>
         <div className="flex items-center gap-3">
           {stats.pending ? (
@@ -99,7 +99,7 @@ export default function AdminReviewsPage() {
             key={tab.key}
             onClick={() => setFilter(tab.key)}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              filter === tab.key ? "bg-white shadow-sm text-gray-900" : "text-gray-600 hover:text-gray-900"
+              filter === tab.key ? "bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-900/30 text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
             }`}
           >
             <Icon icon={tab.icon} className="w-4 h-4" />
@@ -113,33 +113,33 @@ export default function AdminReviewsPage() {
       <div className="space-y-4">
         {loading ? (
           [...Array(3)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl border p-6 animate-pulse">
+            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border p-6 animate-pulse">
               <div className="h-5 bg-gray-200 rounded w-1/3 mb-3" />
               <div className="h-4 bg-gray-200 rounded w-2/3 mb-2" />
               <div className="h-4 bg-gray-200 rounded w-1/2" />
             </div>
           ))
         ) : reviews.length === 0 ? (
-          <div className="bg-white rounded-xl border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border p-12 text-center">
             <Icon icon="mdi:message-text-outline" className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500">No {filter === "all" ? "" : filter} reviews</p>
+            <p className="text-gray-500 dark:text-gray-400">No {filter === "all" ? "" : filter} reviews</p>
           </div>
         ) : (
           reviews.map((review) => (
-            <div key={review.id} className="bg-white rounded-xl border p-6">
+            <div key={review.id} className="bg-white dark:bg-gray-800 rounded-xl border p-6">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
                     <Icon icon="mdi:account" className="w-5 h-5 text-gray-400" />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">{review.user?.name || "Anonymous"}</p>
-                    <p className="text-xs text-gray-500">{review.user?.email}</p>
+                    <p className="font-medium text-gray-900 dark:text-white text-sm">{review.user?.name || "Anonymous"}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{review.user?.email}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {review.reportCount > 0 && (
-                    <span className="text-xs px-2 py-1 bg-red-50 text-red-600 rounded-full font-medium">
+                    <span className="text-xs px-2 py-1 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-full font-medium">
                       {review.reportCount} reports
                     </span>
                   )}
@@ -151,7 +151,7 @@ export default function AdminReviewsPage() {
 
               <div className="mb-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <p className="font-semibold text-gray-900">{review.title || "Untitled Review"}</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{review.title || "Untitled Review"}</p>
                   {review.overallScore && (
                     <span className="text-sm text-amber-600 font-medium flex items-center gap-0.5">
                       <Icon icon="mdi:star" className="w-4 h-4" />
@@ -159,10 +159,10 @@ export default function AdminReviewsPage() {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-gray-500 mb-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
                   on <span className="font-medium">{review.phone?.name}</span> • {new Date(review.createdAt).toLocaleDateString()}
                 </p>
-                <p className="text-sm text-gray-700 line-clamp-3">{review.content}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-200 line-clamp-3">{review.content}</p>
               </div>
 
               {(review.pros || review.cons) && (
@@ -170,13 +170,13 @@ export default function AdminReviewsPage() {
                   {review.pros && (
                     <div className="bg-emerald-50/50 rounded-lg p-2">
                       <p className="text-xs font-medium text-emerald-700 mb-1">Pros</p>
-                      <p className="text-xs text-gray-600">{review.pros}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">{review.pros}</p>
                     </div>
                   )}
                   {review.cons && (
-                    <div className="bg-red-50/50 rounded-lg p-2">
+                    <div className="bg-red-50 dark:bg-red-900/20/50 rounded-lg p-2">
                       <p className="text-xs font-medium text-red-700 mb-1">Cons</p>
-                      <p className="text-xs text-gray-600">{review.cons}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">{review.cons}</p>
                     </div>
                   )}
                 </div>
@@ -210,7 +210,7 @@ export default function AdminReviewsPage() {
                   <button
                     onClick={() => handleModerate(review.id, "spam")}
                     disabled={actionLoading === review.id}
-                    className="flex items-center gap-1.5 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1.5 px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm transition-colors disabled:opacity-50"
                   >
                     <Icon icon="mdi:shield-alert" className="w-4 h-4" />
                     Spam

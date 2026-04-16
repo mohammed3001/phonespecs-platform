@@ -44,7 +44,7 @@ export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
 
   if (sessionLoading) {
     return (
-      <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center">
+      <div className="bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 text-center">
         <div className="animate-pulse">
           <div className="h-4 bg-gray-200 rounded w-1/3 mx-auto mb-2" />
           <div className="h-3 bg-gray-200 rounded w-1/2 mx-auto" />
@@ -55,9 +55,9 @@ export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
 
   if (!sessionUser) {
     return (
-      <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center">
+      <div className="bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 text-center">
         <Icon icon="mdi:account-circle" className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-        <p className="text-sm text-gray-600 mb-3">
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
           Sign in to write a review for {phoneName}
         </p>
         <div className="flex items-center justify-center gap-3">
@@ -69,7 +69,7 @@ export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
           </Link>
           <Link
             href="/register"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
           >
             Create Account
           </Link>
@@ -130,33 +130,33 @@ export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 space-y-4">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-bold text-gray-900">Write Your Review</h3>
-        <button type="button" onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600">
+        <h3 className="font-bold text-gray-900 dark:text-white">Write Your Review</h3>
+        <button type="button" onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600 dark:text-gray-300">
           <Icon icon="mdi:close" className="w-5 h-5" />
         </button>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">{error}</div>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">{error}</div>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Title</label>
         <input
           type="text"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
           required
           maxLength={200}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white"
           placeholder="Sum up your experience..."
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
           Overall Score: <span className="text-blue-600 font-bold">{form.overallScore}/10</span>
         </label>
         <input
@@ -176,7 +176,7 @@ export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Your Review</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Your Review</label>
         <textarea
           value={form.content}
           onChange={(e) => setForm({ ...form, content: e.target.value })}
@@ -184,7 +184,7 @@ export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
           minLength={20}
           maxLength={5000}
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white"
           placeholder="Share your detailed experience with this phone..."
         />
         <p className="text-xs text-gray-400 mt-1">{form.content.length}/5000 characters (min 20)</p>
@@ -192,24 +192,24 @@ export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Pros</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Pros</label>
           <textarea
             value={form.pros}
             onChange={(e) => setForm({ ...form, pros: e.target.value })}
             rows={2}
             maxLength={1000}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white"
             placeholder="What's great about it?"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Cons</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Cons</label>
           <textarea
             value={form.cons}
             onChange={(e) => setForm({ ...form, cons: e.target.value })}
             rows={2}
             maxLength={1000}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white"
             placeholder="Any drawbacks?"
           />
         </div>
@@ -236,7 +236,7 @@ export default function ReviewForm({ phoneId, phoneName }: ReviewFormProps) {
         <button
           type="button"
           onClick={() => setIsOpen(false)}
-          className="px-4 py-2.5 text-sm text-gray-600 hover:text-gray-800"
+          className="px-4 py-2.5 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800"
         >
           Cancel
         </button>

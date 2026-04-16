@@ -39,7 +39,7 @@ export default async function BrandsPage() {
   const totalPhones = brands.reduce((sum, b) => sum + b.phoneCount, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateCollectionPageJsonLd("Smartphone Brands", "Browse all smartphone brands and manufacturers with detailed profiles.", "/brands"),
         generateBreadcrumbJsonLd([
@@ -72,7 +72,7 @@ export default async function BrandsPage() {
               href={`/brands/${brand.slug}`}
               className="group"
             >
-              <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl hover:shadow-blue-600/5 hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 h-full">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl hover:shadow-blue-600/5 hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 h-full">
                 {/* Brand Icon */}
                 <div className="w-16 h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center mb-4 group-hover:from-blue-50 group-hover:to-violet-50 transition-colors">
                   <span className="text-3xl font-black text-gray-300 group-hover:text-blue-400 transition-colors">
@@ -80,17 +80,17 @@ export default async function BrandsPage() {
                   </span>
                 </div>
 
-                <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">
                   {brand.name}
                 </h3>
 
                 {brand.description && (
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">{brand.description}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{brand.description}</p>
                 )}
 
                 <div className="mt-4 flex items-center justify-between">
                   <span className="text-sm text-gray-400">
-                    <span className="font-semibold text-gray-700">{brand.phoneCount}</span> phones
+                    <span className="font-semibold text-gray-700 dark:text-gray-200">{brand.phoneCount}</span> phones
                   </span>
                   <span className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
                     View

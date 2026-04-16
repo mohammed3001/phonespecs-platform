@@ -98,7 +98,7 @@ export default async function PhonesPage({
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateCollectionPageJsonLd("All Smartphones", "Browse all smartphones with full specifications, prices, and reviews.", "/phones"),
         generateBreadcrumbJsonLd([
@@ -109,29 +109,29 @@ export default async function PhonesPage({
       <Header />
 
       {/* Page Header */}
-      <div className="bg-white border-b">
+      <div className="bg-white dark:bg-gray-800 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-          <nav className="flex items-center gap-2 text-sm text-gray-500 mb-4">
+          <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             {currentBrand ? (
               <>
                 <Link href="/phones" className="hover:text-blue-600 transition-colors">Phones</Link>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                <span className="text-gray-900 font-medium capitalize">{brands.find((b) => b.slug === currentBrand)?.name || currentBrand}</span>
+                <span className="text-gray-900 dark:text-white font-medium capitalize">{brands.find((b) => b.slug === currentBrand)?.name || currentBrand}</span>
               </>
             ) : (
-              <span className="text-gray-900 font-medium">All Phones</span>
+              <span className="text-gray-900 dark:text-white font-medium">All Phones</span>
             )}
           </nav>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                 {currentBrand
                   ? `${brands.find((b) => b.slug === currentBrand)?.name || currentBrand} Phones`
                   : currentQ ? `Search: "${currentQ}"` : "All Phones"}
               </h1>
-              <p className="text-gray-500 mt-1.5 text-base">{total} phones found</p>
+              <p className="text-gray-500 dark:text-gray-400 mt-1.5 text-base">{total} phones found</p>
             </div>
             {/* Search */}
             <div className="max-w-sm w-full">
@@ -146,7 +146,7 @@ export default async function PhonesPage({
                   name="q"
                   defaultValue={currentQ}
                   placeholder="Search phones..."
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </form>
             </div>
@@ -158,14 +158,14 @@ export default async function PhonesPage({
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Filters */}
           <aside className="lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm sticky top-24 overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 sticky top-24 overflow-hidden">
               {/* Brands */}
               <div className="p-5 border-b">
-                <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider mb-3">Brands</h3>
+                <h3 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider mb-3">Brands</h3>
                 <div className="space-y-0.5">
                   <Link
                     href={`/phones?sort=${currentSort}${currentQ ? `&q=${currentQ}` : ""}`}
-                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${!currentBrand ? "bg-blue-50 text-blue-700 font-semibold" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
+                    className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${!currentBrand ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 font-semibold" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"}`}
                   >
                     <span>All Brands</span>
                     {!currentBrand && (
@@ -176,7 +176,7 @@ export default async function PhonesPage({
                     <Link
                       key={brand.id}
                       href={`/phones?brand=${brand.slug}&sort=${currentSort}${currentQ ? `&q=${currentQ}` : ""}`}
-                      className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${currentBrand === brand.slug ? "bg-blue-50 text-blue-700 font-semibold" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
+                      className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${currentBrand === brand.slug ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 font-semibold" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"}`}
                     >
                       <span>{brand.name}</span>
                       <span className="text-xs text-gray-400 tabular-nums">{brand.phoneCount}</span>
@@ -187,13 +187,13 @@ export default async function PhonesPage({
 
               {/* Sort By */}
               <div className="p-5">
-                <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider mb-3">Sort By</h3>
+                <h3 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider mb-3">Sort By</h3>
                 <div className="space-y-0.5">
                   {sortOptions.map(({ key, label }) => (
                     <Link
                       key={key}
                       href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${key}${currentQ ? `&q=${currentQ}` : ""}`}
-                      className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${currentSort === key ? "bg-blue-50 text-blue-700 font-semibold" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
+                      className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${currentSort === key ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 font-semibold" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"}`}
                     >
                       <span>{label}</span>
                       {currentSort === key && (
@@ -209,12 +209,12 @@ export default async function PhonesPage({
           {/* Phone Grid */}
           <div className="flex-1">
             {phones.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-16 text-center">
                 <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">
                   📱
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">No phones found</h3>
-                <p className="text-sm text-gray-500 mb-6">Try adjusting your filters or search query</p>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">No phones found</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Try adjusting your filters or search query</p>
                 <Link href="/phones" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors">
                   Clear Filters
                 </Link>
@@ -233,7 +233,7 @@ export default async function PhonesPage({
                 {page > 1 && (
                   <Link
                     href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${currentSort}&page=${page - 1}${currentQ ? `&q=${currentQ}` : ""}`}
-                    className="px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-medium hover:bg-gray-50 hover:border-gray-400 transition-all"
+                    className="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:border-gray-400 transition-all"
                   >
                     Previous
                   </Link>
@@ -247,7 +247,7 @@ export default async function PhonesPage({
                       className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-medium transition-all ${
                         page === p
                           ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                          : "bg-white border border-gray-300 hover:bg-gray-50"
+                          : "bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                       }`}
                     >
                       {p}
@@ -257,7 +257,7 @@ export default async function PhonesPage({
                 {page < totalPages && (
                   <Link
                     href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${currentSort}&page=${page + 1}${currentQ ? `&q=${currentQ}` : ""}`}
-                    className="px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-medium hover:bg-gray-50 hover:border-gray-400 transition-all"
+                    className="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:border-gray-400 transition-all"
                   >
                     Next
                   </Link>

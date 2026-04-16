@@ -54,7 +54,7 @@ export default function Footer() {
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="text-sm hover:text-white transition-colors inline-flex items-center gap-1.5 group">
-                    <Icon icon="mdi:chevron-right" width={14} className="text-gray-600 group-hover:text-blue-400 transition-colors" />
+                    <Icon icon="mdi:chevron-right" width={14} className="text-gray-600 dark:text-gray-300 group-hover:text-blue-400 transition-colors" />
                     {item.name}
                   </Link>
                 </li>
@@ -76,7 +76,7 @@ export default function Footer() {
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="text-sm hover:text-white transition-colors inline-flex items-center gap-1.5 group">
-                    <Icon icon="mdi:chevron-right" width={14} className="text-gray-600 group-hover:text-blue-400 transition-colors" />
+                    <Icon icon="mdi:chevron-right" width={14} className="text-gray-600 dark:text-gray-300 group-hover:text-blue-400 transition-colors" />
                     {item.name}
                   </Link>
                 </li>
@@ -98,7 +98,7 @@ export default function Footer() {
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="text-sm hover:text-white transition-colors inline-flex items-center gap-1.5 group">
-                    <Icon icon="mdi:chevron-right" width={14} className="text-gray-600 group-hover:text-blue-400 transition-colors" />
+                    <Icon icon="mdi:chevron-right" width={14} className="text-gray-600 dark:text-gray-300 group-hover:text-blue-400 transition-colors" />
                     {item.name}
                   </Link>
                 </li>
@@ -112,17 +112,17 @@ export default function Footer() {
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               &copy; {new Date().getFullYear()} MobilePlatform. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <Link href="/privacy" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              <Link href="/privacy" className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-300 transition-colors">
                 Privacy
               </Link>
-              <Link href="/terms" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              <Link href="/terms" className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-300 transition-colors">
                 Terms
               </Link>
-              <Link href="/sitemap" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+              <Link href="/sitemap" className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-300 transition-colors">
                 Sitemap
               </Link>
             </div>

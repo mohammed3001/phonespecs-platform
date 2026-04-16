@@ -107,14 +107,14 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
   const status: Record<string, { label: string; color: string }> = {
     available: { label: "Available", color: "text-emerald-700 bg-emerald-50 ring-emerald-600/20" },
     coming_soon: { label: "Coming Soon", color: "text-amber-700 bg-amber-50 ring-amber-600/20" },
-    discontinued: { label: "Discontinued", color: "text-gray-600 bg-gray-100 ring-gray-500/20" },
+    discontinued: { label: "Discontinued", color: "text-gray-600 dark:text-gray-300 bg-gray-100 ring-gray-500/20" },
     rumored: { label: "Rumored", color: "text-violet-700 bg-violet-50 ring-violet-600/20" },
   };
 
   const phoneStatus = status[phone.marketStatus] || status.available;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generatePhoneProductJsonLd(phone),
         generateBreadcrumbJsonLd([
@@ -128,7 +128,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
       <Header />
 
       {/* Breadcrumbs */}
-      <div className="bg-white border-b">
+      <div className="bg-white dark:bg-gray-800 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <Breadcrumb items={[
             { label: "Home", href: "/" },
@@ -140,12 +140,12 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
       </div>
 
       {/* Phone Header */}
-      <section className="bg-white border-b">
+      <section className="bg-white dark:bg-gray-800 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
           <div className="flex flex-col md:flex-row gap-8 md:gap-12">
             {/* Phone Image */}
             <div className="flex-shrink-0 flex justify-center">
-              <div className="w-56 h-72 md:w-64 md:h-80 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl flex items-center justify-center border border-gray-200 overflow-hidden">
+              <div className="w-56 h-72 md:w-64 md:h-80 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl flex items-center justify-center border border-gray-200 dark:border-gray-700 overflow-hidden">
                 {phone.mainImage ? (
                   <Image src={phone.mainImage} alt={phone.name} width={256} height={320} className="w-full h-full object-contain p-2" priority />
                 ) : (
@@ -168,7 +168,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 </span>
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                 {phone.name}
               </h1>
 
@@ -187,7 +187,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500 dark:text-gray-400">
                 {phone.releaseDate && (
                   <span className="flex items-center gap-1.5">
                     <SpecIcon specKey="" size={14} className="text-gray-400" />
@@ -205,7 +205,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                   </span>
                 )}
                 {phone.dataSource && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 rounded-full text-xs font-medium">
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     Source: {phone.dataSource}
                   </span>
@@ -218,11 +218,11 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                   <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Key Specifications</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {keySpecs.map((s) => (
-                      <div key={s.spec.key} className="flex items-center gap-2.5 px-3.5 py-3 bg-gray-50 rounded-xl border border-gray-100">
+                      <div key={s.spec.key} className="flex items-center gap-2.5 px-3.5 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-100">
                         <SpecIcon specKey={s.spec.key} size={20} className="text-blue-500 flex-shrink-0" />
                         <div className="min-w-0">
                           <p className="text-[11px] text-gray-400 font-medium">{s.spec.name}</p>
-                          <p className="text-sm font-semibold text-gray-900 truncate">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                             {s.value}{s.spec.unit ? ` ${s.spec.unit}` : ""}
                           </p>
                         </div>
@@ -243,7 +243,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 </Link>
                 <Link
                   href={`/compare?phones=${phone.slug}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 text-sm font-semibold rounded-xl border border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm font-semibold rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:border-gray-400 transition-all"
                 >
                   <SpecIcon specKey="" size={16} className="text-gray-400" />
                   Compare
@@ -261,16 +261,16 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
           <div className="flex-1 min-w-0 space-y-8">
             {/* Overview */}
             {phone.overview && (
-              <section className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Overview</h2>
-                <p className="text-gray-600 leading-relaxed whitespace-pre-line">{phone.overview}</p>
+              <section className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Overview</h2>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">{phone.overview}</p>
               </section>
             )}
 
             {/* Pros & Cons */}
             {((phone.pros as string[] | null)?.length || (phone.cons as string[] | null)?.length) ? (
-              <section className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-5">Pros & Cons</h2>
+              <section className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-5">Pros & Cons</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {(phone.pros as string[] | null)?.length ? (
                     <div>
@@ -280,7 +280,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                       </h3>
                       <ul className="space-y-2">
                         {(phone.pros as string[]).map((pro, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-200">
                             <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
                             {pro}
                           </li>
@@ -296,7 +296,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                       </h3>
                       <ul className="space-y-2">
                         {(phone.cons as string[]).map((con, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                          <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-200">
                             <span className="mt-1 w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
                             {con}
                           </li>
@@ -309,10 +309,10 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
             ) : null}
 
             {/* Full Specifications */}
-            <section id="specifications" className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-              <div className="px-6 md:px-8 py-6 border-b bg-gray-50">
-                <h2 className="text-xl font-bold text-gray-900">{phone.name} Full Specifications</h2>
-                <p className="text-sm text-gray-500 mt-1">Complete technical specifications</p>
+            <section id="specifications" className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className="px-6 md:px-8 py-6 border-b bg-gray-50 dark:bg-gray-900">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">{phone.name} Full Specifications</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Complete technical specifications</p>
               </div>
               <div className="divide-y divide-gray-100">
                 {sortedGroups.map(({ group, specs }) => {
@@ -332,20 +332,20 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
 
                   return (
                     <div key={group.slug}>
-                      <div className="px-6 md:px-8 py-4 bg-gray-50/50 flex items-center gap-2.5">
+                      <div className="px-6 md:px-8 py-4 bg-gray-50 dark:bg-gray-900/50 flex items-center gap-2.5">
                         <GroupIcon groupSlug={group.slug} size={18} className="text-blue-600" />
-                        <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wider">{group.name}</h3>
+                        <h3 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider">{group.name}</h3>
                       </div>
                       {/* Specs without subSection */}
                       {noSubSection.length > 0 && (
                         <div className="divide-y divide-gray-50">
                           {noSubSection.map((ps) => (
-                            <div key={ps.spec.key} className="flex items-center px-6 md:px-8 py-3.5 hover:bg-blue-50/30 transition-colors">
+                            <div key={ps.spec.key} className="flex items-center px-6 md:px-8 py-3.5 hover:bg-blue-50 dark:hover:bg-blue-900/20/30 transition-colors">
                               <div className="flex items-center gap-2.5 w-48 flex-shrink-0">
                                 <SpecIcon specKey={ps.spec.key} size={16} className="text-gray-400" />
-                                <span className="text-sm text-gray-500 font-medium">{ps.spec.name}</span>
+                                <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">{ps.spec.name}</span>
                               </div>
-                              <span className="text-sm font-semibold text-gray-900">
+                              <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                 {ps.value}{ps.spec.unit ? ` ${ps.spec.unit}` : ""}
                               </span>
                             </div>
@@ -355,17 +355,17 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                       {/* Specs grouped by subSection */}
                       {hasSubSections && Object.entries(subSections).map(([subName, subSpecs]) => (
                         <div key={subName}>
-                          <div className="px-6 md:px-8 py-3 bg-blue-50/40 border-t border-gray-100">
+                          <div className="px-6 md:px-8 py-3 bg-blue-50 dark:bg-blue-900/20/40 border-t border-gray-100">
                             <h4 className="text-xs font-bold text-blue-700 uppercase tracking-wider">{subName}</h4>
                           </div>
                           <div className="divide-y divide-gray-50">
                             {subSpecs.map((ps) => (
-                              <div key={ps.spec.key} className="flex items-center px-6 md:px-8 py-3.5 hover:bg-blue-50/30 transition-colors">
+                              <div key={ps.spec.key} className="flex items-center px-6 md:px-8 py-3.5 hover:bg-blue-50 dark:hover:bg-blue-900/20/30 transition-colors">
                                 <div className="flex items-center gap-2.5 w-48 flex-shrink-0">
                                   <SpecIcon specKey={ps.spec.key} size={16} className="text-gray-400" />
-                                  <span className="text-sm text-gray-500 font-medium">{ps.spec.name}</span>
+                                  <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">{ps.spec.name}</span>
                                 </div>
-                                <span className="text-sm font-semibold text-gray-900">
+                                <span className="text-sm font-semibold text-gray-900 dark:text-white">
                                   {ps.value}{ps.spec.unit ? ` ${ps.spec.unit}` : ""}
                                 </span>
                               </div>
@@ -383,8 +383,8 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
             <ReviewsSection phoneId={phone.id} phoneName={phone.name} phoneSlug={phone.slug} />
 
             {/* FAQ Section */}
-            <section className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+            <section className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Frequently Asked Questions</h2>
               <div className="space-y-4">
                 {[
                   {
@@ -408,15 +408,15 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 ].map((faq, i) => (
                   <details
                     key={i}
-                    className="group rounded-xl border border-gray-200 overflow-hidden"
+                    className="group rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
                   >
-                    <summary className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-gray-50 transition-colors font-semibold text-gray-900 text-sm">
+                    <summary className="flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors font-semibold text-gray-900 dark:text-white text-sm">
                       {faq.q}
                       <svg className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
                     </summary>
-                    <div className="px-5 pb-4 text-sm text-gray-600 leading-relaxed">{faq.a}</div>
+                    <div className="px-5 pb-4 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{faq.a}</div>
                   </details>
                 ))}
               </div>
@@ -427,19 +427,19 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
           <aside className="lg:w-80 flex-shrink-0">
             <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin">
             {/* Quick Specs Card */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-5">
-              <h3 className="font-bold text-gray-900 text-sm mb-4">Quick Specs</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
+              <h3 className="font-bold text-gray-900 dark:text-white text-sm mb-4">Quick Specs</h3>
               <div className="space-y-3">
                 {phone.specs
                   .filter((s) => s.spec.showInCard)
                   .sort((a, b) => a.spec.sortOrder - b.spec.sortOrder)
                   .map((s) => (
                     <div key={s.spec.key} className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                         <SpecIcon specKey={s.spec.key} size={14} className="text-gray-400" />
                         {s.spec.name}
                       </div>
-                      <span className="text-sm font-semibold text-gray-900 text-right truncate max-w-[140px]">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white text-right truncate max-w-[140px]">
                         {s.value}{s.spec.unit ? ` ${s.spec.unit}` : ""}
                       </span>
                     </div>
@@ -455,7 +455,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 </Link>
                 <Link
                   href={`/phones?brand=${phone.brand.slug}`}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-100 text-gray-700 dark:text-gray-200 text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors"
                 >
                   More {phone.brand.name} Phones
                 </Link>
@@ -483,8 +483,8 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
           <section className="mt-12">
             <div className="flex items-end justify-between mb-8">
               <div>
-                <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">More from {phone.brand.name}</h2>
-                <p className="text-gray-500 mt-1">Other phones by {phone.brand.name}</p>
+                <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight">More from {phone.brand.name}</h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">Other phones by {phone.brand.name}</p>
               </div>
               <Link href={`/brands/${phone.brand.slug}`} className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700">
                 View All
@@ -500,28 +500,28 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
         )}
 
         {/* Smart Internal Links — Category Pages */}
-        <section className="mt-12 bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Explore More</h2>
+        <section className="mt-12 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Explore More</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            <Link href="/phones/best-camera-phones" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50/50 transition-all text-sm">
+            <Link href="/phones/best-camera-phones" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/20/50 transition-all text-sm">
               <SpecIcon specKey="main_camera" size={18} className="text-blue-500 flex-shrink-0" />
-              <span className="font-medium text-gray-700">Best Camera</span>
+              <span className="font-medium text-gray-700 dark:text-gray-200">Best Camera</span>
             </Link>
-            <Link href="/phones/best-battery-life" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-green-200 hover:bg-green-50/50 transition-all text-sm">
+            <Link href="/phones/best-battery-life" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-green-200 hover:bg-green-50 dark:bg-green-900/20/50 transition-all text-sm">
               <SpecIcon specKey="battery" size={18} className="text-green-500 flex-shrink-0" />
-              <span className="font-medium text-gray-700">Best Battery</span>
+              <span className="font-medium text-gray-700 dark:text-gray-200">Best Battery</span>
             </Link>
-            <Link href="/phones/best-performance" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-red-200 hover:bg-red-50/50 transition-all text-sm">
+            <Link href="/phones/best-performance" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-red-200 hover:bg-red-50 dark:bg-red-900/20/50 transition-all text-sm">
               <SpecIcon specKey="processor" size={18} className="text-red-500 flex-shrink-0" />
-              <span className="font-medium text-gray-700">Best Performance</span>
+              <span className="font-medium text-gray-700 dark:text-gray-200">Best Performance</span>
             </Link>
-            <Link href="/phones/best-display" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50/50 transition-all text-sm">
+            <Link href="/phones/best-display" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-purple-200 hover:bg-purple-50 dark:bg-purple-900/20/50 transition-all text-sm">
               <SpecIcon specKey="display_size" size={18} className="text-purple-500 flex-shrink-0" />
-              <span className="font-medium text-gray-700">Best Display</span>
+              <span className="font-medium text-gray-700 dark:text-gray-200">Best Display</span>
             </Link>
             <Link href="/phones/flagship" className="flex items-center gap-2.5 p-3 rounded-xl border border-gray-100 hover:border-amber-200 hover:bg-amber-50/50 transition-all text-sm">
               <SpecIcon specKey="" size={18} className="text-amber-500 flex-shrink-0" />
-              <span className="font-medium text-gray-700">Flagship</span>
+              <span className="font-medium text-gray-700 dark:text-gray-200">Flagship</span>
             </Link>
           </div>
         </section>

@@ -37,7 +37,7 @@ export default async function FindMyPhonePage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateBreadcrumbJsonLd([
           { name: "Home", href: "/" },
@@ -47,7 +47,7 @@ export default async function FindMyPhonePage() {
       <Header />
 
       {/* Breadcrumbs */}
-      <div className="bg-white border-b">
+      <div className="bg-white dark:bg-gray-800 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <Breadcrumb items={[
             { label: "Home", href: "/" },
@@ -75,24 +75,24 @@ export default async function FindMyPhonePage() {
       </main>
 
       {/* How It Works */}
-      <section className="bg-white border-t">
+      <section className="bg-white dark:bg-gray-800 border-t">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-          <h2 className="text-xl font-bold text-gray-900 text-center mb-8">How It Works</h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white text-center mb-8">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl mx-auto mb-4">💰</div>
-              <h3 className="font-bold text-gray-900 mb-2">Set Your Budget</h3>
-              <p className="text-sm text-gray-500">Choose a price range that fits your needs</p>
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-2xl mx-auto mb-4">💰</div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">Set Your Budget</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Choose a price range that fits your needs</p>
             </div>
             <div className="text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-2xl mx-auto mb-4">🎯</div>
-              <h3 className="font-bold text-gray-900 mb-2">Set Priorities</h3>
-              <p className="text-sm text-gray-500">Rate what matters most — camera, battery, performance, display, or value</p>
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center text-2xl mx-auto mb-4">🎯</div>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">Set Priorities</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Rate what matters most — camera, battery, performance, display, or value</p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-2xl mx-auto mb-4">🏆</div>
-              <h3 className="font-bold text-gray-900 mb-2">Get Matches</h3>
-              <p className="text-sm text-gray-500">See ranked recommendations with detailed scores and explanations</p>
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">Get Matches</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">See ranked recommendations with detailed scores and explanations</p>
             </div>
           </div>
         </div>

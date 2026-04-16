@@ -65,9 +65,9 @@ export default function AdminHomepagePage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Homepage Configuration</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Homepage Configuration</h1>
         <div className="animate-pulse space-y-4">
-          {[...Array(4)].map((_, i) => <div key={i} className="bg-white rounded-xl border p-6"><div className="h-8 bg-gray-200 rounded w-48" /></div>)}
+          {[...Array(4)].map((_, i) => <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border p-6"><div className="h-8 bg-gray-200 rounded w-48" /></div>)}
         </div>
       </div>
     );
@@ -77,8 +77,8 @@ export default function AdminHomepagePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Homepage Configuration</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Configure the public homepage layout and content</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Homepage Configuration</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Configure the public homepage layout and content</p>
         </div>
         <button onClick={handleSave} disabled={saving}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 flex items-center gap-2">
@@ -87,61 +87,61 @@ export default function AdminHomepagePage() {
         </button>
       </div>
 
-      {success && <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">{success}</div>}
+      {success && <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm">{success}</div>}
 
       {/* Hero Section */}
-      <div className="bg-white rounded-xl border p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border p-6">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
           <Icon icon="mdi:image-area" width={18} className="text-blue-600" />
           Hero Section
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Title</label>
             <input value={config.hero_title} onChange={(e) => setConfig((p) => ({ ...p, hero_title: e.target.value }))}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Subtitle</label>
             <input value={config.hero_subtitle} onChange={(e) => setConfig((p) => ({ ...p, hero_subtitle: e.target.value }))}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">CTA Button Text</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">CTA Button Text</label>
             <input value={config.hero_cta_text} onChange={(e) => setConfig((p) => ({ ...p, hero_cta_text: e.target.value }))}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">CTA Button URL</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">CTA Button URL</label>
             <input value={config.hero_cta_url} onChange={(e) => setConfig((p) => ({ ...p, hero_cta_url: e.target.value }))}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
       </div>
 
       {/* Featured Section */}
-      <div className="bg-white rounded-xl border p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border p-6">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
           <Icon icon="mdi:star-outline" width={18} className="text-yellow-600" />
           Featured Section
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Section Title</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Section Title</label>
             <input value={config.featured_section_title} onChange={(e) => setConfig((p) => ({ ...p, featured_section_title: e.target.value }))}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Number of Featured Phones</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Number of Featured Phones</label>
             <input type="number" min="1" max="20" value={config.featured_phones_count} onChange={(e) => setConfig((p) => ({ ...p, featured_phones_count: e.target.value }))}
-              className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
       </div>
 
       {/* Display Options */}
-      <div className="bg-white rounded-xl border p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-gray-800 rounded-xl border p-6">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
           <Icon icon="mdi:toggle-switch-outline" width={18} className="text-green-600" />
           Display Options
         </h3>
@@ -154,23 +154,23 @@ export default function AdminHomepagePage() {
             <label key={key} className="flex items-center gap-3 cursor-pointer">
               <input type="checkbox" checked={config[key as keyof typeof config] === "true"}
                 onChange={(e) => setConfig((p) => ({ ...p, [key]: e.target.checked ? "true" : "false" }))}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-4 h-4" />
-              <span className="text-sm text-gray-700">{label}</span>
+                className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 w-4 h-4" />
+              <span className="text-sm text-gray-700 dark:text-gray-200">{label}</span>
             </label>
           ))}
         </div>
       </div>
 
       {/* Footer */}
-      <div className="bg-white rounded-xl border p-6">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
-          <Icon icon="mdi:page-layout-footer" width={18} className="text-gray-600" />
+      <div className="bg-white dark:bg-gray-800 rounded-xl border p-6">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <Icon icon="mdi:page-layout-footer" width={18} className="text-gray-600 dark:text-gray-300" />
           Footer
         </h3>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Footer Text</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Footer Text</label>
           <input value={config.footer_text} onChange={(e) => setConfig((p) => ({ ...p, footer_text: e.target.value }))}
-            className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
         </div>
       </div>
     </div>

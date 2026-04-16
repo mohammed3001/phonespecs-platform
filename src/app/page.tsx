@@ -62,7 +62,7 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[generateWebsiteJsonLd(), generateOrganizationJsonLd()]} />
       <Header />
 
@@ -79,7 +79,7 @@ export default async function HomePage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28 lg:py-36">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-blue-200 text-sm mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-gray-800/10 backdrop-blur-sm border border-white/10 text-blue-200 text-sm mb-6">
               <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
               Trusted by thousands of tech enthusiasts
             </div>
@@ -99,14 +99,14 @@ export default async function HomePage() {
             <div className="mt-10 max-w-xl">
               <div className="relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-violet-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition-opacity" />
-                <div className="relative flex items-center bg-white rounded-2xl shadow-2xl">
+                <div className="relative flex items-center bg-white dark:bg-gray-800 rounded-2xl shadow-2xl">
                   <svg className="w-5 h-5 text-gray-400 ml-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <input
                     type="text"
                     placeholder="Search any phone... (e.g., Galaxy S25, iPhone 16)"
-                    className="flex-1 px-4 py-4 md:py-5 text-gray-900 placeholder-gray-400 bg-transparent outline-none text-base"
+                    className="flex-1 px-4 py-4 md:py-5 text-gray-900 dark:text-white placeholder-gray-400 bg-transparent outline-none text-base"
                     readOnly
                   />
                   <Link
@@ -129,7 +129,7 @@ export default async function HomePage() {
                   <Link
                     key={filter.label}
                     href={filter.href}
-                    className="px-4 py-1.5 rounded-full bg-white/10 border border-white/10 text-sm text-blue-100 hover:bg-white/20 hover:border-white/20 transition-all"
+                    className="px-4 py-1.5 rounded-full bg-white dark:bg-gray-800/10 border border-white/10 text-sm text-blue-100 hover:bg-white dark:bg-gray-800/20 hover:border-white/20 transition-all"
                   >
                     {filter.label}
                   </Link>
@@ -143,21 +143,21 @@ export default async function HomePage() {
       {/* ========== STATS BAR ========== */}
       <section className="relative -mt-6 z-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="bg-white rounded-2xl shadow-xl shadow-black/5 border border-gray-100 p-6 md:p-8">
-            <div className="grid grid-cols-3 divide-x divide-gray-200">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-black/5 border border-gray-100 p-6 md:p-8">
+            <div className="grid grid-cols-3 divide-x divide-gray-200 dark:divide-gray-700">
               {[
                 { value: `${stats.phoneCount}+`, label: "Phones Listed", icon: "mdi:cellphone" },
                 { value: `${stats.brandCount}+`, label: "Global Brands", icon: "mdi:domain" },
                 { value: `${stats.specCount}+`, label: "Spec Categories", icon: "mdi:format-list-checks" },
               ].map((stat) => (
                 <div key={stat.label} className="text-center px-4">
-                  <div className="inline-flex items-center justify-center w-10 h-10 bg-blue-50 rounded-xl mb-2">
+                  <div className="inline-flex items-center justify-center w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-xl mb-2">
                     <SpecIcon specKey="" size={20} className="text-blue-600" />
                   </div>
                   <p className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
                     {stat.value}
                   </p>
-                  <p className="text-xs md:text-sm text-gray-500 mt-1 font-medium">{stat.label}</p>
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -176,20 +176,20 @@ export default async function HomePage() {
               <Link
                 key={brand.id}
                 href={`/phones?brand=${brand.slug}`}
-                className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white border border-gray-200 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-600/5 transition-all duration-300"
+                className="group flex items-center gap-2.5 px-5 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-600/5 transition-all duration-300"
               >
-                <div className="w-8 h-8 bg-gray-100 group-hover:bg-blue-50 rounded-lg flex items-center justify-center transition-colors">
+                <div className="w-8 h-8 bg-gray-100 group-hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg flex items-center justify-center transition-colors">
                   <SpecIcon specKey="" size={18} className="text-gray-400 group-hover:text-blue-500 transition-colors" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{brand.name}</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">{brand.name}</p>
                   <p className="text-[10px] text-gray-400">{brand.phoneCount} phones</p>
                 </div>
               </Link>
             ))}
             <Link
               href="/brands"
-              className="flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-400 text-sm font-medium text-gray-500 hover:text-blue-600 transition-all"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-blue-400 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-blue-600 transition-all"
             >
               View All Brands
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -202,7 +202,7 @@ export default async function HomePage() {
 
       {/* ========== FEATURED PHONES ========== */}
       {featuredPhones.length > 0 && (
-        <section className="py-12 md:py-16 bg-white">
+        <section className="py-12 md:py-16 bg-white dark:bg-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-end justify-between mb-10">
               <div>
@@ -212,14 +212,14 @@ export default async function HomePage() {
                   </svg>
                   Editor&apos;s Choice
                 </div>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                   Featured Phones
                 </h2>
-                <p className="text-gray-500 mt-2 text-lg">Our top picks and recommendations</p>
+                <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Our top picks and recommendations</p>
               </div>
               <Link
                 href="/phones"
-                className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-700 transition-colors"
+                className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors"
               >
                 View All
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -253,14 +253,14 @@ export default async function HomePage() {
                 <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                 Just Added
               </div>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                 Latest Phones
               </h2>
-              <p className="text-gray-500 mt-2 text-lg">Recently added to our database</p>
+              <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Recently added to our database</p>
             </div>
             <Link
               href="/phones?sort=newest"
-              className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-700 transition-colors"
+              className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors"
             >
               View All
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -277,12 +277,12 @@ export default async function HomePage() {
       </section>
 
       {/* ========== COMPARE CTA ========== */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-violet-700 p-8 md:p-14">
             {/* Decorative */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/3" />
+            <div className="absolute top-0 right-0 w-80 h-80 bg-white dark:bg-gray-800/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white dark:bg-gray-800/5 rounded-full translate-y-1/2 -translate-x-1/3" />
 
             <div className="relative flex flex-col md:flex-row items-center gap-8">
               <div className="flex-1">
@@ -297,7 +297,7 @@ export default async function HomePage() {
                 </p>
                 <Link
                   href="/compare"
-                  className="mt-8 inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-colors shadow-xl shadow-black/10"
+                  className="mt-8 inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-gray-800 text-blue-700 font-bold rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors shadow-xl shadow-black/10"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -306,13 +306,13 @@ export default async function HomePage() {
                 </Link>
               </div>
               <div className="flex-shrink-0 hidden md:flex gap-4">
-                <div className="w-40 h-52 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 flex items-center justify-center text-5xl">
+                <div className="w-40 h-52 bg-white dark:bg-gray-800/10 backdrop-blur-sm rounded-2xl border border-white/20 flex items-center justify-center text-5xl">
                   📱
                 </div>
                 <div className="w-6 flex items-center justify-center">
                   <span className="text-3xl font-bold text-white/50">vs</span>
                 </div>
-                <div className="w-40 h-52 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 flex items-center justify-center text-5xl">
+                <div className="w-40 h-52 bg-white dark:bg-gray-800/10 backdrop-blur-sm rounded-2xl border border-white/20 flex items-center justify-center text-5xl">
                   📱
                 </div>
               </div>
@@ -325,10 +325,10 @@ export default async function HomePage() {
       <section className="py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               Explore the Platform
             </h2>
-            <p className="text-gray-500 mt-2 text-lg">Everything you need, all in one place</p>
+            <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Everything you need, all in one place</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
@@ -362,14 +362,14 @@ export default async function HomePage() {
               },
             ].map((item) => (
               <Link key={item.href} href={item.href} className="group">
-                <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300 h-full">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300 h-full">
                   <div className={`w-12 h-12 bg-gradient-to-br ${item.color} rounded-xl flex items-center justify-center shadow-lg mb-4`}>
                     <SpecIcon specKey="" size={24} className="text-white" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-gray-500 mt-2 leading-relaxed">{item.desc}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">{item.desc}</p>
                   <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 group-hover:gap-2 transition-all">
                     Explore
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -384,7 +384,7 @@ export default async function HomePage() {
       </section>
 
       {/* ========== NEWSLETTER CTA ========== */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-3xl p-8 md:p-14 text-center">
             <h2 className="text-2xl md:text-3xl font-extrabold text-white">
@@ -398,13 +398,13 @@ export default async function HomePage() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-5 py-3.5 rounded-xl bg-white/10 border border-white/10 text-white placeholder-gray-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+                className="flex-1 px-5 py-3.5 rounded-xl bg-white dark:bg-gray-800/10 border border-white/10 text-white placeholder-gray-500 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
               />
               <button className="px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-600/25">
                 Subscribe
               </button>
             </div>
-            <p className="mt-4 text-xs text-gray-500">No spam. Unsubscribe at any time.</p>
+            <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">No spam. Unsubscribe at any time.</p>
           </div>
         </div>
       </section>

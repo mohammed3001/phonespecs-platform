@@ -69,11 +69,11 @@ export default function AdminModerationPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Moderation Queue</h1>
-          <p className="text-sm text-gray-500 mt-1">Review user reports and take action on flagged content</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Moderation Queue</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Review user reports and take action on flagged content</p>
         </div>
         {stats.pending ? (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-700 text-sm font-medium rounded-lg">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-900/20 text-red-700 text-sm font-medium rounded-lg">
             <Icon icon="mdi:flag" className="w-4 h-4" />
             {stats.pending} pending
           </span>
@@ -92,7 +92,7 @@ export default function AdminModerationPage() {
             key={tab.key}
             onClick={() => setFilter(tab.key)}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              filter === tab.key ? "bg-white shadow-sm text-gray-900" : "text-gray-600 hover:text-gray-900"
+              filter === tab.key ? "bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-900/30 text-gray-900 dark:text-white" : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
             }`}
           >
             {tab.label}
@@ -105,27 +105,27 @@ export default function AdminModerationPage() {
       <div className="space-y-4">
         {loading ? (
           [...Array(3)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl border p-6 animate-pulse">
+            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border p-6 animate-pulse">
               <div className="h-5 bg-gray-200 rounded w-1/3 mb-3" />
               <div className="h-4 bg-gray-200 rounded w-2/3" />
             </div>
           ))
         ) : reports.length === 0 ? (
-          <div className="bg-white rounded-xl border p-12 text-center">
+          <div className="bg-white dark:bg-gray-800 rounded-xl border p-12 text-center">
             <Icon icon="mdi:shield-check" className="w-12 h-12 text-emerald-300 mx-auto mb-3" />
-            <p className="text-gray-500">No {filter === "all" ? "" : filter} reports</p>
+            <p className="text-gray-500 dark:text-gray-400">No {filter === "all" ? "" : filter} reports</p>
           </div>
         ) : (
           reports.map((report) => (
-            <div key={report.id} className="bg-white rounded-xl border p-6">
+            <div key={report.id} className="bg-white dark:bg-gray-800 rounded-xl border p-6">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${report.status === "pending" ? "bg-red-100" : "bg-gray-100"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${report.status === "pending" ? "bg-red-100 dark:bg-red-900/30" : "bg-gray-100"}`}>
                     <Icon icon={reasonIcons[report.reason] || "mdi:flag"} className={`w-5 h-5 ${report.status === "pending" ? "text-red-500" : "text-gray-400"}`} />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 text-sm capitalize">{report.reason} Report</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="font-medium text-gray-900 dark:text-white text-sm capitalize">{report.reason} Report</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       by {report.reporter?.name || "Unknown"} • {new Date(report.createdAt).toLocaleDateString()} •
                       <span className="capitalize ml-1">{report.entityType}</span>
                     </p>
@@ -133,28 +133,28 @@ export default function AdminModerationPage() {
                 </div>
                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
                   report.status === "pending" ? "bg-amber-50 text-amber-700" :
-                  report.status === "resolved" ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-600"
+                  report.status === "resolved" ? "bg-emerald-50 text-emerald-700" : "bg-gray-100 text-gray-600 dark:text-gray-300"
                 }`}>
                   {report.status}
                 </span>
               </div>
 
               {report.description && (
-                <p className="text-sm text-gray-700 mb-3 bg-gray-50 rounded-lg p-3">{report.description}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-200 mb-3 bg-gray-50 dark:bg-gray-900 rounded-lg p-3">{report.description}</p>
               )}
 
               {/* Reported Content Preview */}
               {report.review && (
-                <div className="border rounded-lg p-3 mb-3 bg-gray-50/50">
-                  <p className="text-xs text-gray-500 mb-1">Reported Review:</p>
-                  <p className="text-sm font-medium text-gray-900">{report.review.title || "Untitled"}</p>
-                  <p className="text-xs text-gray-600 line-clamp-2 mt-1">{report.review.content}</p>
+                <div className="border rounded-lg p-3 mb-3 bg-gray-50 dark:bg-gray-900/50">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Reported Review:</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{report.review.title || "Untitled"}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 mt-1">{report.review.content}</p>
                   <p className="text-xs text-gray-400 mt-1">by {report.review.user?.name || "Unknown"}</p>
                 </div>
               )}
 
               {report.moderatedBy && (
-                <p className="text-xs text-gray-500 mb-3">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
                   Moderated by <strong>{report.moderatedBy.name}</strong>
                   {report.moderationNote && `: ${report.moderationNote}`}
                 </p>
@@ -173,7 +173,7 @@ export default function AdminModerationPage() {
                   <button
                     onClick={() => handleAction(report.id, "dismiss")}
                     disabled={actionLoading === report.id}
-                    className="flex items-center gap-1.5 px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1.5 px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
                   >
                     <Icon icon="mdi:close" className="w-4 h-4" />
                     Dismiss

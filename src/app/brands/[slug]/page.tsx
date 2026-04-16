@@ -125,7 +125,7 @@ export default async function BrandDetailPage({ params }: { params: { slug: stri
   const maxPrice = prices.length > 0 ? Math.max(...prices) : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateBrandOrganizationJsonLd(brand),
         generateBreadcrumbJsonLd([
@@ -156,7 +156,7 @@ export default async function BrandDetailPage({ params }: { params: { slug: stri
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             {/* Brand Logo */}
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/10">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white dark:bg-gray-800/10 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/10">
               {brand.logo ? (
                 <Image src={brand.logo} alt={brand.name} width={56} height={56} className="w-14 h-14 object-contain" />
               ) : (
@@ -171,13 +171,13 @@ export default async function BrandDetailPage({ params }: { params: { slug: stri
               )}
               <div className="flex flex-wrap items-center gap-3 mt-4">
                 {brand.country && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full text-sm text-blue-200">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-gray-800/10 rounded-full text-sm text-blue-200">
                     <Icon icon="mdi:map-marker" className="w-4 h-4" />
                     {brand.country}
                   </span>
                 )}
                 {brand.foundedYear && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full text-sm text-blue-200">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-gray-800/10 rounded-full text-sm text-blue-200">
                     <Icon icon="mdi:calendar" className="w-4 h-4" />
                     Founded {brand.foundedYear}
                   </span>
@@ -187,7 +187,7 @@ export default async function BrandDetailPage({ params }: { params: { slug: stri
                     href={brand.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 rounded-full text-sm text-blue-200 hover:bg-white/20 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-gray-800/10 rounded-full text-sm text-blue-200 hover:bg-white dark:bg-gray-800/20 transition-colors"
                   >
                     <Icon icon="mdi:web" className="w-4 h-4" />
                     Website
@@ -200,19 +200,19 @@ export default async function BrandDetailPage({ params }: { params: { slug: stri
 
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10">
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+            <div className="bg-white dark:bg-gray-800/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <p className="text-2xl font-bold text-white">{brand.phones.length}</p>
               <p className="text-sm text-blue-200/60">Total Phones</p>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+            <div className="bg-white dark:bg-gray-800/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <p className="text-2xl font-bold text-green-400">{availableCount}</p>
               <p className="text-sm text-blue-200/60">Available</p>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+            <div className="bg-white dark:bg-gray-800/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <p className="text-2xl font-bold text-amber-400">{comingSoonCount}</p>
               <p className="text-sm text-blue-200/60">Coming Soon</p>
             </div>
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+            <div className="bg-white dark:bg-gray-800/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
               <p className="text-2xl font-bold text-white">
                 {minPrice && maxPrice
                   ? minPrice === maxPrice
@@ -230,7 +230,7 @@ export default async function BrandDetailPage({ params }: { params: { slug: stri
       {/* Phones Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 flex-1">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             All {brand.name} Phones
             <span className="text-gray-400 font-normal ml-2">({brand.phones.length})</span>
           </h2>
@@ -243,10 +243,10 @@ export default async function BrandDetailPage({ params }: { params: { slug: stri
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
+          <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100">
             <Icon icon="mdi:cellphone-off" className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-700 mb-2">No phones listed yet</h3>
-            <p className="text-gray-500">Check back soon for {brand.name} phones.</p>
+            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">No phones listed yet</h3>
+            <p className="text-gray-500 dark:text-gray-400">Check back soon for {brand.name} phones.</p>
           </div>
         )}
       </section>

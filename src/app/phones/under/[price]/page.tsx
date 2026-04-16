@@ -93,7 +93,7 @@ export default async function UnderPricePage({ params }: { params: { price: stri
     .slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateItemListJsonLd(
           phones.map((p, i) => ({ name: p.name, slug: p.slug, position: i + 1 })),
@@ -144,7 +144,7 @@ export default async function UnderPricePage({ params }: { params: { price: stri
         {phones.length === 0 ? (
           <div className="text-center py-20">
             <Icon icon="mdi:tag-off" className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-600">No phones found {config.label}</h2>
+            <h2 className="text-xl font-semibold text-gray-600 dark:text-gray-300">No phones found {config.label}</h2>
             <p className="text-gray-400 mt-2">Try a different price range or check back soon.</p>
             <Link href="/phones" className="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm font-semibold">
               Browse All Phones
@@ -153,7 +153,7 @@ export default async function UnderPricePage({ params }: { params: { price: stri
         ) : (
           <>
             <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-gray-500">{phones.length} phones {config.label}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{phones.length} phones {config.label}</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {phones.map((phone, index) => (
@@ -174,14 +174,14 @@ export default async function UnderPricePage({ params }: { params: { price: stri
 
         {/* Other Price Ranges */}
         <section className="mt-12">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Other Price Ranges</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Other Price Ranges</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {priceRanges.map(([key, cfg]) => (
-              <Link key={key} href={`/phones/under/${key}`} className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-emerald-300 hover:shadow-sm transition-all">
+              <Link key={key} href={`/phones/under/${key}`} className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-emerald-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
                 <Icon icon="mdi:currency-usd" className="w-6 h-6 text-emerald-500" />
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">{cfg.label}</p>
-                  <p className="text-xs text-gray-500">Best value picks</p>
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm">{cfg.label}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Best value picks</p>
                 </div>
               </Link>
             ))}
@@ -190,25 +190,25 @@ export default async function UnderPricePage({ params }: { params: { price: stri
 
         {/* Related Categories */}
         <section className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link href="/phones/best-camera-phones" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-camera-phones" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:camera" className="w-6 h-6 text-blue-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Camera</p>
-              <p className="text-xs text-gray-500">Top photography phones</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Camera</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Top photography phones</p>
             </div>
           </Link>
-          <Link href="/phones/best-battery-life" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-battery-life" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:battery-high" className="w-6 h-6 text-green-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Battery</p>
-              <p className="text-xs text-gray-500">Longest lasting phones</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Battery</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Longest lasting phones</p>
             </div>
           </Link>
-          <Link href="/phones/flagship" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/flagship" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:star" className="w-6 h-6 text-amber-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Flagship Phones</p>
-              <p className="text-xs text-gray-500">Premium devices $1000+</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Flagship Phones</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Premium devices $1000+</p>
             </div>
           </Link>
         </section>

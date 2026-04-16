@@ -47,17 +47,17 @@ export default function AdminPhonesPage() {
 
   const statusBadge = (status: string) => {
     const map: Record<string, string> = {
-      available: "bg-green-100 text-green-700",
+      available: "bg-green-100 dark:bg-green-900/30 text-green-700",
       coming_soon: "bg-amber-100 text-amber-700",
-      discontinued: "bg-gray-100 text-gray-600",
+      discontinued: "bg-gray-100 text-gray-600 dark:text-gray-300",
     };
-    return map[status] || "bg-gray-100 text-gray-600";
+    return map[status] || "bg-gray-100 text-gray-600 dark:text-gray-300";
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Phones</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Phones</h1>
         <Link
           href="/admin/phones/new"
           className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
@@ -70,7 +70,7 @@ export default function AdminPhonesPage() {
       </div>
 
       {/* Search & Filters */}
-      <div className="bg-white rounded-xl shadow-sm border p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-4">
         <div className="flex gap-4">
           <div className="flex-1">
             <input
@@ -85,19 +85,19 @@ export default function AdminPhonesPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 border-b">
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Phone</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Brand</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Price</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Published</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Views</th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Specs</th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <tr className="bg-gray-50 dark:bg-gray-900 border-b">
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Phone</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Brand</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Price</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Published</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Views</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Specs</th>
+                <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -116,13 +116,13 @@ export default function AdminPhonesPage() {
                 ))
               ) : phones.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
+                  <td colSpan={8} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                     No phones found
                   </td>
                 </tr>
               ) : (
                 phones.map((phone) => (
-                  <tr key={phone.id} className="hover:bg-gray-50">
+                  <tr key={phone.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-lg overflow-hidden">
@@ -133,25 +133,25 @@ export default function AdminPhonesPage() {
                           )}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900 text-sm">{phone.name}</p>
-                          <p className="text-xs text-gray-500">/{phone.slug}</p>
+                          <p className="font-medium text-gray-900 dark:text-white text-sm">{phone.name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">/{phone.slug}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{phone.brand.name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">{phone.brand.name}</td>
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusBadge(phone.marketStatus)}`}>
                         {phone.marketStatus.replace("_", " ")}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-700">
+                    <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
                       {phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd}` : "—")}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`w-2.5 h-2.5 rounded-full inline-block ${phone.isPublished ? "bg-green-500" : "bg-gray-300"}`} />
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{phone.viewCount.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{phone._count.specs}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{phone.viewCount.toLocaleString()}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{phone._count.specs}</td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-3">
                         <Link
@@ -168,7 +168,7 @@ export default function AdminPhonesPage() {
                         </Link>
                         <Link
                           href={`/admin/phones/${phone.id}`}
-                          className="text-gray-600 hover:text-gray-800 text-xs font-medium"
+                          className="text-gray-600 dark:text-gray-300 hover:text-gray-800 text-xs font-medium"
                         >
                           Edit
                         </Link>
@@ -187,17 +187,17 @@ export default function AdminPhonesPage() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50"
+              className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white disabled:opacity-50"
             >
               Previous
             </button>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               Page {page} of {totalPages}
             </span>
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50"
+              className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white disabled:opacity-50"
             >
               Next
             </button>

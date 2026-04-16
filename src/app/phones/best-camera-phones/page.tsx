@@ -55,7 +55,7 @@ export default async function BestCameraPhonesPage() {
   const phones = await getBestCameraPhones();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateItemListJsonLd(
           phones.map((p, i) => ({ name: p.name, slug: p.slug, position: i + 1 })),
@@ -107,13 +107,13 @@ export default async function BestCameraPhonesPage() {
         {phones.length === 0 ? (
           <div className="text-center py-20">
             <Icon icon="mdi:camera-off" className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-600">No phones found</h2>
+            <h2 className="text-xl font-semibold text-gray-600 dark:text-gray-300">No phones found</h2>
             <p className="text-gray-400 mt-2">Check back soon for updated rankings.</p>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-gray-500">{phones.length} phones ranked</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{phones.length} phones ranked</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {phones.map((phone, index) => (
@@ -133,17 +133,17 @@ export default async function BestCameraPhonesPage() {
         )}
 
         {/* SEO Content */}
-        <section className="mt-16 bg-white rounded-2xl border border-gray-200 p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">How We Rank Camera Phones</h2>
+        <section className="mt-16 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">How We Rank Camera Phones</h2>
           <div className="prose prose-gray max-w-none">
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Our camera phone rankings are based on a comprehensive evaluation of multiple factors including 
               main camera resolution, sensor size, aperture, image stabilization, video capabilities, and 
               computational photography features. We consider both hardware specifications and real-world 
               performance to provide the most accurate rankings.
             </p>
             <h3 className="text-lg font-semibold text-gray-800 mt-6 mb-2">Key Factors We Consider</h3>
-            <ul className="text-gray-600 space-y-1">
+            <ul className="text-gray-600 dark:text-gray-300 space-y-1">
               <li>Main camera megapixel count and sensor technology</li>
               <li>Optical zoom capabilities and lens quality</li>
               <li>Night mode and low-light performance</li>
@@ -156,25 +156,25 @@ export default async function BestCameraPhonesPage() {
 
         {/* Related Categories */}
         <section className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link href="/phones/best-battery-life" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-battery-life" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:battery-high" className="w-6 h-6 text-green-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Battery Life</p>
-              <p className="text-xs text-gray-500">Longest lasting phones</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Battery Life</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Longest lasting phones</p>
             </div>
           </Link>
-          <Link href="/phones/best-performance" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-performance" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:speedometer" className="w-6 h-6 text-red-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Performance</p>
-              <p className="text-xs text-gray-500">Most powerful phones</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Performance</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Most powerful phones</p>
             </div>
           </Link>
-          <Link href="/phones/best-display" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-display" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:cellphone" className="w-6 h-6 text-purple-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Display</p>
-              <p className="text-xs text-gray-500">Top screen quality</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Display</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Top screen quality</p>
             </div>
           </Link>
         </section>

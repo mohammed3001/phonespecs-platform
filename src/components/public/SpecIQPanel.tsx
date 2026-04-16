@@ -28,10 +28,10 @@ interface SpecIQData {
 
 const tierColors: Record<string, { bg: string; text: string; ring: string; bar: string }> = {
   exceptional: { bg: "bg-emerald-50", text: "text-emerald-700", ring: "ring-emerald-200", bar: "bg-emerald-500" },
-  great: { bg: "bg-blue-50", text: "text-blue-700", ring: "ring-blue-200", bar: "bg-blue-500" },
+  great: { bg: "bg-blue-50 dark:bg-blue-900/20", text: "text-blue-700", ring: "ring-blue-200", bar: "bg-blue-500" },
   good: { bg: "bg-amber-50", text: "text-amber-700", ring: "ring-amber-200", bar: "bg-amber-500" },
-  average: { bg: "bg-gray-50", text: "text-gray-600", ring: "ring-gray-200", bar: "bg-gray-400" },
-  below_average: { bg: "bg-red-50", text: "text-red-600", ring: "ring-red-200", bar: "bg-red-400" },
+  average: { bg: "bg-gray-50 dark:bg-gray-900", text: "text-gray-600 dark:text-gray-300", ring: "ring-gray-200", bar: "bg-gray-400" },
+  below_average: { bg: "bg-red-50 dark:bg-red-900/20", text: "text-red-600", ring: "ring-red-200", bar: "bg-red-400" },
 };
 
 const categoryIcons: Record<string, string> = {
@@ -59,7 +59,7 @@ export default function SpecIQPanel({ phoneId }: { phoneId: string }) {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-200 p-5 animate-pulse">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 animate-pulse">
         <div className="h-5 bg-gray-200 rounded w-24 mb-4" />
         <div className="space-y-3">
           <div className="h-12 bg-gray-100 rounded-xl" />
@@ -75,18 +75,18 @@ export default function SpecIQPanel({ phoneId }: { phoneId: string }) {
   const overallColors = tierColors[data.tier] || tierColors.average;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Header */}
       <div className={`px-5 py-4 ${overallColors.bg} border-b ${overallColors.ring}`}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-gray-900 text-sm flex items-center gap-1.5">
+            <h3 className="font-bold text-gray-900 dark:text-white text-sm flex items-center gap-1.5">
               <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               Spec IQ
             </h3>
-            <p className="text-[11px] text-gray-500 mt-0.5">How this phone compares</p>
+            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">How this phone compares</p>
           </div>
           <div className="text-right">
             <div className={`text-2xl font-extrabold ${overallColors.text}`}>
@@ -120,12 +120,12 @@ export default function SpecIQPanel({ phoneId }: { phoneId: string }) {
             const colors = tierColors[badge.tier] || tierColors.average;
             return (
               <div key={badge.specKey} className="flex items-center gap-3">
-                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-sm">
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-sm">
                   {categoryIcons[badge.category] || "📊"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-gray-700 truncate">{badge.specName}</span>
+                    <span className="text-xs font-semibold text-gray-700 dark:text-gray-200 truncate">{badge.specName}</span>
                     <span className={`text-[10px] font-bold ${colors.text}`}>
                       {badge.percentile >= 75 ? `Top ${100 - badge.percentile}%` : `${badge.percentile}%`}
                     </span>
@@ -151,7 +151,7 @@ export default function SpecIQPanel({ phoneId }: { phoneId: string }) {
         <>
           <button
             onClick={() => setExpanded(!expanded)}
-            className="w-full px-5 py-2.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50/50 transition-all flex items-center justify-center gap-1 border-t border-gray-100"
+            className="w-full px-5 py-2.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20/50 transition-all flex items-center justify-center gap-1 border-t border-gray-100"
           >
             {expanded ? "Show Less" : `View All ${data.badges.length} Specs`}
             <svg
@@ -170,12 +170,12 @@ export default function SpecIQPanel({ phoneId }: { phoneId: string }) {
                 const colors = tierColors[badge.tier] || tierColors.average;
                 return (
                   <div key={badge.specKey} className="flex items-center gap-3">
-                    <div className="flex-shrink-0 w-6 h-6 rounded-md bg-gray-50 flex items-center justify-center text-[10px]">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-md bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-[10px]">
                       {categoryIcons[badge.category] || "📊"}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-medium text-gray-600">{badge.specName}</span>
+                        <span className="text-[11px] font-medium text-gray-600 dark:text-gray-300">{badge.specName}</span>
                         <span className={`text-[10px] font-bold ${colors.text}`}>{badge.percentile}%</span>
                       </div>
                       <div className="h-1 bg-gray-100 rounded-full overflow-hidden mt-0.5">
@@ -196,7 +196,7 @@ export default function SpecIQPanel({ phoneId }: { phoneId: string }) {
       {/* Value Score */}
       <div className="px-5 py-3 bg-gradient-to-r from-blue-50 to-violet-50 border-t">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-semibold text-gray-600">Value Score</span>
+          <span className="text-[11px] font-semibold text-gray-600 dark:text-gray-300">Value Score</span>
           <span className="text-sm font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
             {data.valueScore}/100
           </span>

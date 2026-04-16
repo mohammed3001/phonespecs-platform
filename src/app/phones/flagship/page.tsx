@@ -51,7 +51,7 @@ export default async function FlagshipPhonesPage() {
   const phones = await getFlagshipPhones();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
         generateItemListJsonLd(
           phones.map((p, i) => ({ name: p.name, slug: p.slug, position: i + 1 })),
@@ -101,13 +101,13 @@ export default async function FlagshipPhonesPage() {
         {phones.length === 0 ? (
           <div className="text-center py-20">
             <Icon icon="mdi:star-off" className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-600">No flagship phones found</h2>
+            <h2 className="text-xl font-semibold text-gray-600 dark:text-gray-300">No flagship phones found</h2>
             <p className="text-gray-400 mt-2">Check back soon for updated listings.</p>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-gray-500">{phones.length} flagship phones from $1,000+</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{phones.length} flagship phones from $1,000+</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {phones.map((phone, index) => (
@@ -126,10 +126,10 @@ export default async function FlagshipPhonesPage() {
           </>
         )}
 
-        <section className="mt-16 bg-white rounded-2xl border border-gray-200 p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Why Choose a Flagship Phone?</h2>
+        <section className="mt-16 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Why Choose a Flagship Phone?</h2>
           <div className="prose prose-gray max-w-none">
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Flagship phones represent the pinnacle of smartphone technology. They feature the latest 
               processors for blazing performance, the most advanced camera systems with computational 
               photography, premium display technologies like LTPO AMOLED with 120Hz+ refresh rates, 
@@ -140,25 +140,25 @@ export default async function FlagshipPhonesPage() {
         </section>
 
         <section className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Link href="/phones/under/500" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/under/500" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:currency-usd" className="w-6 h-6 text-emerald-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Under $500</p>
-              <p className="text-xs text-gray-500">Great value mid-range</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Under $500</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Great value mid-range</p>
             </div>
           </Link>
-          <Link href="/phones/best-camera-phones" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-camera-phones" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:camera" className="w-6 h-6 text-blue-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Camera</p>
-              <p className="text-xs text-gray-500">Top photography phones</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Camera</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Top photography phones</p>
             </div>
           </Link>
-          <Link href="/phones/best-performance" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+          <Link href="/phones/best-performance" className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:shadow-sm dark:shadow-gray-900/30 transition-all">
             <Icon icon="mdi:speedometer" className="w-6 h-6 text-red-500" />
             <div>
-              <p className="font-semibold text-gray-900 text-sm">Best Performance</p>
-              <p className="text-xs text-gray-500">Most powerful phones</p>
+              <p className="font-semibold text-gray-900 dark:text-white text-sm">Best Performance</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Most powerful phones</p>
             </div>
           </Link>
         </section>

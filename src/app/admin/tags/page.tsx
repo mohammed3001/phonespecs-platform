@@ -95,8 +95,8 @@ export default function AdminTagsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tags</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{tags.length} tags</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tags</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{tags.length} tags</p>
         </div>
         <button
           onClick={() => { resetForm(); setShowForm(true); }}
@@ -108,14 +108,14 @@ export default function AdminTagsPage() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border shadow-sm p-6 space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">{editing ? "Edit Tag" : "New Tag"}</h3>
+        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl border shadow-sm dark:shadow-gray-900/30 p-6 space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{editing ? "Edit Tag" : "New Tag"}</h3>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">{error}</div>
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">{error}</div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Name *</label>
               <input
                 required
                 value={form.name}
@@ -127,17 +127,17 @@ export default function AdminTagsPage() {
                     slug: !editing && (!prev.slug || prev.slug === generateSlug(prev.name)) ? generateSlug(name) : prev.slug,
                   }));
                 }}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="e.g. 5G"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Slug *</label>
               <input
                 required
                 value={form.slug}
                 onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="e.g. 5g"
               />
             </div>
@@ -150,7 +150,7 @@ export default function AdminTagsPage() {
             >
               {saving ? "Saving..." : editing ? "Save Changes" : "Create Tag"}
             </button>
-            <button type="button" onClick={resetForm} className="text-gray-600 px-4 py-2 text-sm hover:bg-gray-100 rounded-lg">
+            <button type="button" onClick={resetForm} className="text-gray-600 dark:text-gray-300 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
               Cancel
             </button>
           </div>
@@ -163,19 +163,19 @@ export default function AdminTagsPage() {
             <div key={i} className="h-10 w-24 bg-gray-200 rounded-lg animate-pulse" />
           ))
         ) : tags.length === 0 ? (
-          <div className="w-full bg-white rounded-xl border p-12 text-center">
+          <div className="w-full bg-white dark:bg-gray-800 rounded-xl border p-12 text-center">
             <Icon icon="mdi:tag-outline" className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No tags yet</h3>
-            <p className="text-sm text-gray-500">Create tags to organize your articles</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No tags yet</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Create tags to organize your articles</p>
           </div>
         ) : (
           tags.map((tag) => (
             <div
               key={tag.id}
-              className="bg-white rounded-lg border px-4 py-2.5 flex items-center gap-3 hover:shadow-sm transition-shadow group"
+              className="bg-white dark:bg-gray-800 rounded-lg border px-4 py-2.5 flex items-center gap-3 hover:shadow-sm dark:shadow-gray-900/30 transition-shadow group"
             >
               <Icon icon="mdi:tag-outline" width={16} className="text-gray-400" />
-              <span className="text-sm font-medium text-gray-900">{tag.name}</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-white">{tag.name}</span>
               <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{tag.articleCount}</span>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button onClick={() => startEdit(tag)} className="text-blue-600 hover:text-blue-800 p-1">

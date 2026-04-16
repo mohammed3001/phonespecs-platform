@@ -94,8 +94,8 @@ export default function AdminAdSlotsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Ad Slots</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Ad Slots</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             Manage advertising placement zones across the site. {slots.length} slot{slots.length !== 1 ? "s" : ""} configured.
           </p>
         </div>
@@ -112,11 +112,11 @@ export default function AdminAdSlotsPage() {
 
       {/* Create Form */}
       {showForm && (
-        <form onSubmit={handleCreate} className="bg-white rounded-xl shadow-sm border p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">New Ad Slot</h2>
+        <form onSubmit={handleCreate} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">New Ad Slot</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Name *</label>
               <input
                 type="text"
                 value={form.name}
@@ -131,7 +131,7 @@ export default function AdminAdSlotsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Slug *</label>
               <input
                 type="text"
                 value={form.slug}
@@ -141,7 +141,7 @@ export default function AdminAdSlotsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Page Type *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Page Type *</label>
               <select
                 value={form.pageType}
                 onChange={(e) => setForm({ ...form, pageType: e.target.value })}
@@ -153,7 +153,7 @@ export default function AdminAdSlotsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Position *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Position *</label>
               <select
                 value={form.position}
                 onChange={(e) => setForm({ ...form, position: e.target.value })}
@@ -165,7 +165,7 @@ export default function AdminAdSlotsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Dimensions</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Dimensions</label>
               <input
                 type="text"
                 value={form.dimensions}
@@ -175,7 +175,7 @@ export default function AdminAdSlotsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Sort Order</label>
               <input
                 type="number"
                 value={form.sortOrder}
@@ -185,7 +185,7 @@ export default function AdminAdSlotsPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Fallback HTML</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Fallback HTML</label>
             <textarea
               value={form.fallbackHtml}
               onChange={(e) => setForm({ ...form, fallbackHtml: e.target.value })}
@@ -198,7 +198,7 @@ export default function AdminAdSlotsPage() {
             <button type="submit" disabled={saving} className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50">
               {saving ? "Creating..." : "Create Slot"}
             </button>
-            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg border hover:bg-gray-50">
+            <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-700/50">
               Cancel
             </button>
           </div>
@@ -207,30 +207,30 @@ export default function AdminAdSlotsPage() {
 
       {/* Slots grouped by page type */}
       {loading ? (
-        <div className="bg-white rounded-xl shadow-sm border p-8 text-center text-gray-400">Loading slots...</div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-8 text-center text-gray-400">Loading slots...</div>
       ) : Object.keys(grouped).length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
-          <p className="text-gray-500 font-medium">No ad slots configured</p>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border p-12 text-center">
+          <p className="text-gray-500 dark:text-gray-400 font-medium">No ad slots configured</p>
           <p className="text-gray-400 text-sm mt-1">Create your first slot to define where ads can appear</p>
         </div>
       ) : (
         Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([pageType, pageSlots]) => (
-          <div key={pageType} className="bg-white rounded-xl shadow-sm border overflow-hidden">
-            <div className="px-4 py-3 bg-gray-50 border-b flex items-center gap-2">
-              <span className="text-xs px-2 py-1 rounded-full bg-purple-50 text-purple-700 font-medium capitalize">
+          <div key={pageType} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border overflow-hidden">
+            <div className="px-4 py-3 bg-gray-50 dark:bg-gray-900 border-b flex items-center gap-2">
+              <span className="text-xs px-2 py-1 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-700 font-medium capitalize">
                 {pageType.replace(/_/g, " ")}
               </span>
               <span className="text-xs text-gray-400">{pageSlots.length} slot{pageSlots.length !== 1 ? "s" : ""}</span>
             </div>
             <div className="divide-y">
               {pageSlots.map((slot) => (
-                <div key={slot.id} className="px-4 py-3 flex items-center justify-between hover:bg-gray-50">
+                <div key={slot.id} className="px-4 py-3 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50">
                   <div className="flex items-center gap-4">
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">{slot.name}</p>
-                      <p className="text-xs text-gray-500 font-mono">{slot.slug}</p>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{slot.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">{slot.slug}</p>
                     </div>
-                    <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded capitalize">
+                    <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 dark:text-gray-300 rounded capitalize">
                       {slot.position.replace(/_/g, " ")}
                     </span>
                     {slot.dimensions && (
@@ -238,7 +238,7 @@ export default function AdminAdSlotsPage() {
                     )}
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="text-xs text-gray-500 text-right">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 text-right">
                       <p>{slot._count.impressions.toLocaleString()} impr.</p>
                       <p>{slot._count.clicks.toLocaleString()} clicks</p>
                     </div>
@@ -248,7 +248,7 @@ export default function AdminAdSlotsPage() {
                         slot.isActive ? "bg-green-500" : "bg-gray-300"
                       }`}
                     >
-                      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white dark:bg-gray-800 transition-transform ${
                         slot.isActive ? "translate-x-4" : "translate-x-1"
                       }`} />
                     </button>

@@ -155,8 +155,8 @@ export default function AdminSpecsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Specifications Management</h1>
-          <p className="text-sm text-gray-500 mt-1">{groups.length} groups, {groups.reduce((sum, g) => sum + g.definitions.length, 0)} specs total</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Specifications Management</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{groups.length} groups, {groups.reduce((sum, g) => sum + g.definitions.length, 0)} specs total</p>
         </div>
         <button
           onClick={() => { setShowAddGroup(true); setEditGroup(null); setGroupForm(emptyGroup); }}
@@ -169,35 +169,35 @@ export default function AdminSpecsPage() {
 
       {/* Add/Edit Group Form */}
       {showAddGroup && (
-        <form onSubmit={handleSaveGroup} className="bg-white rounded-xl border p-5 space-y-4">
-          <h3 className="text-sm font-semibold text-gray-900">{editGroup ? "Edit Group" : "New Group"}</h3>
+        <form onSubmit={handleSaveGroup} className="bg-white dark:bg-gray-800 rounded-xl border p-5 space-y-4">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{editGroup ? "Edit Group" : "New Group"}</h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Name *</label>
               <input required value={groupForm.name} onChange={(e) => setGroupForm((p) => ({ ...p, name: e.target.value }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Slug</label>
               <input value={groupForm.slug} onChange={(e) => setGroupForm((p) => ({ ...p, slug: e.target.value }))}
-                placeholder="Auto-generated" className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                placeholder="Auto-generated" className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Icon</label>
               <input value={groupForm.icon} onChange={(e) => setGroupForm((p) => ({ ...p, icon: e.target.value }))}
-                placeholder="e.g. 📱" className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                placeholder="e.g. 📱" className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Sort Order</label>
               <input type="number" value={groupForm.sortOrder} onChange={(e) => setGroupForm((p) => ({ ...p, sortOrder: parseInt(e.target.value) || 0 }))}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="w-full px-3 py-2 border rounded-lg text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div className="flex gap-2">
             <button type="submit" disabled={saving} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
               {saving ? "Saving..." : editGroup ? "Update" : "Create"}
             </button>
-            <button type="button" onClick={() => { setShowAddGroup(false); setEditGroup(null); }} className="text-gray-600 px-4 py-2 text-sm hover:bg-gray-100 rounded-lg">Cancel</button>
+            <button type="button" onClick={() => { setShowAddGroup(false); setEditGroup(null); }} className="text-gray-600 dark:text-gray-300 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
           </div>
         </form>
       )}
@@ -205,35 +205,35 @@ export default function AdminSpecsPage() {
       {loading ? (
         <div className="space-y-4">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="bg-white rounded-xl border p-4 animate-pulse">
+            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl border p-4 animate-pulse">
               <div className="h-5 bg-gray-200 rounded w-40" />
             </div>
           ))}
         </div>
       ) : groups.length === 0 ? (
-        <div className="bg-white rounded-xl border p-12 text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border p-12 text-center">
           <Icon icon="mdi:format-list-bulleted" className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No spec groups yet</h3>
-          <p className="text-sm text-gray-500">Create a group to organize phone specifications</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No spec groups yet</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Create a group to organize phone specifications</p>
         </div>
       ) : (
         <div className="space-y-4">
           {groups.map((group) => (
-            <div key={group.id} className="bg-white rounded-xl shadow-sm border overflow-hidden">
-              <div className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
+            <div key={group.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-900/30 border overflow-hidden">
+              <div className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                 <button onClick={() => setExpandedGroup(expandedGroup === group.id ? null : group.id)} className="flex items-center gap-3 flex-1 text-left">
                   <span className="text-xl">{group.icon || "📋"}</span>
                   <div>
-                    <h3 className="font-semibold text-gray-900">{group.name}</h3>
-                    <p className="text-xs text-gray-500">{group.definitions.length} specs &bull; Order: {group.sortOrder}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-white">{group.name}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{group.definitions.length} specs &bull; Order: {group.sortOrder}</p>
                   </div>
                 </button>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{group.slug}</span>
-                  <button onClick={() => startEditGroup(group)} className="p-1.5 hover:bg-gray-200 rounded text-gray-500" title="Edit">
+                  <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 px-2 py-1 rounded-full">{group.slug}</span>
+                  <button onClick={() => startEditGroup(group)} className="p-1.5 hover:bg-gray-200 rounded text-gray-500 dark:text-gray-400" title="Edit">
                     <Icon icon="mdi:pencil-outline" width={16} />
                   </button>
-                  <button onClick={() => handleDeleteGroup(group.id, group.name)} className="p-1.5 hover:bg-red-100 rounded text-red-400" title="Delete">
+                  <button onClick={() => handleDeleteGroup(group.id, group.name)} className="p-1.5 hover:bg-red-100 dark:bg-red-900/30 rounded text-red-400" title="Delete">
                     <Icon icon="mdi:delete-outline" width={16} />
                   </button>
                   <Icon icon="mdi:chevron-down" width={20} className={`text-gray-400 transition-transform ${expandedGroup === group.id ? "rotate-180" : ""}`} />
@@ -244,7 +244,7 @@ export default function AdminSpecsPage() {
                 <div className="border-t">
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="text-sm font-medium text-gray-700">Spec Definitions</h4>
+                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-200">Spec Definitions</h4>
                       <button
                         onClick={() => { setShowAddSpec(group.id); setEditSpec(null); setSpecForm({ ...emptySpec, groupId: group.id }); }}
                         className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
@@ -255,25 +255,25 @@ export default function AdminSpecsPage() {
 
                     {/* Add/Edit Spec Form */}
                     {showAddSpec === group.id && (
-                      <form onSubmit={handleSaveSpec} className="bg-gray-50 rounded-lg p-4 mb-4 space-y-3">
+                      <form onSubmit={handleSaveSpec} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-4 space-y-3">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Name *</label>
+                            <label className="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Name *</label>
                             <input required value={specForm.name} onChange={(e) => setSpecForm((p) => ({ ...p, name: e.target.value }))}
                               className="w-full px-3 py-2 border rounded-lg text-sm" />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Key</label>
+                            <label className="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Key</label>
                             <input value={specForm.key} onChange={(e) => setSpecForm((p) => ({ ...p, key: e.target.value }))}
                               placeholder="Auto" className="w-full px-3 py-2 border rounded-lg text-sm" />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Unit</label>
+                            <label className="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Unit</label>
                             <input value={specForm.unit} onChange={(e) => setSpecForm((p) => ({ ...p, unit: e.target.value }))}
                               placeholder="e.g. mAh, MP" className="w-full px-3 py-2 border rounded-lg text-sm" />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-700 mb-1">Data Type</label>
+                            <label className="block text-xs font-medium text-gray-700 dark:text-gray-200 mb-1">Data Type</label>
                             <select value={specForm.dataType} onChange={(e) => setSpecForm((p) => ({ ...p, dataType: e.target.value }))}
                               className="w-full px-3 py-2 border rounded-lg text-sm">
                               <option value="text">Text</option>
@@ -287,7 +287,7 @@ export default function AdminSpecsPage() {
                           {([["showInCard", "Card"], ["showInDetail", "Detail"], ["showInCompare", "Compare"], ["isFilterable", "Filterable"], ["isHighlighted", "Highlight"]] as const).map(([field, label]) => (
                             <label key={field} className="flex items-center gap-2 text-sm">
                               <input type="checkbox" checked={specForm[field] as boolean} onChange={(e) => setSpecForm((p) => ({ ...p, [field]: e.target.checked }))}
-                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                                className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500" />
                               {label}
                             </label>
                           ))}
@@ -296,38 +296,38 @@ export default function AdminSpecsPage() {
                           <button type="submit" disabled={saving} className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
                             {saving ? "Saving..." : editSpec ? "Update" : "Create"}
                           </button>
-                          <button type="button" onClick={() => { setShowAddSpec(null); setEditSpec(null); }} className="text-gray-600 px-3 py-1.5 text-sm hover:bg-gray-200 rounded-lg">Cancel</button>
+                          <button type="button" onClick={() => { setShowAddSpec(null); setEditSpec(null); }} className="text-gray-600 dark:text-gray-300 px-3 py-1.5 text-sm hover:bg-gray-200 rounded-lg">Cancel</button>
                         </div>
                       </form>
                     )}
 
                     {group.definitions.length === 0 ? (
-                      <p className="text-sm text-gray-500 text-center py-4">No specifications defined in this group</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-4">No specifications defined in this group</p>
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                           <thead>
-                            <tr className="bg-gray-50">
-                              <th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Name</th>
-                              <th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Key</th>
-                              <th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Unit</th>
-                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500">Card</th>
-                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500">Detail</th>
-                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500">Compare</th>
-                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500">Filter</th>
-                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500">Highlight</th>
-                              <th className="text-right px-3 py-2 text-xs font-medium text-gray-500">Actions</th>
+                            <tr className="bg-gray-50 dark:bg-gray-900">
+                              <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">Name</th>
+                              <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">Key</th>
+                              <th className="text-left px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">Unit</th>
+                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">Card</th>
+                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">Detail</th>
+                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">Compare</th>
+                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">Filter</th>
+                              <th className="text-center px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">Highlight</th>
+                              <th className="text-right px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400">Actions</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y">
                             {group.definitions.map((def) => (
-                              <tr key={def.id} className="hover:bg-gray-50">
-                                <td className="px-3 py-2 font-medium text-gray-900">{def.name}</td>
-                                <td className="px-3 py-2 text-gray-500 font-mono text-xs">{def.key}</td>
-                                <td className="px-3 py-2 text-gray-500">{def.unit || "—"}</td>
+                              <tr key={def.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                <td className="px-3 py-2 font-medium text-gray-900 dark:text-white">{def.name}</td>
+                                <td className="px-3 py-2 text-gray-500 dark:text-gray-400 font-mono text-xs">{def.key}</td>
+                                <td className="px-3 py-2 text-gray-500 dark:text-gray-400">{def.unit || "—"}</td>
                                 {(["showInCard", "showInDetail", "showInCompare", "isFilterable", "isHighlighted"] as const).map((field) => (
                                   <td key={field} className="px-3 py-2 text-center">
-                                    <span className={`w-5 h-5 inline-flex items-center justify-center rounded text-xs ${def[field] ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-400"}`}>
+                                    <span className={`w-5 h-5 inline-flex items-center justify-center rounded text-xs ${def[field] ? "bg-green-100 dark:bg-green-900/30 text-green-600" : "bg-gray-100 text-gray-400"}`}>
                                       {def[field] ? "Y" : "—"}
                                     </span>
                                   </td>

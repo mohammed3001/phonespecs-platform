@@ -40,11 +40,11 @@ export default function ReviewsSection({ phoneId, phoneName, phoneSlug }: Review
   }, [phoneSlug]);
 
   return (
-    <section id="reviews" className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
+    <section id="reviews" className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">User Reviews</h2>
-          <p className="text-sm text-gray-500 mt-1">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">User Reviews</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {stats.total > 0
               ? `${stats.total} review${stats.total > 1 ? "s" : ""} • Average ${stats.averageScore.toFixed(1)}/10`
               : "Be the first to review this phone"}
@@ -83,14 +83,14 @@ export default function ReviewsSection({ phoneId, phoneName, phoneSlug }: Review
       ) : (
         <div className="space-y-4">
           {reviews.map((review) => (
-            <div key={review.id} className="border border-gray-100 rounded-xl p-5 hover:border-gray-200 transition-colors">
+            <div key={review.id} className="border border-gray-100 rounded-xl p-5 hover:border-gray-200 dark:border-gray-700 transition-colors">
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-violet-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                     {(review.user?.name || "U").charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">{review.user?.name || "Anonymous"}</p>
+                    <p className="font-medium text-gray-900 dark:text-white text-sm">{review.user?.name || "Anonymous"}</p>
                     <p className="text-xs text-gray-400">
                       {new Date(review.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </p>
@@ -106,10 +106,10 @@ export default function ReviewsSection({ phoneId, phoneName, phoneSlug }: Review
               </div>
 
               {review.title && (
-                <h4 className="font-semibold text-gray-900 mb-1">{review.title}</h4>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-1">{review.title}</h4>
               )}
               {review.content && (
-                <p className="text-sm text-gray-600 leading-relaxed mb-3">{review.content}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-3">{review.content}</p>
               )}
 
               {(review.pros || review.cons) && (
@@ -119,15 +119,15 @@ export default function ReviewsSection({ phoneId, phoneName, phoneSlug }: Review
                       <p className="text-xs font-semibold text-emerald-700 mb-1 flex items-center gap-1">
                         <Icon icon="mdi:thumb-up" className="w-3.5 h-3.5" /> Pros
                       </p>
-                      <p className="text-xs text-gray-600">{review.pros}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">{review.pros}</p>
                     </div>
                   )}
                   {review.cons && (
-                    <div className="bg-red-50/60 rounded-lg p-3">
+                    <div className="bg-red-50 dark:bg-red-900/20/60 rounded-lg p-3">
                       <p className="text-xs font-semibold text-red-700 mb-1 flex items-center gap-1">
                         <Icon icon="mdi:thumb-down" className="w-3.5 h-3.5" /> Cons
                       </p>
-                      <p className="text-xs text-gray-600">{review.cons}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300">{review.cons}</p>
                     </div>
                   )}
                 </div>

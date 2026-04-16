@@ -190,7 +190,7 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
                   {i + 1}
                 </div>
                 <span className={`text-sm font-medium hidden sm:inline ${
-                  i <= currentStepIndex ? "text-gray-900" : "text-gray-400"
+                  i <= currentStepIndex ? "text-gray-900 dark:text-white" : "text-gray-400"
                 }`}>
                   {s === "budget" ? "Budget" : s === "priorities" ? "Priorities" : "Brand"}
                 </span>
@@ -209,8 +209,8 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
       {step === "budget" && (
         <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">What&apos;s your budget?</h2>
-            <p className="text-gray-500 mt-2">Select a price range that works for you</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">What&apos;s your budget?</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-2">Select a price range that works for you</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {BUDGET_PRESETS.map((preset, i) => (
@@ -219,12 +219,12 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
                 onClick={() => handleBudgetSelect(i, preset.min, preset.max)}
                 className={`p-4 rounded-xl border-2 transition-all text-center ${
                   selectedBudget === i
-                    ? "border-blue-600 bg-blue-50 ring-2 ring-blue-200"
-                    : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50"
+                    ? "border-blue-600 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200"
+                    : "border-gray-200 dark:border-gray-700 hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20/50"
                 }`}
               >
                 <span className={`text-lg font-bold ${
-                  selectedBudget === i ? "text-blue-700" : "text-gray-900"
+                  selectedBudget === i ? "text-blue-700" : "text-gray-900 dark:text-white"
                 }`}>
                   {preset.label}
                 </span>
@@ -250,18 +250,18 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
       {step === "priorities" && (
         <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">What matters most to you?</h2>
-            <p className="text-gray-500 mt-2">Rate each category from 0 (don&apos;t care) to 5 (top priority)</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">What matters most to you?</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-2">Rate each category from 0 (don&apos;t care) to 5 (top priority)</p>
           </div>
           <div className="space-y-4">
             {PRIORITY_OPTIONS.map((opt) => (
-              <div key={opt.key} className="bg-white rounded-xl border border-gray-200 p-5">
+              <div key={opt.key} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <span className="text-2xl">{opt.icon}</span>
                     <div>
-                      <h3 className="font-bold text-gray-900">{opt.label}</h3>
-                      <p className="text-xs text-gray-500">{opt.description}</p>
+                      <h3 className="font-bold text-gray-900 dark:text-white">{opt.label}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{opt.description}</p>
                     </div>
                   </div>
                   <span className="text-lg font-bold text-blue-600 w-8 text-center">
@@ -287,7 +287,7 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
           <div className="flex justify-between pt-4">
             <button
               onClick={handleBack}
-              className="px-6 py-3 text-gray-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors flex items-center gap-2"
+              className="px-6 py-3 text-gray-600 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -311,20 +311,20 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
       {step === "brand" && (
         <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">Any brand preference?</h2>
-            <p className="text-gray-500 mt-2">Optional — skip if you&apos;re open to any brand</p>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Any brand preference?</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-2">Optional — skip if you&apos;re open to any brand</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <button
               onClick={() => setBrandPreference("")}
               className={`p-4 rounded-xl border-2 transition-all text-center ${
                 brandPreference === ""
-                  ? "border-blue-600 bg-blue-50 ring-2 ring-blue-200"
-                  : "border-gray-200 hover:border-blue-300"
+                  ? "border-blue-600 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200"
+                  : "border-gray-200 dark:border-gray-700 hover:border-blue-300"
               }`}
             >
               <span className="text-2xl">🌐</span>
-              <p className="text-sm font-semibold mt-1 text-gray-700">Any Brand</p>
+              <p className="text-sm font-semibold mt-1 text-gray-700 dark:text-gray-200">Any Brand</p>
             </button>
             {brands.map((brand) => (
               <button
@@ -332,19 +332,19 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
                 onClick={() => setBrandPreference(brand.slug)}
                 className={`p-4 rounded-xl border-2 transition-all text-center ${
                   brandPreference === brand.slug
-                    ? "border-blue-600 bg-blue-50 ring-2 ring-blue-200"
-                    : "border-gray-200 hover:border-blue-300"
+                    ? "border-blue-600 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200"
+                    : "border-gray-200 dark:border-gray-700 hover:border-blue-300"
                 }`}
               >
                 <span className="text-2xl">{brand.name.charAt(0)}</span>
-                <p className="text-sm font-semibold mt-1 text-gray-700">{brand.name}</p>
+                <p className="text-sm font-semibold mt-1 text-gray-700 dark:text-gray-200">{brand.name}</p>
               </button>
             ))}
           </div>
           <div className="flex justify-between pt-4">
             <button
               onClick={handleBack}
-              className="px-6 py-3 text-gray-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors flex items-center gap-2"
+              className="px-6 py-3 text-gray-600 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -371,24 +371,24 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
             <div className="text-center py-16">
               <div className="inline-flex items-center gap-3">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
-                <span className="text-lg font-semibold text-gray-700">Analyzing phones...</span>
+                <span className="text-lg font-semibold text-gray-700 dark:text-gray-200">Analyzing phones...</span>
               </div>
               <p className="text-sm text-gray-400 mt-2">Scoring against your preferences</p>
             </div>
           ) : results ? (
             <>
               <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-900">Your Perfect Matches</h2>
-                <p className="text-gray-500 mt-1">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Perfect Matches</h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">
                   {results.recommendations.length} phone{results.recommendations.length !== 1 ? "s" : ""} matched
                   {results.filteredOut > 0 && ` (${results.filteredOut} filtered out)`}
                 </p>
               </div>
 
               {results.recommendations.length === 0 ? (
-                <div className="text-center py-12 bg-gray-50 rounded-2xl">
+                <div className="text-center py-12 bg-gray-50 dark:bg-gray-900 rounded-2xl">
                   <span className="text-4xl">🤷</span>
-                  <p className="text-gray-600 font-semibold mt-3">No phones match your criteria</p>
+                  <p className="text-gray-600 dark:text-gray-300 font-semibold mt-3">No phones match your criteria</p>
                   <p className="text-gray-400 text-sm mt-1">Try adjusting your budget or brand preference</p>
                   <button
                     onClick={handleRestart}
@@ -402,10 +402,10 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
                   {results.recommendations.map((rec) => (
                     <div
                       key={rec.phone.id}
-                      className={`bg-white rounded-2xl border overflow-hidden transition-all hover:shadow-lg ${
+                      className={`bg-white dark:bg-gray-800 rounded-2xl border overflow-hidden transition-all hover:shadow-lg ${
                         rec.rank === 1
                           ? "border-blue-300 ring-2 ring-blue-100"
-                          : "border-gray-200"
+                          : "border-gray-200 dark:border-gray-700"
                       }`}
                     >
                       {rec.rank === 1 && (
@@ -428,7 +428,7 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
                                 <p className="text-xs text-gray-400 font-medium">{rec.phone.brandName}</p>
                                 <Link
                                   href={`/phones/${rec.phone.slug}`}
-                                  className="text-lg font-bold text-gray-900 hover:text-blue-600 transition-colors"
+                                  className="text-lg font-bold text-gray-900 dark:text-white hover:text-blue-600 transition-colors"
                                 >
                                   {rec.phone.name}
                                 </Link>
@@ -449,7 +449,7 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
                             <div className="grid grid-cols-5 gap-2 mt-4">
                               {(["camera", "battery", "performance", "display", "value"] as const).map((cat) => (
                                 <div key={cat} className="text-center">
-                                  <div className="text-sm font-bold text-gray-700">
+                                  <div className="text-sm font-bold text-gray-700 dark:text-gray-200">
                                     {rec.categoryScores[cat].score}
                                   </div>
                                   <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
@@ -507,7 +507,7 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
                               </Link>
                               <Link
                                 href={`/compare?phones=${rec.phone.slug}`}
-                                className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg hover:bg-gray-200 transition-colors"
+                                className="px-4 py-2 bg-gray-100 text-gray-700 dark:text-gray-200 text-sm font-semibold rounded-lg hover:bg-gray-200 transition-colors"
                               >
                                 Compare
                               </Link>
@@ -523,7 +523,7 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
               <div className="flex justify-center pt-4">
                 <button
                   onClick={handleRestart}
-                  className="px-6 py-3 text-gray-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors flex items-center gap-2"
+                  className="px-6 py-3 text-gray-600 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -534,7 +534,7 @@ export default function DecisionEngineWizard({ brands }: { brands: Array<{ name:
             </>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500">Something went wrong. Please try again.</p>
+              <p className="text-gray-500 dark:text-gray-400">Something went wrong. Please try again.</p>
               <button
                 onClick={handleRestart}
                 className="mt-4 px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700"
