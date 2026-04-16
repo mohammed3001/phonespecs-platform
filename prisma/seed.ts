@@ -102,7 +102,7 @@ async function main() {
   const passwordHash = await bcrypt.hash("Mp@dmin2024!Secure", 12);
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@mobileplatform.com" },
-    update: {},
+    update: { passwordHash, name: "Admin", roleId: adminRole.id, isActive: true, emailVerified: true },
     create: {
       email: "admin@mobileplatform.com",
       passwordHash,
@@ -1252,7 +1252,7 @@ The OnePlus 12 is the better phone objectively, but the Nothing Phone (2a) offer
 
   const advertiser = await prisma.advertiser.upsert({
     where: { id: "seed-advertiser-samsung" },
-    update: {},
+    update: { companyId: company.id, name: "Samsung Mobile Marketing", email: "marketing@samsung.com", contactPerson: "David Kim", balance: 5000, isActive: true },
     create: {
       id: "seed-advertiser-samsung",
       companyId: company.id,
@@ -1266,7 +1266,7 @@ The OnePlus 12 is the better phone objectively, but the Nothing Phone (2a) offer
 
   const campaign = await prisma.campaign.upsert({
     where: { id: "seed-campaign-s24ultra" },
-    update: {},
+    update: { status: "active", endDate: "2027-12-31", targeting: JSON.stringify({ brands: ["samsung"], categories: ["flagship"], countries: ["US", "UK", "DE"] }) },
     create: {
       id: "seed-campaign-s24ultra",
       advertiserId: advertiser.id,
@@ -1290,7 +1290,7 @@ The OnePlus 12 is the better phone objectively, but the Nothing Phone (2a) offer
   const samsungPhoneId = phoneMap["samsung-galaxy-s24-ultra"];
   await prisma.adCreative.upsert({
     where: { id: "seed-creative-s24ultra" },
-    update: {},
+    update: { title: "Galaxy S24 Ultra — Redefine Possible", isActive: true, phoneId: samsungPhoneId || null },
     create: {
       id: "seed-creative-s24ultra",
       campaignId: campaign.id,

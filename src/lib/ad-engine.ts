@@ -71,7 +71,19 @@ export async function serveAd(request: AdServeRequest): Promise<AdServeResult> {
     orderBy: [{ priority: "desc" }, { createdAt: "asc" }],
   });
 
-  // 3. Filter by budget, targeting, date, and frequency
+  // 3. Resolve brand/phone slugs for targeting (so targeting can use slugs or IDs)
+  let requestBrandSlug: string | undefined;
+  let requestPhoneSlug: string | undefined;
+  if (request.brandId) {
+    const brand = await prisma.brand.findUnique({ where: { id: request.brandId }, select: { slug: true, name: true } });
+    if (brand) requestBrandSlug = brand.slug;
+  }
+  if (request.phoneId) {
+    const phone = await prisma.phone.findUnique({ where: { id: request.phoneId }, select: { slug: true } });
+    if (phone) requestPhoneSlug = phone.slug;
+  }
+
+  // Filter by budget, targeting, date, and frequency
   const eligibleAds: Array<{
     campaign: typeof campaigns[0];
     creative: typeof campaigns[0]["creatives"][0];
@@ -103,9 +115,9 @@ export async function serveAd(request: AdServeRequest): Promise<AdServeResult> {
       if (impressionCount >= campaign.frequencyCap) continue;
     }
 
-    // Check targeting
+    // Check targeting (pass both IDs and slugs so targeting can use either format)
     if (campaign.targeting) {
-      if (!matchesTargeting(campaign.targeting, request)) continue;
+      if (!matchesTargeting(campaign.targeting, request, requestBrandSlug, requestPhoneSlug)) continue;
     }
 
     // Score each creative
@@ -313,18 +325,29 @@ async function getDailySpend(campaignId: string, date: string): Promise<number> 
  * Match campaign targeting against request context.
  * Targeting is a JSON string: { brands?: string[], phones?: string[], devices?: string[], countries?: string[], pageTypes?: string[] }
  */
-function matchesTargeting(targetingStr: string, request: AdServeRequest): boolean {
+function matchesTargeting(
+  targetingStr: string,
+  request: AdServeRequest,
+  brandSlug?: string,
+  phoneSlug?: string,
+): boolean {
   try {
     const targeting = JSON.parse(targetingStr);
 
-    // Brand targeting
+    // Brand targeting — match by ID or slug/name
     if (targeting.brands?.length > 0 && request.brandId) {
-      if (!targeting.brands.includes(request.brandId)) return false;
+      const brandMatches = targeting.brands.some((b: string) =>
+        b === request.brandId || (brandSlug && b.toLowerCase() === brandSlug.toLowerCase())
+      );
+      if (!brandMatches) return false;
     }
 
-    // Phone targeting
+    // Phone targeting — match by ID or slug
     if (targeting.phones?.length > 0 && request.phoneId) {
-      if (!targeting.phones.includes(request.phoneId)) return false;
+      const phoneMatches = targeting.phones.some((p: string) =>
+        p === request.phoneId || (phoneSlug && p.toLowerCase() === phoneSlug.toLowerCase())
+      );
+      if (!phoneMatches) return false;
     }
 
     // Device targeting
