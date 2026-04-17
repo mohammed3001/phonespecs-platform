@@ -29,15 +29,18 @@ export const metadata: Metadata = {
 
 async function getPhones(searchParams: Record<string, string | undefined>) {
   const page = parseInt(searchParams.page || "1");
-  const limit = 12;
+  const limitParam = parseInt(searchParams.limit || "20");
+  const limit = [20, 50, 100].includes(limitParam) ? limitParam : 20;
   const skip = (page - 1) * limit;
   const brand = searchParams.brand;
   const sort = searchParams.sort || "newest";
   const q = searchParams.q;
+  const status = searchParams.status;
 
   const where: Record<string, unknown> = { isPublished: true };
   if (brand) where.brand = { slug: brand };
   if (q) where.name = { contains: q };
+  if (status) where.marketStatus = status;
 
   let orderBy: Record<string, string> = {};
   switch (sort) {
@@ -55,7 +58,6 @@ async function getPhones(searchParams: Record<string, string | undefined>) {
         brand: { select: { name: true, slug: true } },
         specs: {
           include: { spec: { include: { group: true } } },
-          where: { spec: { showInCard: true } },
         },
       },
       orderBy,
@@ -65,7 +67,7 @@ async function getPhones(searchParams: Record<string, string | undefined>) {
     prisma.phone.count({ where }),
   ]);
 
-  return { phones, total, page, totalPages: Math.ceil(total / limit) };
+  return { phones, total, page, limit, totalPages: Math.ceil(total / limit) };
 }
 
 async function getBrands() {
@@ -80,7 +82,7 @@ export default async function PhonesPage({
 }: {
   searchParams: Record<string, string | undefined>;
 }) {
-  const [{ phones, total, page, totalPages }, brands] = await Promise.all([
+  const [{ phones, total, page, limit, totalPages }, brands] = await Promise.all([
     getPhones(searchParams),
     getBrands(),
   ]);
@@ -192,13 +194,33 @@ export default async function PhonesPage({
                   {sortOptions.map(({ key, label }) => (
                     <Link
                       key={key}
-                      href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${key}${currentQ ? `&q=${currentQ}` : ""}`}
+                      href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${key}${currentQ ? `&q=${currentQ}` : ""}${limit !== 20 ? `&limit=${limit}` : ""}`}
                       className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-all ${currentSort === key ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 font-semibold" : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"}`}
                     >
                       <span>{label}</span>
                       {currentSort === key && (
                         <span className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
                       )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Show Count */}
+              <div className="p-5 border-t">
+                <h3 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-wider mb-3">Show</h3>
+                <div className="flex gap-1.5">
+                  {[20, 50, 100].map((count) => (
+                    <Link
+                      key={count}
+                      href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${currentSort}${currentQ ? `&q=${currentQ}` : ""}${count !== 20 ? `&limit=${count}` : ""}`}
+                      className={`flex-1 text-center px-2 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                        limit === count
+                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 font-semibold"
+                          : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      }`}
+                    >
+                      {count}
                     </Link>
                   ))}
                 </div>
@@ -232,7 +254,7 @@ export default async function PhonesPage({
               <div className="flex items-center justify-center gap-2 mt-10">
                 {page > 1 && (
                   <Link
-                    href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${currentSort}&page=${page - 1}${currentQ ? `&q=${currentQ}` : ""}`}
+                    href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${currentSort}&page=${page - 1}${currentQ ? `&q=${currentQ}` : ""}${limit !== 20 ? `&limit=${limit}` : ""}`}
                     className="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:border-gray-400 transition-all"
                   >
                     Previous
@@ -243,7 +265,7 @@ export default async function PhonesPage({
                   return (
                     <Link
                       key={p}
-                      href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${currentSort}&page=${p}${currentQ ? `&q=${currentQ}` : ""}`}
+                      href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${currentSort}&page=${p}${currentQ ? `&q=${currentQ}` : ""}${limit !== 20 ? `&limit=${limit}` : ""}`}
                       className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-medium transition-all ${
                         page === p
                           ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
@@ -256,7 +278,7 @@ export default async function PhonesPage({
                 })}
                 {page < totalPages && (
                   <Link
-                    href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${currentSort}&page=${page + 1}${currentQ ? `&q=${currentQ}` : ""}`}
+                    href={`/phones?${currentBrand ? `brand=${currentBrand}&` : ""}sort=${currentSort}&page=${page + 1}${currentQ ? `&q=${currentQ}` : ""}${limit !== 20 ? `&limit=${limit}` : ""}`}
                     className="px-5 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:border-gray-400 transition-all"
                   >
                     Next

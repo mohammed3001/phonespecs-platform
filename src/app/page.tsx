@@ -6,16 +6,17 @@ import PhoneCard from "@/components/public/PhoneCard";
 import { SpecIcon } from "@/components/shared/SpecIcon";
 import { JsonLd, generateWebsiteJsonLd, generateOrganizationJsonLd } from "@/lib/json-ld";
 
+const phoneInclude = {
+  brand: { select: { name: true, slug: true } },
+  specs: {
+    include: { spec: { include: { group: true } } },
+  },
+};
+
 async function getFeaturedPhones() {
   return prisma.phone.findMany({
     where: { isPublished: true, isFeatured: true },
-    include: {
-      brand: { select: { name: true, slug: true } },
-      specs: {
-        include: { spec: { include: { group: true } } },
-        where: { spec: { showInCard: true } },
-      },
-    },
+    include: phoneInclude,
     orderBy: { createdAt: "desc" },
     take: 6,
   });
@@ -24,15 +25,21 @@ async function getFeaturedPhones() {
 async function getLatestPhones() {
   return prisma.phone.findMany({
     where: { isPublished: true },
-    include: {
-      brand: { select: { name: true, slug: true } },
-      specs: {
-        include: { spec: { include: { group: true } } },
-        where: { spec: { showInCard: true } },
-      },
-    },
+    include: phoneInclude,
     orderBy: { createdAt: "desc" },
     take: 8,
+  });
+}
+
+async function getUpcomingPhones() {
+  return prisma.phone.findMany({
+    where: {
+      isPublished: true,
+      marketStatus: { in: ["coming_soon", "rumored"] },
+    },
+    include: phoneInclude,
+    orderBy: { createdAt: "desc" },
+    take: 6,
   });
 }
 
@@ -53,12 +60,45 @@ async function getStats() {
   return { phoneCount, brandCount, specCount };
 }
 
+async function getLatestReviews() {
+  return prisma.article.findMany({
+    where: { status: "published", type: "review" },
+    include: {
+      author: { select: { name: true, avatar: true } },
+      category: { select: { name: true, slug: true } },
+    },
+    orderBy: { publishedAt: "desc" },
+    take: 4,
+  });
+}
+
+async function getLatestComparisons() {
+  return prisma.comparison.findMany({
+    where: { isPublished: true },
+    include: {
+      phones: {
+        include: {
+          phone: {
+            select: { name: true, slug: true, mainImage: true, brand: { select: { name: true } } },
+          },
+        },
+        orderBy: { sortOrder: "asc" },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 6,
+  });
+}
+
 export default async function HomePage() {
-  const [featuredPhones, latestPhones, brands, stats] = await Promise.all([
+  const [featuredPhones, latestPhones, upcomingPhones, brands, stats, latestReviews, latestComparisons] = await Promise.all([
     getFeaturedPhones(),
     getLatestPhones(),
+    getUpcomingPhones(),
     getBrands(),
     getStats(),
+    getLatestReviews(),
+    getLatestComparisons(),
   ]);
 
   return (
@@ -298,6 +338,191 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ========== BUDGET RANGE SELECTOR ========== */}
+      <section className="py-12 md:py-16 bg-white dark:bg-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-xs font-semibold mb-3">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              Find Your Budget
+            </div>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+              Choose Your Budget Range
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Find the best phone within your price range</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {[
+              { label: "Under $100", href: "/phones/under/100", color: "from-emerald-400 to-emerald-500" },
+              { label: "$100 - $200", href: "/phones/under/200?min=100", color: "from-teal-400 to-teal-500" },
+              { label: "$200 - $400", href: "/phones/under/400?min=200", color: "from-cyan-400 to-cyan-500" },
+              { label: "$400 - $700", href: "/phones/under/700?min=400", color: "from-blue-400 to-blue-500" },
+              { label: "$700 - $1000", href: "/phones/under/1000?min=700", color: "from-violet-400 to-violet-500" },
+              { label: "$1000+", href: "/phones?sort=price_desc&min=1000", color: "from-rose-400 to-rose-500" },
+            ].map((range) => (
+              <Link
+                key={range.label}
+                href={range.href}
+                className="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 hover:border-transparent hover:shadow-lg transition-all duration-300"
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${range.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                <div className="relative p-5 text-center">
+                  <p className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-white transition-colors">{range.label}</p>
+                  <p className="text-xs text-gray-400 group-hover:text-white/70 mt-1 transition-colors">Browse phones</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== UPCOMING PHONES ========== */}
+      {upcomingPhones.length > 0 && (
+        <section className="py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 text-xs font-semibold mb-3">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  Coming Soon
+                </div>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                  Upcoming Phones
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Phones expected to launch soon</p>
+              </div>
+              <Link
+                href="/phones?status=coming_soon"
+                className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors"
+              >
+                View All
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {upcomingPhones.map((phone) => (
+                <PhoneCard key={phone.id} phone={phone} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ========== LATEST REVIEWS ========== */}
+      {latestReviews.length > 0 && (
+        <section className="py-12 md:py-16 bg-white dark:bg-gray-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 text-xs font-semibold mb-3">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                  Expert Reviews
+                </div>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                  Latest Reviews
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">In-depth reviews by our experts</p>
+              </div>
+              <Link
+                href="/news?type=review"
+                className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors"
+              >
+                View All
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {latestReviews.map((review) => (
+                <Link key={review.id} href={`/news/${review.slug}`} className="group block">
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-2xl border border-gray-200 dark:border-gray-600 overflow-hidden hover:shadow-lg hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300">
+                    {review.featuredImage && (
+                      <div className="aspect-[16/9] bg-gray-200 dark:bg-gray-600 overflow-hidden">
+                        <img src={review.featuredImage} alt={review.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      </div>
+                    )}
+                    <div className="p-5">
+                      <h3 className="font-bold text-gray-900 dark:text-white text-sm leading-snug group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-2">
+                        {review.title}
+                      </h3>
+                      {review.excerpt && (
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">{review.excerpt}</p>
+                      )}
+                      <div className="flex items-center gap-2 mt-3 text-xs text-gray-400">
+                        <span>by {review.author.name}</span>
+                        {review.publishedAt && (
+                          <>
+                            <span className="w-1 h-1 bg-gray-300 rounded-full" />
+                            <span>{new Date(review.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ========== LATEST COMPARISONS ========== */}
+      {latestComparisons.length > 0 && (
+        <section className="py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-semibold mb-3">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                  Head to Head
+                </div>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+                  Latest Comparisons
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-2 text-lg">Popular phone matchups</p>
+              </div>
+              <Link
+                href="/compare"
+                className="hidden md:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors"
+              >
+                Compare Phones
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {latestComparisons.map((comparison) => (
+                <Link
+                  key={comparison.id}
+                  href={`/compare/${comparison.slug}`}
+                  className="group flex items-center gap-4 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 hover:border-blue-200 dark:hover:border-blue-500/30 hover:shadow-md transition-all duration-300"
+                >
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    {comparison.phones.slice(0, 2).map((cp, i) => (
+                      <div key={cp.phone.slug} className="flex items-center gap-2 flex-1 min-w-0">
+                        {i === 1 && (
+                          <span className="text-xs font-bold text-gray-400 dark:text-gray-500 flex-shrink-0">vs</span>
+                        )}
+                        <div className="w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {cp.phone.mainImage ? (
+                            <img src={cp.phone.mainImage} alt={cp.phone.name} className="w-full h-full object-contain p-0.5" />
+                          ) : (
+                            <span className="text-lg">📱</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{cp.phone.name}</p>
+                          <p className="text-[10px] text-gray-400">{cp.phone.brand.name}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <svg className="w-4 h-4 text-gray-300 dark:text-gray-600 group-hover:text-blue-400 flex-shrink-0 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ========== COMPARE CTA ========== */}
       <section className="py-12 md:py-16 bg-white dark:bg-gray-800">

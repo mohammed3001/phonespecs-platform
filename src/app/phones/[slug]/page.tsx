@@ -13,6 +13,8 @@ import { getSiteUrl } from "@/lib/site-url";
 import ReviewsSection from "@/components/public/ReviewsSection";
 import AdSlot from "@/components/ads/AdSlot";
 import SpecIQPanel from "@/components/public/SpecIQPanel";
+import { calculateSpecScore, getScoreColor, getCategoryScoreColor } from "@/lib/spec-score";
+import VariantSelector from "@/components/public/VariantSelector";
 
 async function getPhone(slug: string) {
   const phone = await prisma.phone.findUnique({
@@ -21,6 +23,9 @@ async function getPhone(slug: string) {
       brand: true,
       specs: {
         include: { spec: { include: { group: true } } },
+      },
+      variants: {
+        orderBy: { sortOrder: "asc" },
       },
       faqs: {
         orderBy: { sortOrder: "asc" },
@@ -113,6 +118,19 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
 
   const phoneStatus = status[phone.marketStatus] || status.available;
 
+  // Calculate spec score
+  const specScore = calculateSpecScore(
+    phone.specs.map((s) => ({
+      key: s.spec.key,
+      value: s.value,
+      numericValue: s.numericValue,
+      group: s.spec.group,
+    }))
+  );
+
+  // Price label (official/unofficial) based on marketStatus
+  const priceLabel = phone.marketStatus === "available" ? "Official Price" : phone.marketStatus === "coming_soon" ? "Expected Price" : null;
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       <JsonLd data={[
@@ -173,9 +191,28 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
               </h1>
 
               <div className="flex flex-wrap items-center gap-4 mt-4">
-                <span className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-                  {phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd.toLocaleString()}` : "Price TBA")}
-                </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+                      {phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd.toLocaleString()}` : "Price TBA")}
+                    </span>
+                    {priceLabel && (
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold ring-1 ring-inset ${
+                        phone.marketStatus === "available"
+                          ? "text-emerald-700 bg-emerald-50 ring-emerald-600/20 dark:text-emerald-400 dark:bg-emerald-500/10"
+                          : "text-amber-700 bg-amber-50 ring-amber-600/20 dark:text-amber-400 dark:bg-amber-500/10"
+                      }`}>
+                        {priceLabel}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {specScore.overall > 0 && (
+                  <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl ring-1 ring-inset ${getScoreColor(specScore.overall)}`}>
+                    <span className="text-lg font-extrabold">{specScore.overall}%</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider opacity-70">Spec Score</span>
+                  </div>
+                )}
                 {phone.reviewScore > 0 && (
                   <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-lg">
                     <svg className="w-5 h-5 text-amber-400 fill-current" viewBox="0 0 20 20">
@@ -232,6 +269,11 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
                 </div>
               )}
 
+              {/* Variant Selector */}
+              {phone.variants && phone.variants.length > 1 && (
+                <VariantSelector variants={phone.variants} defaultPrice={phone.priceUsd} />
+              )}
+
               {/* Actions */}
               <div className="flex flex-wrap gap-3 mt-6">
                 <Link
@@ -264,6 +306,43 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
               <section className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Overview</h2>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">{phone.overview}</p>
+              </section>
+            )}
+
+            {/* Spec Score Breakdown */}
+            {specScore.overall > 0 && specScore.categories.length > 0 && (
+              <section className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 md:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Spec Score Breakdown</h2>
+                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl ring-1 ring-inset ${getScoreColor(specScore.overall)}`}>
+                    <span className="text-2xl font-extrabold">{specScore.overall}%</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider opacity-70">Overall</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {specScore.categories.map((cat) => (
+                    <div key={cat.slug} className="flex items-center gap-4">
+                      <div className="w-32 flex-shrink-0">
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{cat.name}</p>
+                      </div>
+                      <div className="flex-1">
+                        <div className="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all ${
+                              cat.score >= 8 ? "bg-emerald-500" :
+                              cat.score >= 6 ? "bg-teal-500" :
+                              cat.score >= 4 ? "bg-amber-500" : "bg-red-500"
+                            }`}
+                            style={{ width: `${(cat.score / 10) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                      <span className={`text-sm font-bold w-10 text-right ${getCategoryScoreColor(cat.score)}`}>
+                        {cat.score}/10
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </section>
             )}
 

@@ -3,9 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SpecIcon } from "@/components/shared/SpecIcon";
+import { calculateSpecScore, getScoreColor } from "@/lib/spec-score";
 
 interface PhoneSpec {
   value: string;
+  numericValue?: number | null;
   spec: {
     name: string;
     key: string;
@@ -42,6 +44,17 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
   const keySpecs = phone.specs
     .filter((s) => s.spec.isHighlighted)
     .sort((a, b) => a.spec.sortOrder - b.spec.sortOrder);
+
+  // Calculate spec score
+  const specScoreData = calculateSpecScore(
+    phone.specs.map((s) => ({
+      key: s.spec.key,
+      value: s.value,
+      numericValue: s.numericValue ?? null,
+      group: s.spec.group,
+    }))
+  );
+  const specScore = specScoreData.overall;
 
   const extraSpecs = phone.specs
     .filter((s) => s.spec.showInCard && !s.spec.isHighlighted)
@@ -108,6 +121,11 @@ export default function PhoneCard({ phone, variant = "default" }: { phone: Phone
                     {phone.name}
                   </h3>
                 </div>
+                {specScore > 0 && (
+                  <div className={`flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold ring-1 ring-inset ${getScoreColor(specScore)}`}>
+                    {specScore}%
+                  </div>
+                )}
               </div>
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
