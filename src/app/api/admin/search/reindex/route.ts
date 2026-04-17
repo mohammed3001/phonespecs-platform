@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { fullReindex } from "@/lib/search-sync";
+import { fullReindex } from "@/lib/search";
 
 export async function POST() {
   const session = await getServerSession(authOptions);
@@ -19,8 +19,8 @@ export async function POST() {
   } catch (error) {
     console.error("Reindex error:", error);
     return NextResponse.json(
-      { success: false, error: "Reindex failed" },
-      { status: 500 }
+      { success: false, error: "Reindex failed. Meilisearch may be unavailable." },
+      { status: 503 }
     );
   }
 }

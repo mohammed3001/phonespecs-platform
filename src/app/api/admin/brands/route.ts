@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { indexBrand, removeBrand } from "@/lib/search";
 
 export async function GET() {
   try {
@@ -73,6 +74,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Sync to search index (fire-and-forget — DB is source of truth)
+    indexBrand(brand.id).catch(() => {});
+
     return NextResponse.json({ success: true, data: brand }, { status: 201 });
   } catch (error) {
     console.error("Create brand error:", error);
@@ -132,6 +136,9 @@ export async function PUT(request: NextRequest) {
       },
     });
 
+    // Sync to search index (fire-and-forget — DB is source of truth)
+    indexBrand(brand.id).catch(() => {});
+
     return NextResponse.json({ success: true, data: brand });
   } catch (error) {
     console.error("Update brand error:", error);
@@ -170,6 +177,9 @@ export async function DELETE(request: NextRequest) {
     }
 
     await prisma.brand.delete({ where: { id } });
+
+    // Remove from search index (fire-and-forget)
+    removeBrand(id).catch(() => {});
 
     await prisma.auditLog.create({
       data: {

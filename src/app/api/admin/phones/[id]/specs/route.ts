@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createAuditLog } from "@/lib/audit";
+import { indexPhone } from "@/lib/search";
 
 export async function GET(
   request: NextRequest,
@@ -133,6 +134,9 @@ export async function PUT(
       afterState,
       ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
     });
+
+    // Specs changed — reindex phone in search (fire-and-forget)
+    indexPhone(params.id).catch(() => {});
 
     return NextResponse.json({ success: true, message: "Specifications updated successfully" });
   } catch (error) {

@@ -6,6 +6,7 @@ import slugify from "slugify";
 import { createPhoneSchema, paginationSchema } from "@/lib/validations/schemas";
 import { ZodError } from "zod";
 import { createAuditLog } from "@/lib/audit";
+import { indexPhone, indexBrand } from "@/lib/search";
 
 export async function GET(request: NextRequest) {
   try {
@@ -130,6 +131,11 @@ export async function POST(request: NextRequest) {
       },
       ipAddress: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
     });
+
+    // Sync to search index (fire-and-forget — DB is source of truth)
+    indexPhone(phone.id).catch(() => {});
+    // Brand phone count changed — reindex brand too
+    indexBrand(validated.brandId).catch(() => {});
 
     return NextResponse.json({ success: true, data: phone }, { status: 201 });
   } catch (error) {
