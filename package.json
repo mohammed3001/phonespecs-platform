@@ -10,6 +10,8 @@
     "search:sync": "tsx scripts/search-sync.ts"
   },
   "dependencies": {
+    "@builder.io/sdk-react": "^5.2.0",
+    "@builder.io/sdk-react-nextjs": "^0.25.0",
     "@iconify/react": "^6.0.2",
     "@prisma/client": "^5.22.0",
     "@tiptap/extension-image": "^3.22.3",
