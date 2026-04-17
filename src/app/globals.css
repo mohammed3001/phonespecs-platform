@@ -117,6 +117,37 @@ body {
     radial-gradient(at 70% 70%, rgba(79, 70, 229, 0.2) 0px, transparent 50%);
 }
 
+/* ===== Hero Section — New Tech Styles ===== */
+
+/* Hero gradient text — teal/cyan accent */
+.hero-gradient-text {
+  background: linear-gradient(135deg, #0d9488 0%, #06b6d4 50%, #0891b2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.dark .hero-gradient-text {
+  background: linear-gradient(135deg, #2dd4bf 0%, #22d3ee 50%, #67e8f9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero dot grid — light mode */
+.hero-dots {
+  background-image: radial-gradient(circle, #cbd5e1 0.8px, transparent 0.8px);
+  background-size: 24px 24px;
+  opacity: 0.4;
+}
+
+/* Hero grid — dark mode (subtle) */
+.hero-grid-dark {
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
 /* Glass effect */
 .glass {
   background: rgba(255, 255, 255, 0.85);
