@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createAuditLog } from "@/lib/audit";
 import { indexPhone } from "@/lib/search";
+import { generateAndSaveSocialMediaPost } from "@/lib/social-media-post";
 
 export async function GET(
   request: NextRequest,
@@ -137,6 +138,8 @@ export async function PUT(
 
     // Specs changed — reindex phone in search (fire-and-forget)
     indexPhone(params.id).catch(() => {});
+    // Specs changed — regenerate social media post
+    generateAndSaveSocialMediaPost(params.id).catch(() => {});
 
     return NextResponse.json({ success: true, message: "Specifications updated successfully" });
   } catch (error) {

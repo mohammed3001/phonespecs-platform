@@ -522,6 +522,7 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
               brandName={phone.brand.name}
               price={phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd.toLocaleString()}` : null)}
               specScore={specScore.overall}
+              preGeneratedPost={phone.socialMediaPost}
             />
 
             {/* Sidebar Actions */}

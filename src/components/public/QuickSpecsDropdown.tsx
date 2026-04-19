@@ -18,6 +18,7 @@ interface QuickSpecsDropdownProps {
   brandName: string;
   price: string | null;
   specScore: number;
+  preGeneratedPost: string | null;
 }
 
 export default function QuickSpecsDropdown({
@@ -26,7 +27,13 @@ export default function QuickSpecsDropdown({
   brandName,
   price,
   specScore,
+  preGeneratedPost,
 }: QuickSpecsDropdownProps) {
+  // Parse pre-generated posts if available
+  const preGenerated: Record<string, string> | null = (() => {
+    if (!preGeneratedPost) return null;
+    try { return JSON.parse(preGeneratedPost); } catch { return null; }
+  })();
   const [isOpen, setIsOpen] = useState(true);
   const [copied, setCopied] = useState(false);
   type CopyFormat = "general" | "facebook" | "instagram" | "twitter";
@@ -141,7 +148,8 @@ export default function QuickSpecsDropdown({
   };
 
   const handleCopy = async (format: CopyFormat) => {
-    const text = generateSocialText(format);
+    // Use pre-generated text from DB if available, otherwise generate client-side
+    const text = preGenerated?.[format] || generateSocialText(format);
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);

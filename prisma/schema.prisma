@@ -131,6 +131,7 @@ model Phone {
   publishedAt     DateTime? @map("published_at")
   // Data provenance fields
   dataSource      String?  @map("data_source") // official, leak, manual, api_import
+  socialMediaPost String?  @map("social_media_post") // Auto-generated social media text
   lastVerifiedAt  DateTime? @map("last_verified_at")
   updatedById     String?  @map("updated_by_id")
   updatedBy       User?    @relation("PhoneUpdatedBy", fields: [updatedById], references: [id])

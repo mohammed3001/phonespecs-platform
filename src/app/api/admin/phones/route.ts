@@ -7,6 +7,7 @@ import { createPhoneSchema, paginationSchema } from "@/lib/validations/schemas";
 import { ZodError } from "zod";
 import { createAuditLog } from "@/lib/audit";
 import { indexPhone, indexBrand } from "@/lib/search";
+import { generateAndSaveSocialMediaPost } from "@/lib/social-media-post";
 
 export async function GET(request: NextRequest) {
   try {
@@ -136,6 +137,8 @@ export async function POST(request: NextRequest) {
     indexPhone(phone.id).catch(() => {});
     // Brand phone count changed — reindex brand too
     indexBrand(validated.brandId).catch(() => {});
+    // Auto-generate social media post
+    generateAndSaveSocialMediaPost(phone.id).catch(() => {});
 
     return NextResponse.json({ success: true, data: phone }, { status: 201 });
   } catch (error) {
