@@ -41,7 +41,7 @@ export default function PhoneImageGallery({
   if (!currentImage) {
     return (
       <div className="flex-shrink-0 flex justify-center">
-        <div className="w-64 md:w-72 aspect-[3/4] bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-3xl flex items-center justify-center border border-gray-200 dark:border-gray-700">
+        <div className="w-64 md:w-72 aspect-[3/4] bg-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-3xl flex items-center justify-center border border-gray-100 dark:border-gray-800">
           <span className="text-8xl">📱</span>
         </div>
       </div>
@@ -52,7 +52,7 @@ export default function PhoneImageGallery({
     <div className="flex-shrink-0 flex flex-col items-center gap-3">
       {/* Main Image */}
       <div
-        className="relative w-64 md:w-72 aspect-[3/4] bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-3xl flex items-center justify-center border border-gray-200 dark:border-gray-700 overflow-hidden cursor-zoom-in group"
+        className="relative w-64 md:w-72 aspect-[3/4] bg-gray-50 dark:bg-gray-900 rounded-3xl flex items-center justify-center border border-gray-100 dark:border-gray-800 overflow-hidden cursor-zoom-in group"
         onClick={() => setIsZoomed(true)}
       >
         <Image
@@ -82,7 +82,7 @@ export default function PhoneImageGallery({
               className={`relative w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${
                 i === selectedIndex
                   ? "border-teal-500 ring-2 ring-teal-500/20 shadow-md"
-                  : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                  : "border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700"
               }`}
             >
               <Image

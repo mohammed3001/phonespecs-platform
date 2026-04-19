@@ -178,11 +178,11 @@ export default function QuickSpecsDropdown({
   ];
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
       {/* Header — toggle dropdown */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+        className="flex items-center justify-between w-full px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
       >
         <div className="flex items-center gap-2.5">
           <svg className="w-5 h-5 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -207,7 +207,7 @@ export default function QuickSpecsDropdown({
           isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="px-5 pb-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="px-5 pb-4 border-t border-gray-100 dark:border-gray-800">
           {/* Specs list grouped by category */}
           <div className="mt-3 space-y-4">
             {Object.entries(grouped).map(([groupSlug, { name, specs: groupSpecs }]) => (
@@ -231,7 +231,7 @@ export default function QuickSpecsDropdown({
           </div>
 
           {/* Copy for Social Media */}
-          <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-700">
+          <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800">
             <div className="relative" ref={formatMenuRef}>
               <button
                 onClick={() => setShowFormatMenu(!showFormatMenu)}
@@ -263,12 +263,12 @@ export default function QuickSpecsDropdown({
 
               {/* Format selector dropdown */}
               {showFormatMenu && (
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl z-50 overflow-hidden">
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-xl z-50 overflow-hidden">
                   {formatOptions.map((opt) => (
                     <button
                       key={opt.key}
                       onClick={() => handleCopy(opt.key)}
-                      className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-left"
+                      className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left"
                     >
                       <span className="text-lg">{opt.icon}</span>
                       <div>
