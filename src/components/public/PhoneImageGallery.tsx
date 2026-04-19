@@ -41,7 +41,7 @@ export default function PhoneImageGallery({
   if (!currentImage) {
     return (
       <div className="flex-shrink-0 flex justify-center">
-        <div className="w-64 md:w-72 aspect-[3/4] bg-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-3xl flex items-center justify-center border border-gray-100 dark:border-gray-800">
+        <div className="w-64 md:w-72 rounded-2xl bg-gray-50 dark:bg-gray-900 flex items-center justify-center border border-gray-100 dark:border-gray-800 min-h-[200px]">
           <span className="text-8xl">📱</span>
         </div>
       </div>
@@ -52,14 +52,15 @@ export default function PhoneImageGallery({
     <div className="flex-shrink-0 flex flex-col items-center gap-3">
       {/* Main Image */}
       <div
-        className="relative w-64 md:w-72 aspect-[3/4] bg-gray-50 dark:bg-gray-900 rounded-3xl flex items-center justify-center border border-gray-100 dark:border-gray-800 overflow-hidden cursor-zoom-in group"
+        className="relative w-64 md:w-72 rounded-2xl overflow-hidden cursor-zoom-in group"
         onClick={() => setIsZoomed(true)}
       >
         <Image
           src={currentImage.url}
           alt={currentImage.alt}
-          fill
-          className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
+          width={288}
+          height={384}
+          className="w-full h-auto transition-transform duration-300 group-hover:scale-105"
           sizes="(max-width: 768px) 256px, 288px"
           priority
         />
