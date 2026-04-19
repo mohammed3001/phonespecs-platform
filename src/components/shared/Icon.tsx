@@ -80,6 +80,12 @@ import {
   Lock,
   Sun,
   Moon,
+  Twitter,
+  Facebook,
+  Instagram,
+  Youtube,
+  Compass,
+  Newspaper,
   type LucideIcon,
 } from "lucide-react";
 
@@ -207,6 +213,16 @@ const iconMap: Record<string, LucideIcon> = {
   // Weather / Theme
   "mdi:weather-sunny": Sun,
   "mdi:weather-night": Moon,
+
+  // Social Media
+  "mdi:twitter": Twitter,
+  "mdi:facebook": Facebook,
+  "mdi:instagram": Instagram,
+  "mdi:youtube": Youtube,
+
+  // Navigation extras
+  "mdi:compass-outline": Compass,
+  "mdi:newspaper-variant-outline": Newspaper,
 };
 
 interface IconProps extends Omit<SVGProps<SVGSVGElement>, "ref"> {
