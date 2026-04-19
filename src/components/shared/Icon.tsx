@@ -80,10 +80,7 @@ import {
   Lock,
   Sun,
   Moon,
-  Twitter,
-  Facebook,
-  Instagram,
-  Youtube,
+  Share2,
   Compass,
   Newspaper,
   type LucideIcon,
@@ -214,11 +211,11 @@ const iconMap: Record<string, LucideIcon> = {
   "mdi:weather-sunny": Sun,
   "mdi:weather-night": Moon,
 
-  // Social Media
-  "mdi:twitter": Twitter,
-  "mdi:facebook": Facebook,
-  "mdi:instagram": Instagram,
-  "mdi:youtube": Youtube,
+  // Social Media (generic fallbacks — lucide has no brand icons)
+  "mdi:twitter": Globe,
+  "mdi:facebook": Globe,
+  "mdi:instagram": Camera,
+  "mdi:youtube": Share2,
 
   // Navigation extras
   "mdi:compass-outline": Compass,

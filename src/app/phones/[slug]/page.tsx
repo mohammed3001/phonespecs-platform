@@ -1,5 +1,4 @@
 import prisma from "@/lib/prisma";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -15,6 +14,8 @@ import AdSlot from "@/components/ads/AdSlot";
 import SpecIQPanel from "@/components/public/SpecIQPanel";
 import { calculateSpecScore, getScoreColor, getCategoryScoreColor } from "@/lib/spec-score";
 import VariantSelector from "@/components/public/VariantSelector";
+import QuickSpecsDropdown from "@/components/public/QuickSpecsDropdown";
+import PhoneImageGallery from "@/components/public/PhoneImageGallery";
 
 async function getPhone(slug: string) {
   const phone = await prisma.phone.findUnique({
@@ -23,6 +24,9 @@ async function getPhone(slug: string) {
       brand: true,
       specs: {
         include: { spec: { include: { group: true } } },
+      },
+      images: {
+        orderBy: { sortOrder: "asc" },
       },
       variants: {
         orderBy: { sortOrder: "asc" },
@@ -161,16 +165,12 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
       <section className="bg-white dark:bg-gray-800 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 md:py-12">
           <div className="flex flex-col md:flex-row gap-8 md:gap-12">
-            {/* Phone Image */}
-            <div className="flex-shrink-0 flex justify-center">
-              <div className="w-56 h-72 md:w-64 md:h-80 bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl flex items-center justify-center border border-gray-200 dark:border-gray-700 overflow-hidden">
-                {phone.mainImage ? (
-                  <Image src={phone.mainImage} alt={phone.name} width={256} height={320} className="w-full h-full object-contain p-2" priority />
-                ) : (
-                  <span className="text-8xl">📱</span>
-                )}
-              </div>
-            </div>
+            {/* Phone Image Gallery */}
+            <PhoneImageGallery
+              mainImage={phone.mainImage}
+              images={phone.images}
+              phoneName={phone.name}
+            />
 
             {/* Phone Info */}
             <div className="flex-1 min-w-0">
@@ -505,40 +505,39 @@ export default async function PhoneDetailPage({ params }: { params: { slug: stri
           {/* Sidebar */}
           <aside className="lg:w-80 flex-shrink-0">
             <div className="sticky top-24 space-y-6 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin">
-            {/* Quick Specs Card */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5">
-              <h3 className="font-bold text-gray-900 dark:text-white text-sm mb-4">Quick Specs</h3>
-              <div className="space-y-3">
-                {phone.specs
-                  .filter((s) => s.spec.showInCard)
-                  .sort((a, b) => a.spec.sortOrder - b.spec.sortOrder)
-                  .map((s) => (
-                    <div key={s.spec.key} className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                        <SpecIcon specKey={s.spec.key} size={14} className="text-gray-400" />
-                        {s.spec.name}
-                      </div>
-                      <span className="text-sm font-semibold text-gray-900 dark:text-white text-right truncate max-w-[140px]">
-                        {s.value}{s.spec.unit ? ` ${s.spec.unit}` : ""}
-                      </span>
-                    </div>
-                  ))}
-              </div>
+            {/* Quick Specs Dropdown */}
+            <QuickSpecsDropdown
+              specs={phone.specs
+                .filter((s) => s.spec.showInCard)
+                .sort((a, b) => a.spec.sortOrder - b.spec.sortOrder)
+                .map((s) => ({
+                  key: s.spec.key,
+                  name: s.spec.name,
+                  value: s.value,
+                  unit: s.spec.unit,
+                  groupName: s.spec.group.name,
+                  groupSlug: s.spec.group.slug,
+                }))}
+              phoneName={phone.name}
+              brandName={phone.brand.name}
+              price={phone.priceDisplay || (phone.priceUsd ? `$${phone.priceUsd.toLocaleString()}` : null)}
+              specScore={specScore.overall}
+            />
 
-              <div className="mt-5 pt-5 border-t space-y-3">
-                <Link
-                  href={`/compare?phones=${phone.slug}`}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors"
-                >
-                  Compare This Phone
-                </Link>
-                <Link
-                  href={`/phones?brand=${phone.brand.slug}`}
-                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-100 text-gray-700 dark:text-gray-200 text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors"
-                >
-                  More {phone.brand.name} Phones
-                </Link>
-              </div>
+            {/* Sidebar Actions */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 space-y-3">
+              <Link
+                href={`/compare?phones=${phone.slug}`}
+                className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+              >
+                Compare This Phone
+              </Link>
+              <Link
+                href={`/phones?brand=${phone.brand.slug}`}
+                className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                More {phone.brand.name} Phones
+              </Link>
             </div>
 
             {/* Spec IQ */}
