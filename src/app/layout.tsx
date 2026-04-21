@@ -1,0 +1,61 @@
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import { getSiteUrl } from "@/lib/site-url";
+import { checkEnv } from "@/lib/env-check";
+import { ThemeProvider } from "@/components/shared/ThemeProvider";
+import "./globals.css";
+
+// Run env validation once on server startup
+checkEnv();
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#1e3a8a",
+};
+
+export const metadata: Metadata = {
+  title: {
+    default: "MobilePlatform - Your Ultimate Smartphone Resource",
+    template: "%s | MobilePlatform",
+  },
+  description: "Discover smartphone specifications, reviews, comparisons, and news. Find the perfect phone with detailed specs, expert reviews, and price comparisons.",
+  keywords: "smartphones, mobile phones, specifications, reviews, comparisons, prices",
+  metadataBase: new URL(getSiteUrl()),
+  openGraph: {
+    type: "website",
+    siteName: "MobilePlatform",
+    title: "MobilePlatform - Your Ultimate Smartphone Resource",
+    description: "Discover smartphone specifications, reviews, comparisons, and news.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MobilePlatform",
+    description: "Your Ultimate Smartphone Resource",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <body className={`${inter.className} antialiased`}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
+    </html>
+  );
+}

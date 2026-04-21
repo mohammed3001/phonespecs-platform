@@ -1,0 +1,910 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== AUTH & USERS ====================
+
+model User {
+  id                     String    @id @default(uuid())
+  email                  String    @unique
+  passwordHash           String    @map("password_hash")
+  name                   String
+  avatar                 String?
+  userType               String    @default("user") @map("user_type") // admin, user, company, moderator
+  roleId                 String?   @map("role_id")
+  role                   Role?     @relation(fields: [roleId], references: [id])
+  companyId              String?   @map("company_id")
+  company                Company?  @relation(fields: [companyId], references: [id])
+  isActive               Boolean   @default(true) @map("is_active")
+  emailVerified          Boolean   @default(false) @map("email_verified")
+  emailVerificationToken String?   @map("email_verification_token")
+  emailVerificationExpiry DateTime? @map("email_verification_expiry")
+  passwordResetToken     String?   @map("password_reset_token")
+  passwordResetExpiry    DateTime? @map("password_reset_expiry")
+  lastLoginAt            DateTime? @map("last_login_at")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  articles            Article[]
+  articleRevisions    ArticleRevision[]
+  reviews             Review[]
+  discussions         Discussion[]
+  discussionReplies   DiscussionReply[]
+  reviewResponses     ReviewResponse[]
+  auditLogs           AuditLog[]
+  media               Media[]
+  phoneSpecHistory    PhoneSpecHistory[]
+  phonesUpdated       Phone[]    @relation("PhoneUpdatedBy")
+  moderationReports   ModerationReport[]
+  moderationActions   ModerationReport[] @relation("ModeratedBy")
+
+  @@map("users")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  isSystem    Boolean  @default(false) @map("is_system")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  users       User[]
+  permissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id          String @id @default(uuid())
+  name        String
+  slug        String @unique
+  group       String
+  description String?
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String     @map("role_id")
+  permissionId String     @map("permission_id")
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// ==================== BRANDS ====================
+
+model Brand {
+  id              String   @id @default(uuid())
+  name            String
+  slug            String   @unique
+  logo            String?
+  description     String?
+  website         String?
+  isActive        Boolean  @default(true) @map("is_active")
+  phoneCount      Int      @default(0) @map("phone_count")
+  sortOrder       Int      @default(0) @map("sort_order")
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  phones    Phone[]
+  showrooms Showroom[]
+
+  @@map("brands")
+}
+
+// ==================== PHONES ====================
+
+model Phone {
+  id              String   @id @default(uuid())
+  brandId         String   @map("brand_id")
+  brand           Brand    @relation(fields: [brandId], references: [id])
+  name            String
+  slug            String   @unique
+  mainImage       String?  @map("main_image")
+  marketStatus    String   @default("available") @map("market_status")
+  releaseDate     String?  @map("release_date")
+  priceUsd        Float?   @map("price_usd")
+  priceDisplay    String?  @map("price_display")
+  overview        String?
+  pros            Json?    // JSON array of strings
+  cons            Json?    // JSON array of strings
+  isFeatured      Boolean  @default(false) @map("is_featured")
+  isPublished     Boolean  @default(false) @map("is_published")
+  viewCount       Int      @default(0) @map("view_count")
+  reviewScore     Float    @default(0) @map("review_score")
+  reviewCount     Int      @default(0) @map("review_count")
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  publishedAt     DateTime? @map("published_at")
+  // Data provenance fields
+  dataSource      String?  @map("data_source") // official, leak, manual, api_import
+  socialMediaPost String?  @map("social_media_post") // Auto-generated social media text
+  lastVerifiedAt  DateTime? @map("last_verified_at")
+  updatedById     String?  @map("updated_by_id")
+  updatedBy       User?    @relation("PhoneUpdatedBy", fields: [updatedById], references: [id])
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  images          PhoneImage[]
+  variants        PhoneVariant[]
+  specs           PhoneSpec[]
+  reviews         Review[]
+  discussions     Discussion[]
+  faqs            Faq[]
+  articlePhones   ArticlePhone[]
+  comparisonPhones ComparisonPhone[]
+  adCreatives     AdCreative[]
+
+  @@index([brandId])
+  @@index([marketStatus])
+  @@index([isPublished])
+  @@map("phones")
+}
+
+model PhoneImage {
+  id        String   @id @default(uuid())
+  phoneId   String   @map("phone_id")
+  phone     Phone    @relation(fields: [phoneId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?  @map("alt_text")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([phoneId])
+  @@map("phone_images")
+}
+
+model PhoneVariant {
+  id        String  @id @default(uuid())
+  phoneId   String  @map("phone_id")
+  phone     Phone   @relation(fields: [phoneId], references: [id], onDelete: Cascade)
+  name      String
+  storage   String?
+  ram       String?
+  priceUsd  Float?  @map("price_usd")
+  isDefault Boolean @default(false) @map("is_default")
+  sortOrder Int     @default(0) @map("sort_order")
+
+  @@index([phoneId])
+  @@map("phone_variants")
+}
+
+// ==================== SPECIFICATIONS ====================
+
+model SpecGroup {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  sortOrder Int      @default(0) @map("sort_order")
+  icon      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  definitions SpecDefinition[]
+
+  @@map("spec_groups")
+}
+
+model SpecDefinition {
+  id            String   @id @default(uuid())
+  groupId       String   @map("group_id")
+  group         SpecGroup @relation(fields: [groupId], references: [id])
+  name          String
+  slug          String   @unique
+  key           String   @unique
+  icon          String?
+  unit          String?
+  dataType      String   @default("text") @map("data_type")
+  selectOptions String?  @map("select_options")
+  showInCard    Boolean  @default(false) @map("show_in_card")
+  showInDetail  Boolean  @default(true) @map("show_in_detail")
+  showInCompare Boolean  @default(true) @map("show_in_compare")
+  isFilterable  Boolean  @default(false) @map("is_filterable")
+  isHighlighted Boolean  @default(false) @map("is_highlighted")
+  subSection    String?  @map("sub_section") // e.g. "Primary Camera", "Selfie Camera"
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  phoneSpecs PhoneSpec[]
+
+  @@index([groupId])
+  @@map("spec_definitions")
+}
+
+model PhoneSpec {
+  id             String         @id @default(uuid())
+  phoneId        String         @map("phone_id")
+  phone          Phone          @relation(fields: [phoneId], references: [id], onDelete: Cascade)
+  specId         String         @map("spec_id")
+  spec           SpecDefinition @relation(fields: [specId], references: [id], onDelete: Cascade)
+  value          String
+  numericValue   Float?         @map("numeric_value")
+  // Provenance
+  source         String?        // official, leak, manual, gsmarena, kimovil
+  lastVerifiedAt DateTime?      @map("last_verified_at")
+  updatedById    String?        @map("updated_by_id")
+
+  history PhoneSpecHistory[]
+
+  @@unique([phoneId, specId])
+  @@index([phoneId])
+  @@index([specId])
+  @@map("phone_specs")
+}
+
+model PhoneSpecHistory {
+  id          Int            @id @default(autoincrement())
+  phoneSpecId String         @map("phone_spec_id")
+  phoneSpec   PhoneSpec      @relation(fields: [phoneSpecId], references: [id], onDelete: Cascade)
+  oldValue    String         @map("old_value")
+  newValue    String         @map("new_value")
+  oldNumeric  Float?         @map("old_numeric")
+  newNumeric  Float?         @map("new_numeric")
+  source      String?        // what source triggered the change
+  reason      String?        // why the change was made
+  changedById String?        @map("changed_by_id")
+  changedBy   User?          @relation(fields: [changedById], references: [id])
+  changedAt   DateTime       @default(now()) @map("changed_at")
+
+  @@index([phoneSpecId])
+  @@index([changedAt])
+  @@map("phone_spec_history")
+}
+
+// ==================== ARTICLES & CONTENT ====================
+
+model Category {
+  id              String     @id @default(uuid())
+  parentId        String?    @map("parent_id")
+  parent          Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children        Category[] @relation("CategoryToCategory")
+  name            String
+  slug            String     @unique
+  description     String?
+  image           String?
+  sortOrder       Int        @default(0) @map("sort_order")
+  metaTitle       String?    @map("meta_title")
+  metaDescription String?    @map("meta_description")
+  createdAt       DateTime   @default(now()) @map("created_at")
+
+  articles Article[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id        String       @id @default(uuid())
+  name      String
+  slug      String       @unique
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  articles ArticleTag[]
+
+  @@map("tags")
+}
+
+model Article {
+  id              String    @id @default(uuid())
+  title           String
+  slug            String    @unique
+  excerpt         String?
+  content         String
+  featuredImage   String?   @map("featured_image")
+  type            String    @default("news")
+  status          String    @default("draft")
+  authorId        String    @map("author_id")
+  author          User      @relation(fields: [authorId], references: [id])
+  categoryId      String?   @map("category_id")
+  category        Category? @relation(fields: [categoryId], references: [id])
+  viewCount       Int       @default(0) @map("view_count")
+  isFeatured      Boolean   @default(false) @map("is_featured")
+  metaTitle       String?   @map("meta_title")
+  metaDescription String?   @map("meta_description")
+  scheduledAt     DateTime? @map("scheduled_at")
+  publishedAt     DateTime? @map("published_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  tags      ArticleTag[]
+  phones    ArticlePhone[]
+  revisions ArticleRevision[]
+
+  @@index([status])
+  @@index([type])
+  @@index([categoryId])
+  @@map("articles")
+}
+
+model ArticleTag {
+  articleId String  @map("article_id")
+  tagId     String  @map("tag_id")
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@map("article_tags")
+}
+
+model ArticlePhone {
+  articleId String  @map("article_id")
+  phoneId   String  @map("phone_id")
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  phone     Phone   @relation(fields: [phoneId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, phoneId])
+  @@map("article_phones")
+}
+
+model ArticleRevision {
+  id           String   @id @default(uuid())
+  articleId    String   @map("article_id")
+  article      Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  title        String
+  content      String
+  authorId     String   @map("author_id")
+  author       User     @relation(fields: [authorId], references: [id])
+  revisionNote String?  @map("revision_note")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([articleId])
+  @@map("article_revisions")
+}
+
+// ==================== REVIEWS & RATINGS ====================
+
+model RatingCategory {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  icon      String?
+  weight    Float    @default(1.0)
+  sortOrder Int      @default(0) @map("sort_order")
+  isActive  Boolean  @default(true) @map("is_active")
+
+  reviewRatings ReviewRating[]
+
+  @@map("rating_categories")
+}
+
+model Review {
+  id              String   @id @default(uuid())
+  phoneId         String   @map("phone_id")
+  phone           Phone    @relation(fields: [phoneId], references: [id], onDelete: Cascade)
+  userId          String   @map("user_id")
+  user            User     @relation(fields: [userId], references: [id])
+  type            String   @default("user")
+  title           String?
+  content         String?
+  overallScore    Float?   @map("overall_score")
+  pros            String?
+  cons            String?
+  isVerified      Boolean  @default(false) @map("is_verified")
+  // Moderation
+  status          String   @default("pending") // pending, approved, rejected, spam
+  moderationNote  String?  @map("moderation_note")
+  moderatedAt     DateTime? @map("moderated_at")
+  reportCount     Int      @default(0) @map("report_count")
+  helpfulCount    Int      @default(0) @map("helpful_count")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  ratings           ReviewRating[]
+  responses         ReviewResponse[]
+  moderationReports ModerationReport[]
+
+  @@index([phoneId])
+  @@index([status])
+  @@map("reviews")
+}
+
+model ReviewRating {
+  id         String         @id @default(uuid())
+  reviewId   String         @map("review_id")
+  review     Review         @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  categoryId String         @map("category_id")
+  category   RatingCategory @relation(fields: [categoryId], references: [id])
+  score      Float
+
+  @@unique([reviewId, categoryId])
+  @@map("review_ratings")
+}
+
+model ReviewResponse {
+  id        String   @id @default(uuid())
+  reviewId  String   @map("review_id")
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  companyId String   @map("company_id")
+  company   Company  @relation(fields: [companyId], references: [id])
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("review_responses")
+}
+
+// ==================== COMPARISONS ====================
+
+model Comparison {
+  id              String   @id @default(uuid())
+  title           String?
+  slug            String   @unique
+  description     String?
+  isFeatured      Boolean  @default(false) @map("is_featured")
+  isPublished     Boolean  @default(true) @map("is_published")
+  viewCount       Int      @default(0) @map("view_count")
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  phones ComparisonPhone[]
+
+  @@map("comparisons")
+}
+
+model ComparisonPhone {
+  comparisonId String     @map("comparison_id")
+  phoneId      String     @map("phone_id")
+  comparison   Comparison @relation(fields: [comparisonId], references: [id], onDelete: Cascade)
+  phone        Phone      @relation(fields: [phoneId], references: [id], onDelete: Cascade)
+  sortOrder    Int        @default(0) @map("sort_order")
+
+  @@id([comparisonId, phoneId])
+  @@map("comparison_phones")
+}
+
+// ==================== DISCUSSIONS ====================
+
+model Discussion {
+  id         String   @id @default(uuid())
+  phoneId    String?  @map("phone_id")
+  phone      Phone?   @relation(fields: [phoneId], references: [id])
+  category   String   @default("general")
+  title      String
+  content    String
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id])
+  isPinned   Boolean  @default(false) @map("is_pinned")
+  isLocked   Boolean  @default(false) @map("is_locked")
+  replyCount Int      @default(0) @map("reply_count")
+  upvoteCount Int     @default(0) @map("upvote_count")
+  viewCount  Int      @default(0) @map("view_count")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  replies DiscussionReply[]
+
+  @@index([phoneId])
+  @@map("discussions")
+}
+
+model DiscussionReply {
+  id             String     @id @default(uuid())
+  discussionId   String     @map("discussion_id")
+  discussion     Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  userId         String     @map("user_id")
+  user           User       @relation(fields: [userId], references: [id])
+  content        String
+  upvoteCount    Int        @default(0) @map("upvote_count")
+  isCompanyReply Boolean    @default(false) @map("is_company_reply")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  @@index([discussionId])
+  @@map("discussion_replies")
+}
+
+// ==================== SHOWROOMS ====================
+
+model Showroom {
+  id          String   @id @default(uuid())
+  companyId   String?  @map("company_id")
+  company     Company? @relation(fields: [companyId], references: [id])
+  brandId     String?  @map("brand_id")
+  brand       Brand?   @relation(fields: [brandId], references: [id])
+  name        String
+  slug        String   @unique
+  description String?
+  address     String?
+  city        String?
+  country     String?
+  latitude    Float?
+  longitude   Float?
+  phoneNumber String?  @map("phone_number")
+  email       String?
+  website     String?
+  images      String?
+  workingHours String? @map("working_hours")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("showrooms")
+}
+
+// ==================== COMPANIES & ADVERTISERS ====================
+
+model Company {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  logo        String?
+  description String?
+  website     String?
+  type        String   @default("brand")
+  isVerified  Boolean  @default(false) @map("is_verified")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  users           User[]
+  showrooms       Showroom[]
+  advertisers     Advertiser[]
+  reviewResponses ReviewResponse[]
+
+  @@map("companies")
+}
+
+model Advertiser {
+  id            String   @id @default(uuid())
+  companyId     String?  @map("company_id")
+  company       Company? @relation(fields: [companyId], references: [id])
+  name          String
+  email         String?
+  contactPerson String?  @map("contact_person")
+  balance       Float    @default(0)
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  campaigns Campaign[]
+  payments  Payment[]
+
+  @@map("advertisers")
+}
+
+// ==================== ADVERTISING ====================
+
+model Campaign {
+  id            String   @id @default(uuid())
+  advertiserId  String   @map("advertiser_id")
+  advertiser    Advertiser @relation(fields: [advertiserId], references: [id])
+  name          String
+  type          String   @default("banner")
+  pricingModel  String   @default("cpm") @map("pricing_model")
+  status        String   @default("draft")
+  budgetTotal   Float?   @map("budget_total")
+  budgetDaily   Float?   @map("budget_daily")
+  spentTotal    Float    @default(0) @map("spent_total")
+  bidAmount     Float?   @map("bid_amount")
+  startDate     String?  @map("start_date")
+  endDate       String?  @map("end_date")
+  priority      Int      @default(0)
+  frequencyCap  Int?     @map("frequency_cap")
+  targeting     String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  creatives   AdCreative[]
+  impressions AdImpression[]
+  clicks      AdClick[]
+  dailyStats  AdDailyStat[]
+
+  @@index([status])
+  @@map("campaigns")
+}
+
+model AdCreative {
+  id         String   @id @default(uuid())
+  campaignId String   @map("campaign_id")
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  title      String?
+  description String?
+  image      String?
+  clickUrl   String?  @map("click_url")
+  phoneId    String?  @map("phone_id")
+  phone      Phone?   @relation(fields: [phoneId], references: [id])
+  isActive   Boolean  @default(true) @map("is_active")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  impressions AdImpression[]
+  clicks      AdClick[]
+  dailyStats  AdDailyStat[]
+
+  @@index([campaignId])
+  @@map("ad_creatives")
+}
+
+model AdSlot {
+  id          String  @id @default(uuid())
+  name        String
+  slug        String  @unique
+  pageType    String  @map("page_type")
+  position    String
+  dimensions  String?
+  isActive    Boolean @default(true) @map("is_active")
+  fallbackHtml String? @map("fallback_html")
+  sortOrder   Int     @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  impressions AdImpression[]
+  clicks      AdClick[]
+
+  @@map("ad_slots")
+}
+
+model AdImpression {
+  id              Int      @id @default(autoincrement())
+  campaignId      String   @map("campaign_id")
+  campaign        Campaign @relation(fields: [campaignId], references: [id])
+  creativeId      String   @map("creative_id")
+  creative        AdCreative @relation(fields: [creativeId], references: [id])
+  slotId          String?  @map("slot_id")
+  slot            AdSlot?  @relation(fields: [slotId], references: [id])
+  userFingerprint String?  @map("user_fingerprint")
+  ipAddress       String?  @map("ip_address")
+  country         String?
+  deviceType      String?  @map("device_type")
+  pageUrl         String?  @map("page_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([campaignId])
+  @@map("ad_impressions")
+}
+
+model AdClick {
+  id              Int      @id @default(autoincrement())
+  campaignId      String   @map("campaign_id")
+  campaign        Campaign @relation(fields: [campaignId], references: [id])
+  creativeId      String   @map("creative_id")
+  creative        AdCreative @relation(fields: [creativeId], references: [id])
+  slotId          String?  @map("slot_id")
+  slot            AdSlot?  @relation(fields: [slotId], references: [id])
+  userFingerprint String?  @map("user_fingerprint")
+  ipAddress       String?  @map("ip_address")
+  country         String?
+  deviceType      String?  @map("device_type")
+  pageUrl         String?  @map("page_url")
+  clickUrl        String?  @map("click_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([campaignId])
+  @@map("ad_clicks")
+}
+
+model AdDailyStat {
+  id          String   @id @default(uuid())
+  campaignId  String   @map("campaign_id")
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  creativeId  String   @map("creative_id")
+  creative    AdCreative @relation(fields: [creativeId], references: [id])
+  date        String
+  impressions Int      @default(0)
+  clicks      Int      @default(0)
+  spent       Float    @default(0)
+
+  @@unique([campaignId, creativeId, date])
+  @@map("ad_daily_stats")
+}
+
+// ==================== CMS & SETTINGS ====================
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  group     String   @default("general")
+  isPublic  Boolean  @default(false) @map("is_public")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+model Page {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  content         String?
+  template        String   @default("default")
+  status          String   @default("draft")
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("pages")
+}
+
+model Menu {
+  id       String     @id @default(uuid())
+  name     String
+  slug     String     @unique
+  location String?
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  items MenuItem[]
+
+  @@map("menus")
+}
+
+model MenuItem {
+  id        String     @id @default(uuid())
+  menuId    String     @map("menu_id")
+  menu      Menu       @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  parentId  String?    @map("parent_id")
+  parent    MenuItem?  @relation("MenuItemToMenuItem", fields: [parentId], references: [id])
+  children  MenuItem[] @relation("MenuItemToMenuItem")
+  title     String
+  url       String?
+  target    String     @default("_self")
+  icon      String?
+  sortOrder Int        @default(0) @map("sort_order")
+
+  @@index([menuId])
+  @@map("menu_items")
+}
+
+model Media {
+  id            String   @id @default(uuid())
+  filename      String
+  originalName  String   @map("original_name")
+  mimeType      String   @map("mime_type")
+  size          Int
+  path          String
+  thumbnailPath String?  @map("thumbnail_path")
+  altText       String?  @map("alt_text")
+  folder        String   @default("/")
+  dimensions    String?
+  variants      String?
+  uploadedBy    String?  @map("uploaded_by")
+  uploader      User?    @relation(fields: [uploadedBy], references: [id])
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("media")
+}
+
+// ==================== SEO ====================
+
+model SeoTemplate {
+  id                    String   @id @default(uuid())
+  contentType           String   @unique @map("content_type")
+  titleTemplate         String?  @map("title_template")
+  descriptionTemplate   String?  @map("description_template")
+  ogTitleTemplate       String?  @map("og_title_template")
+  ogDescriptionTemplate String?  @map("og_description_template")
+  robots                String   @default("index,follow")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("seo_templates")
+}
+
+model Redirect {
+  id         String   @id @default(uuid())
+  sourcePath String   @map("source_path")
+  targetPath String   @map("target_path")
+  type       Int      @default(301)
+  isActive   Boolean  @default(true) @map("is_active")
+  hitCount   Int      @default(0) @map("hit_count")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("redirects")
+}
+
+// ==================== AUDIT LOG ====================
+
+model AuditLog {
+  id          Int      @id @default(autoincrement())
+  userId      String?  @map("user_id")
+  user        User?    @relation(fields: [userId], references: [id])
+  action      String
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id")
+  changes     String?
+  beforeState String?  @map("before_state") // JSON snapshot of entity before change
+  afterState  String?  @map("after_state")  // JSON snapshot of entity after change
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ==================== MODERATION ====================
+
+model ModerationReport {
+  id           String   @id @default(uuid())
+  entityType   String   @map("entity_type") // review, discussion, reply
+  entityId     String   @map("entity_id")
+  reviewId     String?  @map("review_id")
+  review       Review?  @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  reporterId   String   @map("reporter_id")
+  reporter     User     @relation(fields: [reporterId], references: [id])
+  reason       String   // spam, inappropriate, misleading, offensive, other
+  description  String?
+  status       String   @default("pending") // pending, reviewed, resolved, dismissed
+  moderatedById String? @map("moderated_by_id")
+  moderatedBy  User?    @relation("ModeratedBy", fields: [moderatedById], references: [id])
+  moderationNote String? @map("moderation_note")
+  resolvedAt   DateTime? @map("resolved_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([entityType, entityId])
+  @@index([status])
+  @@index([reviewId])
+  @@map("moderation_reports")
+}
+
+// ==================== FAQ ====================
+
+model Faq {
+  id        String   @id @default(uuid())
+  phoneId   String?  @map("phone_id")
+  phone     Phone?   @relation(fields: [phoneId], references: [id])
+  question  String
+  answer    String
+  sortOrder Int      @default(0) @map("sort_order")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("faqs")
+}
+
+// ==================== PAYMENTS ====================
+
+model Payment {
+  id           String   @id @default(uuid())
+  advertiserId String   @map("advertiser_id")
+  advertiser   Advertiser @relation(fields: [advertiserId], references: [id])
+  amount       Float
+  currency     String   @default("USD")
+  provider     String
+  providerRef  String?  @map("provider_ref")
+  status       String   @default("pending")
+  metadata     String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("payments")
+}
+
+// ==================== SEARCH ANALYTICS ====================
+
+model SearchQuery {
+  id          String   @id @default(uuid())
+  query       String
+  normalizedQuery String @map("normalized_query")
+  resultCount Int      @default(0) @map("result_count")
+  clickedSlug String?  @map("clicked_slug")
+  filters     String?  // JSON string of applied filters
+  sortBy      String?  @map("sort_by")
+  source      String   @default("web") // web, autocomplete, api
+  userId      String?  @map("user_id")
+  sessionId   String?  @map("session_id")
+  responseMs  Int?     @map("response_ms")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([normalizedQuery])
+  @@index([createdAt])
+  @@map("search_queries")
+}
